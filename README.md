@@ -1,4 +1,4 @@
 # SchichtPlaner
 Software Design Studio Project III
 
-Test on main
+Test for initial commit
