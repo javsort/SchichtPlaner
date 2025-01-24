@@ -27,17 +27,23 @@ jobs:
         run: |
           echo "Building the backend..."
           cd planner-backend
-          ./mvnw clean package
+          sudo ./mvnw clean package
+        with:
+          sudo-pass: ${{ secrets.SUDO_PASS }}
 
       - name: Build container
         run: |
           echo "Building the container..."
-          docker compose -f shichtconfig/docker/docker-compose-test.yml build
+          sudo docker compose -f shichtconfig/docker/docker-compose-test.yml build
+        with:
+          sudo-pass: ${{ secrets.SUDO_PASS }}
 
       - name: Run container
         run: |
           echo "Running the container..."
-          docker compose -f shichtconfig/docker/docker-compose-test.yml down || true
-          docker compose -f shichtconfig/docker/docker-compose-test.yml up -d 
+          sudo docker compose -f shichtconfig/docker/docker-compose-test.yml down || true
+          sudo docker compose -f shichtconfig/docker/docker-compose-test.yml up -d
+        with:
+          sudo-pass: ${{ secrets.SUDO_PASS }}
            
 #  build-front:
