@@ -20,7 +20,7 @@ jobs:
       - name: Verify Docker
         run: |
           docker --version
-          docker-compose --version
+          docker compose --version
           sudo systemctl status docker || sudo systemctl start docker
 
 
@@ -41,12 +41,12 @@ jobs:
       - name: Build container
         run: |
           echo "Building the container..."
-          docker-compose -f shichtconfig/docker/docker-compose-test.yml build
+          docker compose -f shichtconfig/docker/docker-compose-test.yml build
 
       - name: Run container
         run: |
           echo "Running the container..."
-          docker-compose -f shichtconfig/docker/docker-compose-test.yml down || true
-          docker-compose -f shichtconfig/docker/docker-compose-test.yml up -d 
+          docker compose -f shichtconfig/docker/docker-compose-test.yml down || true
+          docker compose -f shichtconfig/docker/docker-compose-test.yml up -d 
            
 #  build-front:
