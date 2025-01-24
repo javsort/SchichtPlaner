@@ -1,2 +1,4 @@
-planner-backend/modules/scheduler/target/
-planner-backend/modules/statistics/target/
+planner-backend/modules/*/target/
+
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
