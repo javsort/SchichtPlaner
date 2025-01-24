@@ -14,11 +14,11 @@ jobs:
   build-back:
     runs-on: self-hosted
     steps:
-      - name: Verify Docker
-        run: |
-          docker --version
-          docker compose --version
-          sudo systemctl status docker || sudo systemctl start docker
+#      - name: Verify Docker
+#        run: |
+#          docker --version
+#          docker compose --version
+#          sudo systemctl status docker || sudo systemctl start docker
 
       - name: Checkout
         uses: actions/checkout@v4
