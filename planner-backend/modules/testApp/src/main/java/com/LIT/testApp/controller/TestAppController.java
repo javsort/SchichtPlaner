@@ -11,4 +11,9 @@ public class TestAppController {
     public String hello() {
         return "Hello from test App!";
     }
+
+    @GetMapping("/cicdtest")
+    public String cicdtest() {
+        return "Hello from test App! If this endpoint is working, then the CI/CD pipeline is working!";
+    }
 }
