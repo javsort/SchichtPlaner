@@ -5,7 +5,10 @@ on:
   push:
     branches:
       - main
-    workflow_dispatch:
+    paths:
+      - 'planner-backend/**'
+      - 'planner-frontend/**'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,10 +17,6 @@ jobs:
   build-back:
     runs-on: self-hosted
     steps:
-
-      - name: Debug username
-        run: whoami
-
       - name: Checkout
         uses: actions/checkout@v4
 
