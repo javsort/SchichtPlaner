@@ -14,11 +14,6 @@ jobs:
   build-back:
     runs-on: self-hosted
     steps:
-#      - name: Verify Docker
-#        run: |
-#          docker --version
-#          docker compose --version
-#          sudo systemctl status docker || sudo systemctl start docker
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,9 +22,8 @@ jobs:
         run: |
           echo "Building the backend..."
           cd planner-backend
-          sudo ./mvnw clean package
-        with:
-          sudo-pass: ${{ secrets.SUDO_PASS }}
+          chmod +x mvnw
+          ./mvnw clean package
 
       - name: Build container
         run: |
