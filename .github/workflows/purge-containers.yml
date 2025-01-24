@@ -1,0 +1,28 @@
+name: Purge Containers
+
+on:
+  workflow_dispatch:
+
+  jobs:
+    purge-containers:
+      runs-on: self-hosted
+      steps:
+        - name: Cleanup unused containers
+          run: |
+            echo "Purging containers..."
+            docker container prune -f
+
+        - name: Cleanup unused images
+          run: |
+            echo "Purging images..."
+            docker image prune -f
+        
+        - name: Cleanup unused volumes
+          run: |
+            echo "Purging volumes..."
+            docker volume prune -f
+        
+        - name: Cleanup unused networks
+          run: |
+            echo "Purging networks..."
+            docker network prune -f
