@@ -1,0 +1,16 @@
+name: Stop Alles Containers
+
+on:
+  workflow_dispatch:
+
+  jobs:
+    stop-backend:
+      runs-on: self-hosted
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Stop container
+          run: |
+            echo "Stopping the container..."
+            docker compose -f shichtconfig/docker/docker-compose-test.yml down || true
