@@ -34,12 +34,11 @@
                 <version>${springboot.version}</version>
             </dependency>
 
-            <!-- MySQL Dependency -->
+            <!-- MariaDB Dependency -->
             <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>9.1.0</version>
-                <scope>runtime</scope>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>3.5.1</version>
             </dependency>
 
             <!-- Lombok for Cleaner Code -->

@@ -1,6 +1,6 @@
 # Set up connections to other services:
 server:
-  port: 8080
+  port: 8081
 
 spring:
   datasource:

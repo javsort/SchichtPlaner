@@ -1,6 +1,6 @@
 # Set up connections to other services:
 server:
-  port: 8080
+  port: 8082
 
 spring:
   datasource:
@@ -26,4 +26,4 @@ logging:
       springframework: DEBUG
       springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:DEBUG}
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:DEBUG}
-      springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
+      springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG} 

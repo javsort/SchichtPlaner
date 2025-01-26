@@ -4,12 +4,15 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the jar file
-#COPY ./testApp/target/testApp-1.0-SNAPSHOT.jar /app/testApp-1.0-SNAPSHOT.jar
 COPY modules/testApp/target/testApp-1.0-SNAPSHOT.jar /app/testApp-1.0-SNAPSHOT.jar
+COPY modules/scheduler/target/scheduler-1.0-SNAPSHOT.jar /app/scheduler-1.0-SNAPSHOT.jar
 
-# Expose port:
-EXPOSE 8080
+# Expose ports for apps :
+EXPOSE 8080 8081
 
-# Run the jar file
-# ENTRYPOINT [ "java", "-jar", "testApp-1.0-SNAPSHOT.jar" ]
-CMD ["sh", "-c", "java -jar testApp-1.0-SNAPSHOT.jar"]
+# Copy the startup script
+COPY ../automation-scripts/jumpstart-backend.sh /app/jumpstart-backend.sh
+RUN chmod +x /app/jumpstart-backend.sh
+
+# Run the script
+CMD ["sh", "/app/jumpstart-backend.sh"]

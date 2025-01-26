@@ -1,6 +1,7 @@
 name: 'shicht-test'
 
 services:
+  # Backend setup
   planner-backend:
     image: javsort/planner-backend:latest
     container_name: testing-planner-backend
@@ -9,4 +10,27 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     restart: always
+
+  # Database setup
+  planner-mariadb:
+    image: mariadb:latest
+    container_name: planner-mariadb
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    networks:
+      - planner-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: planner
+      MYSQL_USER: planner
+      MYSQL_PASSWORD: planner
+
+# Networks
+networks:
+  planner-network:
+    driver: bridge
