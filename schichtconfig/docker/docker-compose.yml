@@ -3,11 +3,13 @@ name: 'schicht-planer-LIT'
 services:
   # Backend setup
   planner-backend:
+    depends_on:
+      - planner-mariadb
     image: javsort/planner-backend:latest
     container_name: testing-planner-backend
     build:
-      context: ../../planner-backend
-      dockerfile: Dockerfile
+      context: ../../
+      dockerfile: planner-backend/Dockerfile
     ports:
       - "8080:8080"
     env_file:
@@ -28,7 +30,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: planner
       MYSQL_USER: planner
-      MYSQL_PASSWORD: planner
+      MYSQL_PASSWORD: root
 
 # Networks
 networks:
