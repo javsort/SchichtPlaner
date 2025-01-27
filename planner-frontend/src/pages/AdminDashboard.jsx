@@ -5,18 +5,17 @@ import './styles.css';
 function AdminDashboard() {
   const navigate = useNavigate();
   
-  // Example of navigation on a button click (This should be inside return to render)
-  // Removed this from here as it was placed incorrectly
-  // <button onClick={() => navigate('/admin-dashboard')}>Go to Admin Dashboard</button>
-  
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
       <div className="admin-sidebar">
         <h2 className="sidebar-title">Admin Panel</h2>
         <ul className="sidebar-nav">
-          <li><button onClick={() => navigate('/employees')} className="sidebar-btn">Employees</button></li>
+          <li><button onClick={() => navigate('/')} className="sidebar-btn">Dashboard</button></li>
+          <li><button onClick={() => navigate('/create-shift')} className="sidebar-btn">Create Shift</button></li>
+          <li><button onClick={() => navigate('/add-employee')} className="sidebar-btn">Add Employee</button></li>
           <li><button onClick={() => navigate('/shifts')} className="sidebar-btn">Shifts</button></li>
+          <li><button onClick={() => navigate('/employees')} className="sidebar-btn">Employees</button></li>
           <li><button onClick={() => navigate('/reports')} className="sidebar-btn">Reports</button></li>
           <li><button onClick={() => navigate('/settings')} className="sidebar-btn">Settings</button></li>
         </ul>
@@ -28,11 +27,7 @@ function AdminDashboard() {
           <h1>Administrator Dashboard</h1>
         </header>
 
-        {/* Quick Action Buttons */}
-        <div className="admin-actions">
-          <button onClick={() => navigate('/create-shift')} className="admin-action-btn">Create New Shift</button>
-          <button onClick={() => navigate('/add-employee')} className="admin-action-btn">Add Employee</button>
-        </div>
+        
 
         {/* Dashboard Overview */}
         <div className="admin-overview">
@@ -55,15 +50,18 @@ function AdminDashboard() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="admin-footer">
-          <p>&copy; 2025 Shift Planner | Admin Panel</p>
-        </footer>
+        
       </div>
     </div>
   );
 }
 
 export default AdminDashboard;
+
+
+
+
+
+
 
 

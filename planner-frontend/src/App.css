@@ -94,3 +94,47 @@
     padding: 10px;
     font-size: 16px;
   }
+  /* Create Shift Form */
+.create-shift-container {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.create-shift-container h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.create-shift-form .form-group {
+  margin-bottom: 15px;
+}
+
+.create-shift-form label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.create-shift-form input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.create-shift-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.create-shift-btn:hover {
+  background-color: #218838;
+}
