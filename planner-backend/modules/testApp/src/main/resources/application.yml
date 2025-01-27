@@ -17,7 +17,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
 
-    #database-platform: org.hibernate.dialect.MariaDBDialect
+    # database-platform: org.hibernate.dialect.MariaDBDialect
 
   web:
     mvc:
@@ -30,3 +30,5 @@ logging:
       springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:DEBUG}
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:DEBUG}
       springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
+    com:
+      zaxxer.hikari: DEBUG
