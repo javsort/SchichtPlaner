@@ -4,10 +4,11 @@ server:
 
 spring:
   datasource:
+    platform: mariadb
+    driverClassName: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.mariadb.jdbc.Driver}
     url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://planner-mariadb:3306/planner}
     username: ${SPRING_DATASOURCE_USERNAME:planner}
     password: ${SPRING_DATASOURCE_PASSWORD:root}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:com.mariadb.jdbc.Driver}
   
   jpa:
     hibernate:
