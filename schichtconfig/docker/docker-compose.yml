@@ -29,10 +29,10 @@ services:
     networks:
       - planner-network
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: planner
-      MYSQL_USER: planner
-      MYSQL_PASSWORD: root
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: planner
+      MARIADB_USER: planner
+      MARIADB_PASSWORD: root
 
 # Networks
 networks:

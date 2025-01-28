@@ -26,9 +26,9 @@ spring:
 logging:
   level:
     org:
-      springframework: DEBUG
-      springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:DEBUG}
-      springframework.web: ${LOGGING_LEVEL_SPRING_WEB:DEBUG}
-      springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
+      springframework: INFO
+      springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:INFO}
+      springframework.web: ${LOGGING_LEVEL_SPRING_WEB:INFO}
+      springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:INFO}
     com:
       zaxxer.hikari: DEBUG
