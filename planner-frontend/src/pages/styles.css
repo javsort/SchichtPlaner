@@ -213,3 +213,36 @@ a:hover {
   text-decoration: underline;
 }
 
+/* ShiftManagementPage.css */
+.shift-management-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.calendar, .shift-list, .shift-form {
+  width: 30%;
+  padding: 10px;
+}
+
+button {
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}

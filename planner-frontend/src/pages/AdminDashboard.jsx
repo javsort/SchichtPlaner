@@ -18,6 +18,8 @@ function AdminDashboard() {
           <li><button onClick={() => navigate('/employees')} className="sidebar-btn">Employees</button></li>
           <li><button onClick={() => navigate('/reports')} className="sidebar-btn">Reports</button></li>
           <li><button onClick={() => navigate('/settings')} className="sidebar-btn">Settings</button></li>
+          {/* Added Shift Management */}
+          <li><button onClick={() => navigate('/shift-management')} className="sidebar-btn">Shift Management</button></li>
         </ul>
       </div>
 
@@ -26,8 +28,6 @@ function AdminDashboard() {
         <header className="admin-header">
           <h1>Administrator Dashboard</h1>
         </header>
-
-        
 
         {/* Dashboard Overview */}
         <div className="admin-overview">
@@ -48,15 +48,32 @@ function AdminDashboard() {
             <p>View and generate shift reports.</p>
             <button onClick={() => navigate('/reports')} className="overview-btn">View Reports</button>
           </div>
+
+          {/* Optionally add a link or button here to navigate to shift management */}
+          <div className="overview-card">
+            <h3>Shift Management</h3>
+            <p>Manage shifts for employees.</p>
+            <button onClick={() => navigate('/shift-management')} className="overview-btn">Manage Shifts</button>
+          </div>
         </div>
 
-        
       </div>
     </div>
   );
 }
 
 export default AdminDashboard;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
