@@ -1,4 +1,4 @@
-package com.LIT.scheduler.model.entity;
+/*package com.LIT.scheduler.model.entity;
 
 import com.LIT.scheduler.model.enums.RoleType;
 
@@ -30,3 +30,4 @@ public class Role {
     @Column(unique = true, nullable = false)
     private RoleType name;
 }
+*/

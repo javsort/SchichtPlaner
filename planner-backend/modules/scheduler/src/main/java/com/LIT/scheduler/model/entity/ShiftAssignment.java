@@ -1,4 +1,4 @@
-package com.LIT.scheduler.model.entity;
+/*package com.LIT.scheduler.model.entity;
 
 import com.LIT.scheduler.model.enums.AssignmentStatus;
 
@@ -40,3 +40,4 @@ public class ShiftAssignment {
     @Column(nullable = false)
     private AssignmentStatus status;
 }
+*/

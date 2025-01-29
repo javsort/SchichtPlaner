@@ -1,4 +1,4 @@
-package com.LIT.scheduler.model.entity;
+/*package com.LIT.scheduler.model.entity;
 
 import java.time.LocalDateTime;
 
@@ -33,3 +33,4 @@ public class Shift {
     @Column(nullable = false)
     private LocalDateTime endTime;
 }
+*/

@@ -1,4 +1,4 @@
-package com.LIT.scheduler.model.entity;
+/*package com.LIT.scheduler.model.entity;
 
 import java.util.Set;
 
@@ -47,3 +47,4 @@ public class User {
     )
     private Set<Role> roles;
 }
+*/

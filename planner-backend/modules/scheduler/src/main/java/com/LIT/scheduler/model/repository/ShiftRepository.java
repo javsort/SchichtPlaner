@@ -1,4 +1,11 @@
-package com.LIT.scheduler.model.repository;
+/*package com.LIT.scheduler.model.repository;
 
-public interface ShiftRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.LIT.scheduler.model.entity.Shift;
+
+@Repository
+public interface ShiftRepository extends JpaRepository<Shift, Integer> {
 }
+*/
