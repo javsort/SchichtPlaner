@@ -13,4 +13,4 @@ jobs:
       - name: Stop container
         run: |
           echo "Stopping the container..."
-          docker compose -f shichtconfig/docker/docker-compose-test.yml down || true
+          docker compose -f schichtconfig/docker/docker-compose.yml down || true
