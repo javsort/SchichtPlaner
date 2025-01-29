@@ -1,14 +1,40 @@
+# Docker
+The docker-compose in this file includes a MariaDB image, which establishes the Database setup for the overall project.
+
 # Docker commands for server
+## Specific commands
+### Check live status for all containers
+```bash
+docker stats
+```
 
+### Check a container's logs
+```bash
+docker logs <container-name>
+```
 
-## Bring up containers
-`docker-compose -f .\docker-compose-test.yml up --build`
+### Check specific app logs (For backend only)
+```bash
+docker exec -it <container-name> tail -f /app/logs/<java-app-name>.log
+```
 
-## Bring down -> Stop and remove containers
-`docker-compose -f .\docker-compose-test.yml down`
+## CRUD for containers
+### Bring up containers
+```bash
+docker-compose -f .\docker-compose-test.yml up --build
+```
 
-## Stop containers
-`docker-compose -f .\docker-compose-test.yml stop`
+### Bring down -> Stop and remove containers
+```bash
+docker-compose -f .\docker-compose-test.yml down
+```
 
-## Remove containers
-`docker-compose -f .\docker-compose-test.yml rm`
+### Stop containers
+```bash
+docker-compose -f .\docker-compose-test.yml stop
+```
+
+### Remove containers
+```bash
+docker-compose -f .\docker-compose-test.yml rm
+```
