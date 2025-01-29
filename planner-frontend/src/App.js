@@ -1,36 +1,33 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';  // React 18
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import './index.css';  // Global styles
-import Login from './pages/Login';  // Import the Login component correctly
-import Register from './pages/Register';  // Import the Register component
+import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Login from './pages/Login';
+import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import CreateShift from './pages/CreateShift';
 import AddEmployee from './pages/AddEmployee';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Employees from './pages/Employees';
+import Shifts from './pages/Shifts';  // New shift management component
+import ShiftManagement from './pages/ShiftManagement';  // New shift management component
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />  {/* Default route */}
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />  {/* Register route */}
+        <Route path="/register" element={<Register />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/create-shift" element={<CreateShift />} />
         <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/employees" element={<Employees />} />
+        <Route path="/shifts" element={<Shifts />} />  {/* Add this route */}
+        <Route path="/shift-management" element={<ShiftManagement />} />  {/* Add this route */}
       </Routes>
     </Router>
   );
 }
 
-// Use ReactDOM.createRoot for React 18 and beyond
-const root = ReactDOM.createRoot(document.getElementById('root')); // Get the root div
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
 export default App;
-

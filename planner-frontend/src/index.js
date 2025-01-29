@@ -1,13 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';  // Optional: Global styles
-import App from './App';  // Your main App component
+import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import App from './App';
 
-// React 18's createRoot method should only be used once to mount the root app
-const root = ReactDOM.createRoot(document.getElementById('root')); // Get the root div
+const rootElement = document.getElementById('root');
+
+// Ensure root is created only once
+const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
 );
+
+
