@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -19,6 +19,8 @@ const ShiftManagement = () => {
     start: "",
     end: "",
   });
+
+  const [view, setView] = useState(Views.WEEK); // Default to Week View
 
   const handleAddShift = (e) => {
     e.preventDefault();
@@ -77,6 +79,17 @@ const ShiftManagement = () => {
         <button type="submit">Add Shift</button>
       </form>
 
+      {/* View Selector */}
+      <div style={{ marginBottom: "20px" }}>
+        <label><strong>Select View:</strong></label>
+        <select value={view} onChange={(e) => setView(e.target.value)}>
+          <option value={Views.MONTH}>Month</option>
+          <option value={Views.WEEK}>Week</option>
+          <option value={Views.DAY}>Day</option>
+          <option value={Views.AGENDA}>Agenda</option>
+        </select>
+      </div>
+
       {/* Calendar View */}
       <div style={{ height: "500px" }}>
         <Calendar
@@ -85,6 +98,8 @@ const ShiftManagement = () => {
           startAccessor="start"
           endAccessor="end"
           style={{ height: 500 }}
+          view={view}
+          onView={(newView) => setView(newView)} // Update view when changed manually
         />
       </div>
     </div>
