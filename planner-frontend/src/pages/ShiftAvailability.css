@@ -1,0 +1,26 @@
+.shift-availability-container {
+    width: 100%;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.shift-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.shift-table th, .shift-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.shift-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.checkbox-cell {
+    text-align: center;
+}
