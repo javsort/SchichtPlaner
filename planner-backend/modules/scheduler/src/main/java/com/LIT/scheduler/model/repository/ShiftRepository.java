@@ -1,11 +1,10 @@
-/*package com.LIT.scheduler.model.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+package com.LIT.scheduler.model.repository;
 
 import com.LIT.scheduler.model.entity.Shift;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface ShiftRepository extends JpaRepository<Shift, Integer> {
+import java.util.List;
+
+public interface ShiftRepository extends JpaRepository<Shift, Long> {
+    List<Shift> findByTitleContainingIgnoreCase(String title);
 }
-*/

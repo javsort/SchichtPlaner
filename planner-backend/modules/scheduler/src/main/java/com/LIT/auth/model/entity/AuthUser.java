@@ -1,4 +1,4 @@
-package com.LIT.scheduler.model.entity;
+package com.LIT.auth.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,8 +10,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "users")
-public class User {
+public class AuthUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,10 +21,13 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String name;
+    private String username;
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = true, unique = true)
+    private String googleId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

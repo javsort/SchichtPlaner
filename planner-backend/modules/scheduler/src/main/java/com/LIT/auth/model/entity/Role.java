@@ -1,4 +1,4 @@
-package com.LIT.scheduler.model.entity;
+package com.LIT.auth.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,5 +15,6 @@ public class Role {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name; // Role name stored as a string
+    private String name;
 }
+
