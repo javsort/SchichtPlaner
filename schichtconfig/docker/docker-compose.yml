@@ -1,0 +1,41 @@
+name: 'schicht-planer-lit'
+
+services:
+  # Backend setup
+  planner-backend:
+    depends_on:
+      - planner-mariadb
+    image: javsort/planner-backend:latest
+    container_name: planner-backend
+    build:
+      context: ../../
+      dockerfile: planner-backend/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - planner-network
+
+  # Database setup
+  planner-mariadb:
+    image: mariadb:latest
+    container_name: planner-mariadb
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    networks:
+      - planner-network
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: planner
+      MARIADB_USER: planner
+      MARIADB_PASSWORD: root
+
+# Networks
+networks:
+  planner-network:
+    driver: bridge
