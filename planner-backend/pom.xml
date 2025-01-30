@@ -16,6 +16,7 @@
     <modules>
         <module>modules/scheduler</module>
         <module>modules/testApp</module>
+        <module>modules/auth</module>
         <!-- <module>modules/statistics</module> -->
     </modules>
 
