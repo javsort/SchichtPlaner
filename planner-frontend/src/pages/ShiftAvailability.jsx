@@ -1,41 +1,58 @@
 import React, { useState } from "react";
-import "./ShiftAvailability.css"; // Ensure the CSS file exists
+import "./ShiftAvailability.css";
+
+const generateTimeSlots = () => {
+  const slots = [];
+  for (let hour = 0; hour < 24; hour++) {
+    slots.push(`${hour}:00`); // 24-hour format
+  }
+  return slots;
+};
 
 const ShiftAvailability = () => {
-  // Define time slots from 12 AM (00:00) to 12 PM (12:00)
-  const timeSlots = Array.from({ length: 13 }, (_, i) => {
-    const hour = i === 12 ? 12 : i; // 12 for noon, otherwise normal count
-    const suffix = i < 12 ? "AM" : "PM";
-    return `${hour}:00 ${suffix}`;
-  });
-
-  // Days of the week (columns)
+  const timeSlots = generateTimeSlots();
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-  // Store shift availability as an object { day: { time: boolean } }
+  
   const [availability, setAvailability] = useState(
     days.reduce((acc, day) => {
-      acc[day] = timeSlots.reduce((acc, time) => {
-        acc[time] = false;
-        return acc;
-      }, {});
+      acc[day] = {};
+      timeSlots.forEach((slot) => (acc[day][slot] = false));
       return acc;
     }, {})
   );
 
-  // Handle checkbox toggle
-  const handleCheckboxChange = (day, time) => {
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  const handleMouseDown = (day, slot) => {
+    setIsSelecting(true);
+    setSelectedDay(day);
+    toggleSlot(day, slot);
+  };
+
+  const handleMouseEnter = (day, slot) => {
+    if (isSelecting && day === selectedDay) {
+      toggleSlot(day, slot);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsSelecting(false);
+    setSelectedDay(null);
+  };
+
+  const toggleSlot = (day, slot) => {
     setAvailability((prev) => ({
       ...prev,
       [day]: {
         ...prev[day],
-        [time]: !prev[day][time],
+        [slot]: !prev[day][slot],
       },
     }));
   };
 
   return (
-    <div className="shift-availability-container">
+    <div className="shift-availability-container" onMouseUp={handleMouseUp}>
       <h2>Shift Availability</h2>
       <div className="table-container">
         <table className="shift-table">
@@ -48,17 +65,16 @@ const ShiftAvailability = () => {
             </tr>
           </thead>
           <tbody>
-            {timeSlots.map((time) => (
-              <tr key={time}>
-                <td>{time}</td>
+            {timeSlots.map((slot) => (
+              <tr key={slot}>
+                <td>{slot}</td>
                 {days.map((day) => (
-                  <td key={`${day}-${time}`}>
-                    <input
-                      type="checkbox"
-                      checked={availability[day][time]}
-                      onChange={() => handleCheckboxChange(day, time)}
-                    />
-                  </td>
+                  <td
+                    key={`${day}-${slot}`}
+                    className={availability[day][slot] ? "selected" : ""}
+                    onMouseDown={() => handleMouseDown(day, slot)}
+                    onMouseEnter={() => handleMouseEnter(day, slot)}
+                  ></td>
                 ))}
               </tr>
             ))}
