@@ -9,8 +9,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import CreateShift from './pages/CreateShift';
 import AddEmployee from './pages/AddEmployee';
 import Employees from './pages/Employees';
-import Shifts from './pages/Shifts';  // New shift management component
-import ShiftManagement from './pages/ShiftManagement';  // New shift management component
+import Shifts from './pages/Shifts';
+import ShiftManagement from './pages/ShiftManagement';
+import ShiftAvailability from './pages/ShiftAvailability'; // New Shift Availability Page
 
 function App() {
   return (
@@ -23,11 +24,13 @@ function App() {
         <Route path="/create-shift" element={<CreateShift />} />
         <Route path="/add-employee" element={<AddEmployee />} />
         <Route path="/employees" element={<Employees />} />
-        <Route path="/shifts" element={<Shifts />} />  {/* Add this route */}
-        <Route path="/shift-management" element={<ShiftManagement />} />  {/* Add this route */}
+        <Route path="/shifts" element={<Shifts />} />
+        <Route path="/shift-management" element={<ShiftManagement />} />
+        <Route path="/shift-availability" element={<ShiftAvailability />} /> {/* New Route */}
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
