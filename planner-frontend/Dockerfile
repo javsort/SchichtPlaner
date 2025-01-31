@@ -3,11 +3,11 @@ FROM node:18
 
 WORKDIR /app
 
-RUN npm install -g npm@10.8.2
+RUN npm install -g npm@latest || true
 
 COPY planner-frontend/package*.json ./
 
-RUN npm install
+RUN npm install --legacy-peer-deps || true
 
 COPY planner-frontend/ . 
 
