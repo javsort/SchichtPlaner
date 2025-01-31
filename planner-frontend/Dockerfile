@@ -3,10 +3,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY . .
+COPY planner-frontend/package*.json ./
 
-RUN npm install && npm run build
+RUN npm install 
 
-CMD ["npx", "serve", "-s", "build"]
+COPY planner-frontend/ . 
 
 EXPOSE 3000
+
+CMD ["npm", "start"]
