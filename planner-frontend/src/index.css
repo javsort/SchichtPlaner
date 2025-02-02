@@ -1,0 +1,13 @@
+/* src/index.css */
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.calendar-view {
+  margin-bottom: 20px;
+}

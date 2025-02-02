@@ -4,3 +4,12 @@ planner-backend/modules/*/target/
 .mvn/wrapper/maven-wrapper.jar
 .idea/
 .vscode/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore log files
+*.log

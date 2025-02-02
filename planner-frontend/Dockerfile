@@ -1,12 +1,20 @@
 
-FROM node:18-alpine
+FROM node:18
 
 WORKDIR /app
 
-COPY . .
+RUN npm install -g npm@latest || true
 
-RUN npm install && npm run build
+COPY planner-frontend/package*.json ./
 
-CMD ["npx", "serve", "-s", "build"]
+RUN npm install --legacy-peer-deps || true
+
+COPY planner-frontend/ . 
 
 EXPOSE 3000
+
+# Run in development mode
+CMD ["npm", "start"]
+
+# Run in production mode
+# CMD ["npx", "serve", "-s", "build", "-l", "3000"]
