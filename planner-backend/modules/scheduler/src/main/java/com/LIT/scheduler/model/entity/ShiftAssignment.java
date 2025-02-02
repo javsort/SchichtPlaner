@@ -34,7 +34,7 @@ public class ShiftAssignment {
 
     @ManyToOne
     @JoinColumn(name = "shift_id", nullable = false)
-    private ShiftEntity shift;
+    private Shift shift;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
