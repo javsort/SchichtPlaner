@@ -26,7 +26,7 @@ public class AuthUser {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true, unique = true)
+    @Column(unique = true)
     private String googleId;
 
     @ManyToMany(fetch = FetchType.EAGER)

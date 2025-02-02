@@ -1,12 +1,9 @@
 package com.LIT.auth.controller;
 
-
 import com.LIT.auth.model.dto.Req.LoginRequest;
 import com.LIT.auth.model.dto.Req.RegisterRequest;
 import com.LIT.auth.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,5 +26,10 @@ public class AuthenticationController {
         authenticationService.register(registerRequest);
         return ResponseEntity.ok("User registered successfully!");
     }
-}
 
+    @PostMapping("/dummy-data") // Resets dummy data
+    public ResponseEntity<String> resetDummyData() {
+        authenticationService.initializeDummyUsers();
+        return ResponseEntity.ok("Dummy data added!");
+    }
+}
