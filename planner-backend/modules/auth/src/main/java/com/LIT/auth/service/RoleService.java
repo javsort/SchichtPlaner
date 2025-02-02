@@ -1,12 +1,13 @@
-package com.LIT.scheduler.service;
+package com.LIT.auth.service;
 
-
-import com.LIT.scheduler.model.entity.Role;
-import com.LIT.scheduler.model.repository.RoleRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.LIT.auth.model.entity.Role;
+import com.LIT.auth.model.repository.RoleRepository;
 
 @Service
 public class RoleService {

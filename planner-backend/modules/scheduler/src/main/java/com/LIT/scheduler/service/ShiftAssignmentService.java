@@ -1,27 +1,28 @@
 package com.LIT.scheduler.service;
 
-import com.LIT.scheduler.model.entity.Shift;
-import com.LIT.scheduler.model.entity.ShiftAssignment;
-import com.LIT.scheduler.model.entity.User;
-import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.LIT.scheduler.model.entity.ShiftAssignment;
+import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
 
 @Service
 public class ShiftAssignmentService {
     private final ShiftAssignmentRepository shiftAssignmentRepository;
 
+    @Autowired
     public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository) {
         this.shiftAssignmentRepository = shiftAssignmentRepository;
     }
 
-    public List<ShiftAssignment> getAssignmentsByUser(User user) {
-        return shiftAssignmentRepository.findByUser(user);
+    public List<ShiftAssignment> getAssignmentsByUserId(Long userId) {
+        return shiftAssignmentRepository.findByUserId(userId);
     }
 
-    public List<ShiftAssignment> getAssignmentsByShift(Shift shift) {
-        return shiftAssignmentRepository.findByShift(shift);
+    public List<ShiftAssignment> getAssignmentsByShift(Long shiftId) {
+        return shiftAssignmentRepository.findByShift(shiftId);
     }
 
     public ShiftAssignment assignShift(ShiftAssignment assignment) {

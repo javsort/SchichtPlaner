@@ -1,8 +1,8 @@
-package com.LIT.scheduler.controller;
+package com.LIT.auth.controller;
 
 
-import com.LIT.scheduler.model.entity.Role;
-import com.LIT.scheduler.service.RoleService;
+import com.LIT.auth.model.entity.Role;
+import com.LIT.auth.service.RoleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
