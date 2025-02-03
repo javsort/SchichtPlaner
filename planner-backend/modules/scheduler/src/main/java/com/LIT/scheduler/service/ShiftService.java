@@ -26,8 +26,20 @@ public class ShiftService {
         return shiftRepository.save(shift);
     }
 
+    public Shift updateShift(Long id, Shift updatedShift) {
+        Optional<Shift> optionalShift = shiftRepository.findById(id);
+        if (optionalShift.isPresent()) {
+            Shift existingShift = optionalShift.get();
+            existingShift.setTitle(updatedShift.getTitle());
+            existingShift.setStartTime(updatedShift.getStartTime());
+            existingShift.setEndTime(updatedShift.getEndTime());
+            return shiftRepository.save(existingShift);
+        } else {
+            throw new RuntimeException("Shift not found with id: " + id);
+        }
+    }
+
     public void deleteShift(Long id) {
         shiftRepository.deleteById(id);
     }
 }
-
