@@ -11,7 +11,8 @@ COPY planner-backend/modules/scheduler/target/scheduler-1.0-SNAPSHOT.jar /app/sc
 COPY planner-backend/modules/auth/target/auth-1.0-SNAPSHOT.jar /app/auth-1.0-SNAPSHOT.jar
 
 # Expose ports for apps :
-EXPOSE 8080 8081 8082
+EXPOSE 8080 
+# 8081 8082
 
 RUN apt-get update && apt-get install -y mariadb-client 
 

@@ -1,4 +1,4 @@
-package com.LIT.auth.utilities;
+package com.LIT.logicGate.utilities;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
          */
         // Catch the login / registration
         if(authHeader == null) {
-            if(requestWrap.getRequestURI().equals("/api/auth/login") || requestWrap.getRequestURI().equals("/api/auth/register")) {
+            if(requestWrap.getRequestURI().equals("/api/auth/login") || requestWrap.getRequestURI().equals("/api/auth/register") || requestWrap.getRequestURI().equals("/api/hello")) {
                 chain.doFilter(request, response);
                 return;
             }
