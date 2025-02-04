@@ -65,8 +65,10 @@ function LoginPage() {
         navigate('/tester-dashboard');
       } else if (role === 'Incident Manager') {
         navigate('/incident-manager-dashboard');
-      } else {
+      } else if (role === 'Employee') {
         navigate('/employee-dashboard');
+      } else {
+        setErrorMessage('There was an error logging you in! Please try again.');
       }
     } else {
       setErrorMessage('Please enter valid credentials.');
