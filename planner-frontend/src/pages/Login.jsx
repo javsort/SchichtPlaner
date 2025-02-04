@@ -1,23 +1,65 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
 function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Technician');
+  const [email, setEmail] = useState('admin@example.com');
+  const [password, setPassword] = useState('admin123');
+  const [role, setRole] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  /*
+  
+        <div className="form-group">
+          <label>Role</label>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="Technician">Technician</option>
+            <option value="Tester">Tester</option>
+            <option value="Incident Manager">Incident Manager</option>
+            <option value="Shift Supervisor">Shift Supervisor</option>
+            <option value="Administrator">Administrator</option>
+          </select>
+        </div> 
+  */
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     // Simulate authentication (replace with your authentication logic)
-    if (username && password) {
+    if (email && password) {
+      console.log('Logging in...', { email, password });
+
+      try {
+        const response = await axios.post(`${baseUrl}/api/auth/login`, {
+          email: email,
+          password: password
+        });
+
+        const data = await response;
+        
+        console.log('API Response:', data);
+        
+        console.log('Email:', data.data.email);
+        console.log('Role:', data.data.role);
+        console.log("Token: '" +  data.data.token + "'");
+
+        // Extract role from response headers
+        localStorage.setItem('token', data.data.token)
+        
+        setRole(data.data.role);
+
+      } catch (error) {
+        console.error('API Error:', error);
+      }
+
       // Mock role check after login (you would replace this with actual logic)
-      if (role === 'Shift Supervisor') {
+      if (role === 'Shift Supervisor') {    // Update with DB data!!!
         navigate('/supervisor-dashboard');
-      } else if (role === 'Administrator') {
+      } else if (role === 'Admin') {      // THis one is done so far
         navigate('/admin-dashboard');
       } else if (role === 'Tester') {
         navigate('/tester-dashboard');
@@ -37,11 +79,11 @@ function LoginPage() {
       {errorMessage && <div className="error-message">{errorMessage}</div>}
       <form onSubmit={handleLogin}>
         <div className="form-group">
-          <label>Username</label>
+          <label>Email</label>
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -53,16 +95,6 @@ function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
-          <label>Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="Technician">Technician</option>
-            <option value="Tester">Tester</option>
-            <option value="Incident Manager">Incident Manager</option>
-            <option value="Shift Supervisor">Shift Supervisor</option>
-            <option value="Administrator">Administrator</option>
-          </select>
         </div>
         <button type="submit" className="login-btn">Login</button>
       </form>

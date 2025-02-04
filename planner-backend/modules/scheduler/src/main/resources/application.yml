@@ -2,6 +2,14 @@
 server:
   port: 8081
 
+address:
+  logicGate:
+    url: ${LOGIC_GATE_SERVICE_URL:http://localhost:8080}
+  scheduler:
+    url: ${SCHEDULER_SERVICE_URL:http://localhost:8081}
+  auth:
+    url: ${AUTH_SERVICE_URL:http://localhost:8082} 
+
 jwt:
   secret: ${JWT_SECRET:secret}
 
