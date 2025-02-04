@@ -15,6 +15,8 @@ import Shifts from "./pages/Shifts";
 import ShiftManagement from "./pages/ShiftManagement";
 import ShiftAvailability from "./pages/ShiftAvailability";
 import CompanyShiftCalendar from "./pages/CompanyShiftCalendar";
+import EmployeeManagement from "./pages/EmployeeManagement";
+import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
         <Route path="/shift-management" element={<ShiftManagement />} />
         <Route path="/shift-availability" element={<ShiftAvailability />} />
         <Route path="/shift-view" element={<CompanyShiftCalendar />} />
+        <Route path="/employee-management" element={<EmployeeManagement />} />
+        <Route path="/shift-approval" element={<ShiftApprovalCalendar />} />
       </Routes>
     </Router>
   );
