@@ -1,6 +1,8 @@
 package com.LIT.auth.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -85,7 +87,7 @@ public class AuthenticationService {
         }
     }
 
-    public String login(LoginRequest loginRequest) {
+    public Map<String, String> login(LoginRequest loginRequest) {
 
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
         if (userOptional.isEmpty() ||
@@ -95,7 +97,19 @@ public class AuthenticationService {
         User user = userOptional.get();
         //get the first one (this is assuming each user has AT LEAST one)
         String role = user.getRoles().iterator().next().getName();
-        return jwtTokenUtil.generateToken(user.getEmail(), role);
+
+        // Generate token
+        
+        String token = "Bearer: " + jwtTokenUtil.generateToken(user.getEmail(), role);
+
+         Map<String, String> toReturn = new HashMap<>();
+            toReturn.put("token", token);
+            toReturn.put("email", user.getEmail());
+            toReturn.put("role", role);
+
+        log.info("User " + user.getEmail() + " logged in successfully. Returnig token.");
+
+        return toReturn;
     }
 
     public void register(RegisterRequest registerRequest) {

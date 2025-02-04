@@ -46,6 +46,11 @@ public class LogicGateController {
         return "Hello from logicGate module!";
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Test from logicGate module! JWT is working!";
+    }
+
     /*
      * Authentication endpoints
      *

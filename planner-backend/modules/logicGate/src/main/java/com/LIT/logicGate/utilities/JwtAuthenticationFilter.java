@@ -47,8 +47,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
          */
         // Catch the login / registration
         if(authHeader == null) {
+
             if(requestWrap.getRequestURI().endsWith("/login") || requestWrap.getRequestURI().endsWith("/register") || requestWrap.getRequestURI().endsWith("/hello")) {
-                log.info("No token provided, but it's a login or registration request, so it's fine");
+                log.info("No token provided, but it's a login, registration, or hello request, so it's fine");
 
                 chain.doFilter(request, response);
                 return;
@@ -60,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // there IS a token -> Accessed after system auth -> IN system
-        if (authHeader.startsWith("Bearer ")) {
+        if (authHeader.startsWith("Bearer: ")) {
             // Analyze token's validity
             log.info("Token fulfills basic requirements. Analyzing now the provided tokens: \n'" + authHeader + "'");
 
@@ -74,6 +75,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String userEmail = jwtTokenUtil.extractEmail(token);
             String role = "ROLE_" + jwtTokenUtil.extractRole(token);
+
+            log.info("User: " + userEmail + " has role: " + role);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userEmail, null, Collections.singletonList(new SimpleGrantedAuthority(role)));

@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      container-to-redeploy:
+        description: 'Name of the container'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-back:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild container
+        run: |
+          echo "Rebuilding the container..."
+          
+          if [ -z "${{ github.event.inputs.container-to-redeploy }}" ]; then
+            echo "Container name is not provided"
+            exit 1
+          fi
+
+          if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-logic-gate" ]; then
+            echo "Re-building maven app for logic gate..."
+            cd planner-backend
+            chmod +x mvnw
+            ./mvnw clean package -pl modules/logicGate -am
+          fi
+
+          if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-scheduler" ]; then
+            echo "Re-building maven app for scheduler..."
+            cd planner-backend
+            chmod +x mvnw
+            ./mvnw clean package -pl modules/scheduler -am
+          fi
+
+          if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-auth" ]; then
+            echo "Re-building maven app for auth..."
+            cd planner-backend
+            chmod +x mvnw
+            ./mvnw clean package -pl modules/auth -am
+          fi
+
+          echo "Rebuilding the container..."
+          docker compose -f schichtconfig/docker/docker-compose.yml build --no-cache ${{ github.event.inputs.container-to-redeploy }}
+
+      - name: Re-deploy container
+        run: |
+          echo "Re-deploying the container..."
+          docker compose -f schichtconfig/docker/docker-compose.yml up -d ${{ github.event.inputs.container-to-redeploy }}

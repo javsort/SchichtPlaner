@@ -3,8 +3,7 @@ name: 'schicht-planer-lit'
 services:
   planner-frontend:
     depends_on:
-      - planner-backend
-      - planner-mariadb
+      - planner-logic-gate
     container_name: planner-frontend
     build:
       context: ../../
