@@ -25,6 +25,11 @@ public class ShiftController {
         this.shiftService = shiftService;
     }
 
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello from scheduler module!";
+    }
+
     @GetMapping
     public List<Shift> getAllShifts() {
         return shiftService.getAllShifts();

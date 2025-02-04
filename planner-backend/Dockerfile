@@ -1,3 +1,5 @@
+# THIS FILE IS DEPRECATED, PLEASE USE THE DOCKER-COMPOSE FILE INSTEAD
+
 FROM openjdk:21-jdk-slim
 
 # Set the working directory

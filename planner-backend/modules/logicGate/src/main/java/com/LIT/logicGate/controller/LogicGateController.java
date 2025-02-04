@@ -43,7 +43,7 @@ public class LogicGateController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "Hello from test App!";
+        return "Hello from logicGate module!";
     }
 
     /*
@@ -92,8 +92,11 @@ public class LogicGateController {
         HttpHeaders headers = getHeaders(request);
         HttpEntity<?> httpEntity = new HttpEntity<>(requestBody, headers);
 
+        log.info("Request is being sent to: \n" + targetUrl + "\nProtocol: " + request.getMethod() + "\nHeaders: " + headers + "\nBody: " + requestBody + "\n");
+
         // Forward the request
         try {
+
             ResponseEntity<String> response = restTemplate.exchange(
                 targetUrl,
                 HttpMethod.valueOf(request.getMethod()),

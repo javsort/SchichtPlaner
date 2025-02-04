@@ -2,17 +2,44 @@ name: 'schicht-planer-lit-nofront'
 
 services:
   # Backend setup
-  planner-backend:
-    depends_on:
-      - planner-mariadb
-    container_name: planner-backend
+
+  planner-logic-gate:
+    container_name: planner-logic-gate
     build:
       context: ../../
-      dockerfile: planner-backend/Dockerfile
+      dockerfile: planner-backend/modules/logicGate/Dockerfile
     ports:
       - "8080:8080"
-      #- "8081:8081"
-      #- "8082:8082"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - planner-network
+
+  planner-scheduler:
+    depends_on:
+      - planner-mariadb
+    container_name: planner-scheduler
+    build:
+      context: ../../
+      dockerfile: planner-backend/modules/scheduler/Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - planner-network
+
+  planner-auth:
+    depends_on:
+      - planner-mariadb
+    container_name: planner-auth
+    build:
+      context: ../../
+      dockerfile: planner-backend/modules/auth/Dockerfile
+    ports:
+      - "8082:8082"
     env_file:
       - .env
     restart: always
