@@ -1,4 +1,4 @@
-package com.LIT.auth.utilities;
+/*package com.LIT.auth.utilities;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         /*
          * Catch cases where there's no token provided -> its either invalid req or user is not logged in
-         */
+         *
         // Catch the login / registration
         if(authHeader == null) {
             if(requestWrap.getRequestURI().equals("/api/auth/login") || requestWrap.getRequestURI().equals("/api/auth/register")) {
@@ -89,4 +89,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-}
+}*/
