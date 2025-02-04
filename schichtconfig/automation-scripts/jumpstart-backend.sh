@@ -12,9 +12,9 @@ echo "MariaDB is up, starting applications..."
 # Create a logs directory if it doesn't exist
 mkdir -p /app/logs
 
-# Start TestApp with prefixed logging
-echo "Starting TestApp..." | tee -a /app/logs/testApp.log
-java -jar /app/testApp-1.0-SNAPSHOT.jar 2>&1 | sed 's/^/[TestApp] /' | tee -a /app/logs/testApp.log &
+# Start LogicGate with prefixed logging
+echo "Starting LogicGate..." | tee -a /app/logs/logicGate.log
+java -jar /app/logicGate-1.0-SNAPSHOT.jar 2>&1 | sed 's/^/[logicGate] /' | tee -a /app/logs/logicGate.log &
 
 # Start SchedulerApp with prefixed logging
 echo "Starting SchedulerApp..." | tee -a /app/logs/scheduler.log
