@@ -1,5 +1,4 @@
-
-name: CI/CD Pipeline
+name: CI/CD Pipeline - All Containers
 
 on:
   workflow_dispatch:
