@@ -5,7 +5,6 @@ services:
     depends_on:
       - planner-backend
       - planner-mariadb
-    image: javsort/planner-frontend:latest
     container_name: planner-frontend
     build:
       context: ../../
@@ -20,7 +19,6 @@ services:
   planner-backend:
     depends_on:
       - planner-mariadb
-    image: javsort/planner-backend:latest
     container_name: planner-backend
     build:
       context: ../../

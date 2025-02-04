@@ -1,5 +1,14 @@
 #!/bin/bash
 
+
+# Wait for MariaDB to be ready
+until mysqladmin ping -h "planner-mariadb" --silent; do
+    echo "Waiting for MariaDB to be ready..."
+    sleep 2
+done
+
+echo "MariaDB is up, starting applications..."
+
 # Create a logs directory if it doesn't exist
 mkdir -p /app/logs
 

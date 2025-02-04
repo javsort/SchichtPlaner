@@ -13,6 +13,8 @@ COPY planner-backend/modules/auth/target/auth-1.0-SNAPSHOT.jar /app/auth-1.0-SNA
 # Expose ports for apps :
 EXPOSE 8080 8081 8082
 
+RUN apt-get update && apt-get install -y mariadb-client 
+
 COPY schichtconfig/automation-scripts/jumpstart-backend.sh /app/jumpstart-backend.sh
 
 RUN sed -i 's/\r$//' /app/jumpstart-backend.sh

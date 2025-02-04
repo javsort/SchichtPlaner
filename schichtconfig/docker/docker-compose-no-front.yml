@@ -1,11 +1,10 @@
-name: 'schicht-planer-lit'
+name: 'schicht-planer-lit-nofront'
 
 services:
   # Backend setup
   planner-backend:
     depends_on:
       - planner-mariadb
-    image: javsort/planner-backend:latest
     container_name: planner-backend
     build:
       context: ../../

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +19,17 @@ import com.LIT.auth.model.repository.UserRepository;
 import com.LIT.auth.utilities.JwtTokenUtil;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public AuthenticationService(UserRepository userRepository,
                                  RoleRepository roleRepository,
                                  JwtTokenUtil jwtTokenUtil,
@@ -82,6 +86,7 @@ public class AuthenticationService {
     }
 
     public String login(LoginRequest loginRequest) {
+
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
         if (userOptional.isEmpty() ||
             !passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())) {
