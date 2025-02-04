@@ -10,6 +10,8 @@ services:
       dockerfile: planner-frontend/Dockerfile
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     restart: always
     networks:
       - planner-network
