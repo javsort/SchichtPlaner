@@ -13,9 +13,9 @@ import com.LIT.auth.exception.UserAlreadyExistsException;
 import com.LIT.auth.model.dto.Req.LoginRequest;
 import com.LIT.auth.model.dto.Req.RegisterRequest;
 import com.LIT.auth.model.entity.Role;
-import com.LIT.auth.model.entity.User;
+import com.LIT.auth.model.entity.Employee;
 import com.LIT.auth.model.repository.RoleRepository;
-import com.LIT.auth.model.repository.UserRepository;
+import com.LIT.auth.model.repository.EmployeeRepository;
 import com.LIT.auth.utilities.JwtTokenUtil;
 
 import jakarta.annotation.PostConstruct;
@@ -24,13 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class AuthenticationService {
-    private final UserRepository userRepository;
+    private final EmployeeRepository userRepository;
     private final RoleRepository roleRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository,
+    public AuthenticationService(EmployeeRepository userRepository,
                                  RoleRepository roleRepository,
                                  JwtTokenUtil jwtTokenUtil,
                                  PasswordEncoder passwordEncoder) {

@@ -6,13 +6,13 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.LIT.auth.model.entity.User;
-import com.LIT.auth.model.repository.UserRepository;
+import com.LIT.auth.model.repository.EmployeeRepository;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+    private final EmployeeRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(EmployeeRepository userRepository) {
         this.userRepository = userRepository;
     }
 
