@@ -2,6 +2,8 @@ planner-backend/modules/*/target/
 
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+.idea/
+.vscode/
 
 # Ignore node_modules
 node_modules/
