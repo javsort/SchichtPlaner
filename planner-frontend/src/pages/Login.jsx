@@ -52,24 +52,25 @@ function LoginPage() {
         
         setRole(data.data.role);
 
+        // Mock role check after login (you would replace this with actual logic)
+        if (role === 'Shift Supervisor') {    // Update with DB data!!!
+          navigate('/supervisor-dashboard');
+        } else if (role === 'Admin') {      // THis one is done so far
+          navigate('/admin-dashboard');
+        } else if (role === 'Tester') {
+          navigate('/tester-dashboard');
+        } else if (role === 'Incident Manager') {
+          navigate('/incident-manager-dashboard');
+        } else if (role === 'Employee') {
+          navigate('/employee-dashboard');
+        } else {
+          setErrorMessage('There was an error logging you in! Please try again.');
+        }
+
       } catch (error) {
         console.error('API Error:', error);
       }
 
-      // Mock role check after login (you would replace this with actual logic)
-      if (role === 'Shift Supervisor') {    // Update with DB data!!!
-        navigate('/supervisor-dashboard');
-      } else if (role === 'Admin') {      // THis one is done so far
-        navigate('/admin-dashboard');
-      } else if (role === 'Tester') {
-        navigate('/tester-dashboard');
-      } else if (role === 'Incident Manager') {
-        navigate('/incident-manager-dashboard');
-      } else if (role === 'Employee') {
-        navigate('/employee-dashboard');
-      } else {
-        setErrorMessage('There was an error logging you in! Please try again.');
-      }
     } else {
       setErrorMessage('Please enter valid credentials.');
     }
