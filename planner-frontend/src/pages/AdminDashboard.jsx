@@ -22,7 +22,7 @@ function AdminDashboard() {
       });
       
       const data = await response;
-      console.log('API Response:', data.text());
+      console.log('API Response:', data);
 
     } catch (error) {
       console.error('API Error:', error);
