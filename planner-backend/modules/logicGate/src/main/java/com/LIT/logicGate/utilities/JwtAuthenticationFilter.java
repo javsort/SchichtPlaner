@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Analyze token's validity
             log.info("Token fulfills basic requirements. Analyzing now the provided tokens: \n'" + authHeader + "'");
 
-            String token = authHeader.substring(7); //remove "Bearer " prefix
+            String token = authHeader.substring(8); //remove "Bearer " prefix
 
             if (!jwtTokenUtil.validateToken(token)) {
                 logger.warn("Invalid JWT token");
