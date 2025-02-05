@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
 function AdminDashboard() {
   const navigate = useNavigate();
 
