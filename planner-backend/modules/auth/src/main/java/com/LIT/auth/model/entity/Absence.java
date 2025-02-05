@@ -1,5 +1,6 @@
 package com.LIT.auth.model.entity;
 
+<<<<<<< Updated upstream
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -14,12 +15,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+=======
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDate;
+import java.util.Set;
+>>>>>>> Stashed changes
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+<<<<<<< Updated upstream
+=======
+@Builder
+>>>>>>> Stashed changes
 @Table(name = "absences")
 public class Absence {
     @Id
@@ -36,6 +47,12 @@ public class Absence {
     private LocalDate endDate;
 
     @ManyToOne
+<<<<<<< Updated upstream
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 }
+=======
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+}
+>>>>>>> Stashed changes
