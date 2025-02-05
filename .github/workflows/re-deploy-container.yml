@@ -31,6 +31,8 @@ jobs:
             cd planner-backend
             chmod +x mvnw
             ./mvnw clean package -pl modules/logicGate -am
+            
+            cd ..
           fi
 
           if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-scheduler" ]; then
@@ -38,6 +40,8 @@ jobs:
             cd planner-backend
             chmod +x mvnw
             ./mvnw clean package -pl modules/scheduler -am
+
+            cd ..
           fi
 
           if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-auth" ]; then
@@ -45,6 +49,8 @@ jobs:
             cd planner-backend
             chmod +x mvnw
             ./mvnw clean package -pl modules/auth -am
+
+            cd ..
           fi
 
           echo "Rebuilding the container..."
