@@ -7,6 +7,7 @@ import com.LIT.auth.model.entity.Role;
 
 public class RoleTest {
 
+    //Verifies that object Role is definied
     @Test
     void testRoleCreation() {
         Role role = new Role(1L, "ADMIN");
@@ -14,6 +15,7 @@ public class RoleTest {
         assertEquals("ADMIN", role.getName());
     }
 
+    //Checks if setName works correctly
     @Test
     void testRoleModification() {
         Role role = new Role(2L, "USER");
