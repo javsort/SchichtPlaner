@@ -9,9 +9,9 @@ const localizer = momentLocalizer(moment);
 
 // Dummy employee data for display in the overview
 const dummyEmployees = [
-  { id: 1, name: "John Doe", roles: ["Technician", "Supervisor"] },
-  { id: 2, name: "Jane Smith", roles: ["Technician"] },
-  { id: 3, name: "Bob Johnson", roles: ["Supervisor"] },
+  { id: 1, name: "Justus Fynn", roles: ["Technician", "Supervisor"] },
+  { id: 2, name: "Tanha Schmidt", roles: ["Technician"] },
+  { id: 3, name: "Miley Cyrus", roles: ["Supervisor"] },
 ];
 
 // Helper: Check if two time ranges overlap
@@ -19,7 +19,7 @@ const isOverlap = (startA, endA, startB, endB) => {
   return startA < endB && startB < endA;
 };
 
-const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
+const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   // State for shifts: each shift has id, title, start, end, rolesRequired, assignedEmployees
   const [shifts, setShifts] = useState([
     {
@@ -32,7 +32,7 @@ const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
     },
     {
       id: 102,
-      title: "Evening Shift",
+      title: "Afternoon Shift",
       start: new Date(new Date().setHours(14, 0, 0)),
       end: new Date(new Date().setHours(18, 0, 0)),
       rolesRequired: ["Supervisor"],
@@ -73,13 +73,12 @@ const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
   const calendarEvents = filteredShifts.map((shift) => ({
     ...shift,
     title:
-      shift.title +
+      (shift.title || "Unnamed Shift") +
       " (" +
       (shift.assignedEmployees && shift.assignedEmployees.length > 0
         ? shift.assignedEmployees
             .map(
-              (id) =>
-                dummyEmployees.find((emp) => emp.id === id)?.name || id
+              (id) => dummyEmployees.find((emp) => emp.id === id)?.name || id
             )
             .join(", ")
         : "Unassigned") +
@@ -298,10 +297,9 @@ const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
         <table>
           <thead>
             <tr>
-              <th>Shift Name</th>
+              <th>Employee Name</th>
               <th>Date</th>
               <th>Time</th>
-              <th>Assigned Employees</th>
               <th>Roles Required</th>
               <th>Actions</th>
             </tr>
@@ -309,12 +307,6 @@ const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
           <tbody>
             {shifts.map((shift) => (
               <tr key={shift.id}>
-                <td>{shift.title}</td>
-                <td>{moment(shift.start).format("YYYY-MM-DD")}</td>
-                <td>
-                  {moment(shift.start).format("hh:mm A")} -{" "}
-                  {moment(shift.end).format("hh:mm A")}
-                </td>
                 <td>
                   {shift.assignedEmployees && shift.assignedEmployees.length > 0
                     ? shift.assignedEmployees
@@ -324,6 +316,11 @@ const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
                         )
                         .join(", ")
                     : "Unassigned"}
+                </td>
+                <td>{moment(shift.start).format("YYYY-MM-DD")}</td>
+                <td>
+                  {moment(shift.start).format("hh:mm A")} -{" "}
+                  {moment(shift.end).format("hh:mm A")}
                 </td>
                 <td>{shift.rolesRequired.join(", ")}</td>
                 <td>
@@ -340,5 +337,4 @@ const ShiftManagement = ({ currentUser = { id: 1, name: "John Doe" } }) => {
 };
 
 export default ShiftManagement;
-
 

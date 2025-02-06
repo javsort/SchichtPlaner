@@ -9,32 +9,29 @@ const localizer = momentLocalizer(moment);
 
 const ShiftApprovalCalendar = () => {
   // Dummy pending shift requests (with dates in February 2025)
+  // Note: The 'title' property is intentionally omitted to simulate missing data.
   const [pendingRequests, setPendingRequests] = useState([
     {
       id: 1,
-      title: "Morning Shift",
-      employee: "John Doe",
+      employee: "Justus Fynn",
       start: new Date("2025-02-10T08:00"),
       end: new Date("2025-02-10T12:00"),
     },
     {
       id: 2,
-      title: "Evening Shift",
-      employee: "Jane Smith",
+      employee: "Amina Ali",
       start: new Date("2025-02-12T14:00"),
       end: new Date("2025-02-12T18:00"),
     },
     {
       id: 3,
-      title: "Night Shift",
-      employee: "Bob Johnson",
+      employee: "Magdy Talaat",
       start: new Date("2025-02-15T20:00"),
       end: new Date("2025-02-15T23:00"),
     },
     {
       id: 4,
-      title: "Afternoon Shift",
-      employee: "Alice Brown",
+      employee: "Tanja Schmidt",
       start: new Date("2025-02-18T13:00"),
       end: new Date("2025-02-18T17:00"),
     },
@@ -53,15 +50,19 @@ const ShiftApprovalCalendar = () => {
       // Remove from pending requests
       setPendingRequests(pendingRequests.filter((req) => req.id !== id));
       // Add to approved shifts with a status field
-      setApprovedShifts([...approvedShifts, { ...shiftToApprove, status: "approved" }]);
+      // Here we explicitly set title to a fallback value if it's missing.
+      setApprovedShifts([
+        ...approvedShifts,
+        { ...shiftToApprove, title: shiftToApprove.title || "Unnamed Shift", status: "approved" },
+      ]);
     }
   };
 
   // Prepare events for the calendar from approved shifts.
-  // We format the event title as "Shift Title - Employee".
+  // We format the event title as "Shift Title - Employee", using a fallback if title is missing.
   const calendarEvents = approvedShifts.map((shift) => ({
     ...shift,
-    title: `${shift.title} - ${shift.employee}`,
+    title: `${shift.title || "Unnamed Shift"} - ${shift.employee}`,
   }));
 
   // Custom event style getter: use a green background for approved shifts.
@@ -128,7 +129,8 @@ const ShiftApprovalCalendar = () => {
         <tbody>
           {pendingRequests.map((req) => (
             <tr key={req.id}>
-              <td>{req.title}</td>
+              {/* Use fallback value for title if undefined */}
+              <td>{req.title || "Unnamed Shift"}</td>
               <td>{req.employee}</td>
               <td>{moment(req.start).format("YYYY-MM-DD")}</td>
               <td>

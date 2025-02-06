@@ -10,40 +10,40 @@ const localizer = momentLocalizer(moment);
 const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => {
   // Dummy employee data (resources)
   const [employees] = useState([
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Bob Johnson" },
+    { id: 1, name: "david Marrco" },
+    { id: 2, name: "justus Magdy" },
+    { id: 3, name: "hany Ali" },
     // Add more employees as needed
   ]);
 
   // Dummy shift data (events)
   const [shifts] = useState([
     {
-      title: "John Doe",
+      title: "David Marco",
       start: new Date(new Date().setHours(9, 0, 0)),
       end: new Date(new Date().setHours(13, 0, 0)),
       resourceId: 1, // Assigned to John Doe
-      type: "morning",
+    
       assignedEmployees: [1],
     },
     {
-      title: "John Doe",
+      title: "David Marco",
       start: new Date(new Date().setHours(14, 0, 0)),
       end: new Date(new Date().setHours(18, 0, 0)),
       resourceId: 1, // Assigned to John Doe
-      type: "evening",
+    
       assignedEmployees: [1],
     },
     {
-      title: "Jane Smith",
+      title: "Hany Ali",
       start: new Date(new Date().setHours(8, 0, 0)),
       end: new Date(new Date().setHours(12, 0, 0)),
       resourceId: 2, // Assigned to Jane Smith
-      type: "morning",
+      
       assignedEmployees: [2],
     },
     {
-      title: "Bob Johnson",
+      title: "Hany Ali",
       start: new Date(new Date().setHours(13, 0, 0)),
       end: new Date(new Date().setHours(17, 0, 0)),
       resourceId: 3, // Assigned to Bob Johnson

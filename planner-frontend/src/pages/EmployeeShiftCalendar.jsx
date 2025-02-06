@@ -11,25 +11,25 @@ const EmployeeShiftCalendar = ({ currentUser = { name: "Default Employee" } }) =
   // Dummy shift data; in production, fetch from your API
   const [shifts, setShifts] = useState([
     {
-      title: "Morning Shift",
+      
       start: new Date(new Date().setHours(9, 0)),
       end: new Date(new Date().setHours(13, 0)),
-      assignedTo: "John Doe",
-      type: "morning",
+      assignedTo: "Justus Fynn",
+      
     },
     {
-      title: "Evening Shift",
+      
       start: new Date(new Date().setHours(14, 0)),
       end: new Date(new Date().setHours(18, 0)),
-      assignedTo: "John Doe",
-      type: "evening",
+      assignedTo: "Justus Fynn",
+     
     },
     {
-      title: "Night Shift",
+     
       start: new Date(new Date().setHours(20, 0)),
       end: new Date(new Date().setHours(23, 0)),
-      assignedTo: "Jane Smith",
-      type: "night",
+      assignedTo: "Amina Ali",
+      
     },
   ]);
 
