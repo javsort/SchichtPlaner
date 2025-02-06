@@ -1,13 +1,6 @@
-
-name: CI/CD Pipeline
+name: CI/CD Pipeline - All Containers
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'planner-backend/**'
-      - 'planner-frontend/**'
   workflow_dispatch:
 
 permissions:

@@ -1,4 +1,4 @@
-/*package com.LIT.auth.utilities;
+package com.LIT.logicGate.utilities;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -44,10 +44,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         /*
          * Catch cases where there's no token provided -> its either invalid req or user is not logged in
-         *
+         */
         // Catch the login / registration
         if(authHeader == null) {
-            if(requestWrap.getRequestURI().equals("/api/auth/login") || requestWrap.getRequestURI().equals("/api/auth/register")) {
+
+            if(requestWrap.getRequestURI().endsWith("/login") || requestWrap.getRequestURI().endsWith("/register") || requestWrap.getRequestURI().endsWith("/hello")) {
+                log.info("No token provided, but it's a login, registration, or hello request, so it's fine");
+
                 chain.doFilter(request, response);
                 return;
             }
@@ -58,11 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // there IS a token -> Accessed after system auth -> IN system
-        if (authHeader.startsWith("Bearer ")) {
+        if (authHeader.startsWith("Bearer: ")) {
             // Analyze token's validity
             log.info("Token fulfills basic requirements. Analyzing now the provided tokens: \n'" + authHeader + "'");
 
-            String token = authHeader.substring(7); //remove "Bearer " prefix
+            String token = authHeader.substring(8); //remove "Bearer " prefix
 
             if (!jwtTokenUtil.validateToken(token)) {
                 logger.warn("Invalid JWT token");
@@ -72,6 +75,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String userEmail = jwtTokenUtil.extractEmail(token);
             String role = "ROLE_" + jwtTokenUtil.extractRole(token);
+
+            log.info("User: " + userEmail + " has role: " + role);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userEmail, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
@@ -89,4 +94,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-}*/
+}

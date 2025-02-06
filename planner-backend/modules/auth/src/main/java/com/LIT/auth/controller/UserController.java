@@ -16,7 +16,7 @@ import com.LIT.auth.model.entity.User;
 import com.LIT.auth.service.UserService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
 
