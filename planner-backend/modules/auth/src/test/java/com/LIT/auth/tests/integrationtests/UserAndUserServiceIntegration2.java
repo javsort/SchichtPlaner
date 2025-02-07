@@ -1,4 +1,4 @@
-package com.LIT.auth.tests.unittests;
+package com.LIT.auth.tests.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.LIT.auth.model.entity.User;
 import com.LIT.auth.service.UserService;
 
-public class UserTest3 {
+public class UserAndUserServiceIntegration2 {
 
     private UserService userService;
     private User user;
