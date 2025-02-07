@@ -54,7 +54,7 @@ $ ./build-n-run-local.sh
 **:warning:!** - build-n-run-local.sh already gives the `chmod` permissions to the maven wrapper, so it is only needed to give it once to this script.
 
 - For deployment on **Windows**:
-```cmd
+```bat
 ./build-n-run-local.bat
 ```
 
@@ -100,9 +100,66 @@ The modules divide as follows:
 | planner-auth         | [auth](./planner-backend/modules/auth/)                |
 | Coming Soon!         | -                                                      |
 
-To build the backend individually, 
+
+To run the full backend, it is sufficient to simply go back to [./schichtconfig/automation-scripts/](./schichtconfig/automation-scripts/) and run [`./no-front-buildnrun-loc.sh`](./schichtconfig/automation-scripts/no-front-buildnrun-loc.sh) / [`./no-front-buildnrun-loc.bat`](./schichtconfig/automation-scripts/no-front-buildnrun-loc.bat) depending of your OS.
+```sh
+$ cd schichtconfig/automation-scripts
+
+$ chmod +x ./no-front-buildnrun-loc.sh (if on linux)
+
+$ ./no-front-buildnrun-loc.sh
+
+```
+
+To exclusively install dependencies or build the backend, it is sufficient to...
+```sh
+$ cd schichtconfig/automation-scripts/
+
+:: To install dependencies
+$ chmod +x ./clean-install.sh (only if on linux)
+
+$ ./clean-install.sh
+
+:: To build and package
+$ chmod +x ./build-local.sh (only if on linux)
+
+$ ./build-local.sh
+
+```
+or...
+
+```sh
+$ cd planner-backend/
+
+$ chmod +x ./mvnw (if on linux)
+
+:: To install dependencies
+$ ./mvnw clean install
+
+:: To build and package
+$ ./mvnw clean package
+```
+
+**:warning:!** - If on Linux, remember to give the `chmod +x <script-name.sh>` permission to any script you'd like to run.
 
 ## Planner-Frontend - [/planner-frontend](./planner-frontend/)
 Here, you'll find all the files corresponding to the front-end. 
 
 The front-end is currently running based on React, which is in one container, built from a single [Dockerfike](./planner-frontend/Dockerfile)
+
+To the front-end exclusively on local, it is sufficient to...
+```sh
+$ cd planner-frontend/
+
+$ npm install
+
+:: To run in dev mode
+$ npm start 
+
+:: To run in build version:
+$ npm install -g serve
+
+$ npm run build
+
+$ serve -s build
+```
