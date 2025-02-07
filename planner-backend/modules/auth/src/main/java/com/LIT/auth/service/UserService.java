@@ -31,4 +31,20 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    public User registerUser(String email, String username, String password) {
+        User user = User.builder()
+                .email(email)
+                .username(username)
+                .password(password)
+                .build();
+        if (userRepository != null) {
+            return userRepository.save(user);
+        }
+        return user;
+    }
+
+    public boolean authenticate(User user, String password) {
+        return user.getPassword().equals(password);
+    }
 }
