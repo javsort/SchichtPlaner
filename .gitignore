@@ -1,20 +1,44 @@
-planner-backend/modules/*/target/
-
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
-.idea/
-.vscode/
-
-# Ignore node_modules
-node_modules/
-
-# Ignore VS Code settings
-.vscode/
-
-# Ignore log files
-*.log
-
 
 # Front-end
 planner-frontend/node_modules/
 planner-frontend/build/
+
+# Node.js / Frontend
+planner-frontend/node_modules/
+planner-frontend/build/
+planner-frontend/dist/
+planner-frontend/.cache/
+planner-frontend/.next/
+planner-frontend/out/
+planner-frontend/coverage/
+
+# Java / Maven / Backend
+planner-backend/**/target/
+planner-backend/**/maven-archiver/
+planner-backend/**/maven-status/
+planner-backend/**/surefire-reports/
+planner-backend/**/generated-sources/
+planner-backend/**/generated-test-sources/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE / Editor settings
+.idea/
+.vscode/
+*.swp
+
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
