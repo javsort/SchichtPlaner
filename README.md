@@ -5,45 +5,12 @@ Welcome to SchichtPlaner, a Java-based web-app delivered through React for the f
 
 This application is currently being designed and built through a CI/CD workflow enabled by an external server, so all deployments are done here, via GitHub Actions workflows.
 
-This README is a guide to the repository, where you'll find the following folders:
+This README is a guide to the repository, where you'll find the following folders and helping sections:
 
-## Current Front-End Access
+**:warning:! For deployment instructions, head down to the Schichtconfig section below**
 
-## .Github - [/.github](./.github)
-Here you'll find the Github workflow files which are in charge of the CI/CD deployment process (specifically at [`pipeline-cicd.yml`](./.github/workflows/pipeline-cicd.yml) & at [`re-reploy-container.yml`](./.github/workflows/re-reploy-container.yml))
-
-Also with it, two more helping workflows, [`stop-alles.yml`](./.github/workflows/stop-alles.yml) and [`purge-containers.yml`](./.github/workflows/purge-containers.yml) which as their name establish, they either stop the running containers or purge the unused files and data by the Docker Daemon.
-
-## Planner-Backend - [/planner-backend](./planner-backend/)
-Here, you'll find all the Java files that support the backend.
-
-According to the current architecture design, the backend of the application is divided into different modules or containers.
-
-The modules divide as follows:
-- [logicGate](./planner-backend/modules/logicGate/)
-- [scheduler](./planner-backend/modules/scheduler/)
-- [auth](./planner-backend/modules/auth/)
-- [to-update]
-
-## Planner-Frontend - [/planner-frontend](./planner-frontend/)
-Here, you'll find all the files corresponding to the front-end. 
-
-The front-end is currently running based on React, which is in one container, built from a single [Dockerfike](./planner-frontend/Dockerfile)
-
-## Schichtconfig - [/schichtconfig](./schichtconfig/)
-Here, you'll find relevant docker setup files and scripts which help ease-out the deployment process.
-
-Under the [`/docker`](./schichtconfig/docker/) folder, there's a pertinent README with details on what's in the docker compose and helpful commands to check logs, bring down containers and perform other relevant tasks on the server.
-
-Regarding the scripts, only [`build-n-run-local.bat`](./schichtconfig/automation-scripts/build-n-run-local.bat) is intended to be used outside the server environment Which basically does a clean maven install of the packages and deploys the MariaDB container along with the application's backend & front-end containers to check locally for updates.
-
-- Apologizes in advance for lacking a .sh version this file... Coming soon.
-
-On the server end, the GitHub Workflows described above take charge in all the deployment operations.
-
-The remaining scripts are to be used by the containers themselves or to connect to the server.
-
-**!** - Whenever running access to the servers you still need a password to login, so only do it if you have that.
+## Live Application Access
+The application running on server can be accessed through here! `http://138.199.161.219:3000/login`
 
 ## Tools currenly used:
 
@@ -62,3 +29,71 @@ The remaining scripts are to be used by the containers themselves or to connect 
 - For deployments and containerization, the app's setup is being delivered by:
     - GitHub Actions -> perform deployments, purge & stop containers
     - Docker -> containerization, overall app being served by the platform on a separate server running containers
+
+## .Github - [/.github](./.github)
+Here you'll find the Github workflow files which are in charge of the CI/CD deployment process (specifically at [`pipeline-cicd.yml`](./.github/workflows/pipeline-cicd.yml) & at [`re-reploy-container.yml`](./.github/workflows/re-reploy-container.yml))
+
+Also with it, two more helping workflows, [`stop-alles.yml`](./.github/workflows/stop-alles.yml) and [`purge-containers.yml`](./.github/workflows/purge-containers.yml) which as their name establish, they either stop the running containers or purge the unused files and data by the Docker Daemon.
+
+## Planner-Backend - [/planner-backend](./planner-backend/)
+Here, you'll find all the Java files that support the backend.
+
+According to the current architecture design, the backend of the application is divided into different modules or containers.
+
+The modules divide as follows:
+| Container Name       | Java Module Name                                       |
+|:--------------------:|:------------------------------------------------------:|
+| planner-logic-gate   | [logicGate](./planner-backend/modules/logicGate/)      |
+| planner-scheduler    | [scheduler](./planner-backend/modules/scheduler/)      |
+| planner-auth         | [auth](./planner-backend/modules/auth/)                |
+| Coming Soon!         | -                                                      |
+
+
+## Planner-Frontend - [/planner-frontend](./planner-frontend/)
+Here, you'll find all the files corresponding to the front-end. 
+
+The front-end is currently running based on React, which is in one container, built from a single [Dockerfike](./planner-frontend/Dockerfile)
+
+## Schichtconfig - [/schichtconfig](./schichtconfig/)
+Here, you'll find relevant docker setup files and scripts which help ease-out the deployment process.
+
+Under the [`/docker`](./schichtconfig/docker/) folder, there's a pertinent README with details on what's in the docker compose and helpful commands to check logs, bring down containers and perform other relevant tasks on the server.
+
+Regarding the scripts, only [`build-n-run-local.bat`](./schichtconfig/automation-scripts/build-n-run-local.bat) / [`build-n-run-local.sh`](./schichtconfig/automation-scripts/build-n-run-local.sh) is intended to be used outside the server environment Which basically does a clean maven install of the packages and deploys the MariaDB container along with the application's backend & front-end containers to check locally for updates.
+
+### Local Deployment
+For deployment on Linux/MacOS:
+```sh
+chmod +x ./mvnw
+
+./build-n-run-local.sh
+```
+
+For deployment on Windows:
+```cmd
+./build-n-run-local.bat
+```
+
+Whenever running locally, to check the front-end, once the application is built and running, access the site through: `http://localhost:3000`
+
+### Production Deployment
+On the server end, the GitHub Workflows described above take charge in all the deployment operations.
+
+To deploy on production follow these next steps:
+1. Open the repository, through this [link](https://github.com/javsort/SchichtPlaner)
+2. Head to the `Actions` tab from the repository menu
+3. To deploy...
+    - All containers:
+        1. Click on the workflow titled [`CI/CD Pipeline - All Containers`](https://github.com/javsort/SchichtPlaner/actions/workflows/pipeline-cicd.yml)
+        2. Click on the `Run workflow` button, and then `Run workflow` again.
+        3. Done! The application will be deployed.
+    - A specific container:
+        1. Click on the workflow titled [`CI/CD Pipeline - Specific Container`](https://github.com/javsort/SchichtPlaner/actions/workflows/pipeline-cicd.yml)
+        2. Click on the `Run workflow` button
+        3. You will be prompted to enter the *'Name of the container'*, please make sure the container's name matches with its name on the [docker-compose](./schichtconfig/docker/docker-compose.yml)
+        4. Once written the name of the cotnainer, click on `Run workflow` again.
+        3. Done! The specified container will be deployed.
+
+The remaining scripts are to be used by the containers themselves or to connect to the server.
+
+**!** - Whenever running access to the servers you still need a password to login, so only do it if you have that.
