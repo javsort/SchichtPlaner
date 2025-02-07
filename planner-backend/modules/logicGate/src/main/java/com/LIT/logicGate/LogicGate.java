@@ -1,10 +1,10 @@
-package com.LIT.testApp;
+package com.LIT.logicGate;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TestApp {
+public class LogicGate {
     public static void main(String[] args) {
         /*try {
             Class.forName("org.mariadb.jdbc.Driver");
@@ -14,6 +14,6 @@ public class TestApp {
             e.printStackTrace();
         }*/
 
-        SpringApplication.run(TestApp.class, args);
+        SpringApplication.run(LogicGate.class, args);
     }
 }

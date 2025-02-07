@@ -13,3 +13,8 @@ node_modules/
 
 # Ignore log files
 *.log
+
+
+# Front-end
+planner-frontend/node_modules/
+planner-frontend/build/
