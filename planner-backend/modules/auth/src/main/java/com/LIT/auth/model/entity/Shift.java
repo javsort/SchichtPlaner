@@ -1,10 +1,10 @@
-package com.LIT.auth.model.entity;
+/*package com.LIT.auth.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 
-@Entity
+    @Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,4 +25,4 @@ public class Shift {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User assignedTo;
-}
+} */
