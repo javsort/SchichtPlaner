@@ -4,6 +4,20 @@
     font-family: Arial, sans-serif;
 }
 
+.name-input {
+    margin-bottom: 10px;
+}
+
+.name-input label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.name-input input {
+    padding: 5px;
+    width: 200px;
+}
+
 .shift-table {
     width: 100%;
     border-collapse: collapse;
@@ -21,6 +35,40 @@
     color: white;
 }
 
-.checkbox-cell {
-    text-align: center;
+.shift-preferences {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
+.shift-preferences label {
+    font-weight: bold;
+}
+
+.shift-preferences input {
+    width: 60px;
+    padding: 5px;
+}
+
+.shift-summary {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+.shift-table td {
+    width: 60px;
+    height: 30px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+  }
+  
+  .shift-table td.selected {
+    background-color: #4caf50;
+    color: white;
+  }
+  
