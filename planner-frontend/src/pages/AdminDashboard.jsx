@@ -1,10 +1,34 @@
 // /src/pages/AdminDashboard.jsx
 import React from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
 function AdminDashboard() {
   const navigate = useNavigate();
+
+  const testEndpoint = async (e) => {
+    e.preventDefault();
+
+    console.log('Testing API Endpoint... URL:', `${baseUrl}/api/hello`);
+
+    try {
+      const response = await axios.get(`${baseUrl}/api/hello`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${localStorage.getItem('token')}`
+        }
+      });
+      
+      const data = await response;
+      console.log('API Response:', data);
+
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  };
   
   return (
     <div className="admin-dashboard-container">
@@ -35,6 +59,13 @@ function AdminDashboard() {
           <li>
             <button onClick={() => navigate('/shift-availability')} className="sidebar-btn">
               Shift Availability
+            </button>
+          </li>
+
+          {/* Added a button to test the backend connection */}
+          <li>
+            <button type="button" onClick={testEndpoint} className="action-btn">
+              Test Backend Connection
             </button>
           </li>
         </ul>
