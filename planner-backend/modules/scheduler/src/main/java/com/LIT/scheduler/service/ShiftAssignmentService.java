@@ -4,17 +4,17 @@ import com.LIT.scheduler.exception.ShiftConflictException;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.entity.ShiftAssignment;
 import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
-
-import lombok.extern.slf4j.Slf4j;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
-@Slf4j
 public class ShiftAssignmentService {
+    private static final Logger log = LoggerFactory.getLogger(ShiftAssignmentService.class);
+    
     private final ShiftAssignmentRepository shiftAssignmentRepository;
 
     public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository) {
@@ -30,15 +30,15 @@ public class ShiftAssignmentService {
     }
 
     public ShiftAssignment assignShift(ShiftAssignment assignment) {
-        // Extract time details of new shift
+        // extract new shift time details
         Shift newShift = assignment.getShift();
         if (newShift == null) {
             throw new IllegalArgumentException("Shift must be provided for assignment.");
         }
-        LocalDateTime newShiftStart = newShift.getStartTime();
-        LocalDateTime newShiftEnd = newShift.getEndTime();
+        Timestamp newShiftStart = newShift.getStartTime();
+        Timestamp newShiftEnd = newShift.getEndTime();
 
-        // Query for conflicting assignments for the same user.
+        // query for conflicting assignments for the same user
         List<ShiftAssignment> conflicts = shiftAssignmentRepository.findConflictingAssignments(
                 assignment.getUserId(), newShiftStart, newShiftEnd);
 
@@ -55,6 +55,4 @@ public class ShiftAssignmentService {
     public void removeAssignment(Long id) {
         shiftAssignmentRepository.deleteById(id);
     }
-
-    
 }

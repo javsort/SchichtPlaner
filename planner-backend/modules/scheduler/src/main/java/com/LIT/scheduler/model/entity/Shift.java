@@ -1,8 +1,8 @@
 package com.LIT.scheduler.model.entity;
 
-import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.*;
+import java.sql.Timestamp;  // <-- now using java.sql.Timestamp 
 
 @Entity
 @Getter
@@ -20,8 +20,8 @@ public class Shift {
     private String title;
 
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private Timestamp startTime;
 
     @Column(nullable = false)
-    private LocalDateTime endTime;
+    private Timestamp endTime;
 }
