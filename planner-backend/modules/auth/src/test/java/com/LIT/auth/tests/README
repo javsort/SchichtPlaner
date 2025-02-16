@@ -1,0 +1,4 @@
+To run the tests
+
+- cd SchichtPlaner/planner-backend/modules/auth
+- mvn clean test -Dtest="RoleTest,UserTest,UserAndUserServiceIntegration,UserAndUserServiceIntegration2"
