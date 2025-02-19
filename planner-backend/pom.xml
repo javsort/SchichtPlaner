@@ -18,7 +18,7 @@
         <module>modules/scheduler</module>
         <module>modules/logicGate</module>
         <module>modules/auth</module>
-        <!-- <module>modules/statistics</module> -->
+        <module>modules/statistics</module>
     </modules>
 
     <dependencyManagement>
