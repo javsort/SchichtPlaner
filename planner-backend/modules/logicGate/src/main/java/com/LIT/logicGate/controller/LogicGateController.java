@@ -35,6 +35,9 @@ public class LogicGateController {
     @Value("${address.scheduler.url}")
     private String schedulerUrl;
 
+    @Value("${address.stats.url}")
+    private String statsUrl;
+
     @Autowired
     public LogicGateController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -87,6 +90,16 @@ public class LogicGateController {
         String targetUrl = schedulerUrl + request.getRequestURI();
 
         return forwardGate(request, targetUrl, requestBody, "Scheduler");
+
+    }
+
+    @RequestMapping("/stats/**")
+    public ResponseEntity<?> forwardToStats(HttpServletRequest request, @RequestBody(required = false) String requestBody) {
+
+        log.info("Forwarding request to stats: " + request.getRequestURI());
+        String targetUrl = statsUrl + request.getRequestURI();
+
+        return forwardGate(request, targetUrl, requestBody, "Statistics");
 
     }
 
