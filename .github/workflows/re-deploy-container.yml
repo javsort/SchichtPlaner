@@ -53,6 +53,15 @@ jobs:
             cd ..
           fi
 
+          if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-stats" ]; then
+            echo "Re-building maven app for statistics..."
+            cd planner-backend
+            chmod +x mvnw
+            ./mvnw clean package -pl modules/statistics -am
+
+            cd ..
+          fi
+
           echo "Rebuilding the container..."
           docker compose -f schichtconfig/docker/docker-compose.yml build --no-cache ${{ github.event.inputs.container-to-redeploy }}
 
