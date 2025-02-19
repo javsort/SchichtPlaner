@@ -1,8 +1,7 @@
 #!/bin/bash
 
-set -e  # Exit immediately if a command exits with a non-zero status
+set -e
 
-# Navigate to planner-backend directory
 cd ../../planner-backend
 
 # Ensure mvnw is executable
@@ -24,8 +23,8 @@ cd ../schichtconfig/docker
 
 # Build Docker images without cache
 echo "Building Docker images..."
-docker compose -f docker-compose.yml build --no-cache
+docker compose -f docker-compose-no-front.yml build --no-cache
 
 # Start the Docker containers
 echo "Starting Docker containers..."
-docker compose -f docker-compose.yml up
+docker compose -f docker-compose-no-front.yml up
