@@ -1,9 +1,12 @@
 // src/pages/Login.tsx
 import React, { useState } from "react";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.tsx";
 
 import "./Login.css";
+
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 // Define a type for the authenticated user
 interface AuthUser {
@@ -22,30 +25,70 @@ const useAuthTyped = () => {
 const Login: React.FC = () => {
   const { setUser } = useAuthTyped();
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [email, setEmail] = useState<string>("admin@example.com");
+  const [password, setPassword] = useState<string>("admin123");
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      alert("Please fill in both fields.");
-      return;
+
+    // Simulate authentication (replace with your authentication logic)
+    if (email && password) {
+      console.log('Logging in...', { email, password });
+
+      console.log('API Base URL:', baseUrl);
+
+      try {
+        const response = await axios.post(`${baseUrl}/api/auth/login`, {
+          email: email,
+          password: password
+        });
+
+        const data = await response;
+        
+        console.log('API Response:', data);
+        
+        console.log('Email:', data.data.email);
+        console.log('Role:', data.data.role);
+        console.log("Token: '" +  data.data.token + "'");
+
+        // Extract role from response headers
+        localStorage.setItem('token', data.data.token)
+        
+        setUser({ email: email, role: data.data.role});
+
+        // Mock role check after login (you would replace this with actual logic)
+        if (data.data.role === 'Shift Supervisor') {    // Update with DB data!!!
+          navigate('/supervisor-dashboard');
+        } else if (data.data.role === 'Admin') {      // THis one is done so far
+          navigate('/admin-dashboard');
+        } else if (data.data.role === 'Tester') {
+          navigate('/tester-dashboard');
+        } else if (data.data.role === 'Incident Manager') {
+          navigate('/incident-manager-dashboard');
+        } else if (data.data.role === 'Employee') {
+          navigate('/employee-dashboard');
+        } else {
+          setErrorMessage('There was an error logging you in! Please try again.');
+        }
+
+      } catch (error) {
+        console.error('API Error:', error);
+        navigate('/not-authorized');
+      }
+
+    } else {
+      setErrorMessage('Please enter valid credentials.');
     }
-    // Simulate login by setting a dummy user
-    setUser({
-      email,
-      role: "Shift Supervisor",
-    });
-    // Navigate to a protected route
-    navigate("/admin-dashboard");
   };
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <h2>Shift Planner Login</h2>
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Email or Username</label>
+        <div className="form-group">
+          <label>Email</label>
           <input
             type="text"
             value={email}
@@ -53,7 +96,7 @@ const Login: React.FC = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password</label>
           <input
             type="password"
@@ -62,7 +105,7 @@ const Login: React.FC = () => {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" className="login-btn">Login</button>
       </form>
     </div>
   );
