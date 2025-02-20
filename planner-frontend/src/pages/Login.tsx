@@ -26,8 +26,8 @@ const Login: React.FC = () => {
   const { setUser } = useAuthTyped();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(''); 
-  const [email, setEmail] = useState<string>("admin@example.com");
-  const [password, setPassword] = useState<string>("admin123");
+  const [email, setEmail] = useState<string>("technician@example.com");
+  const [password, setPassword] = useState<string>("technician123");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -67,7 +67,7 @@ const Login: React.FC = () => {
         } else if (data.data.role === 'Incident-manager') {
           navigate('/incident-manager-dashboard');
         } else if (data.data.role === 'Technician') {   
-          navigate('/employee-dashboard');
+          navigate('/shift-view');
         } else {
           setErrorMessage('There was an error logging you in! Please try again.');
         }

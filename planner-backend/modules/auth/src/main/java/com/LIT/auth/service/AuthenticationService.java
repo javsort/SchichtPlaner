@@ -126,12 +126,12 @@ public class AuthenticationService {
                     .build();
 
             log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");
-            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager));
+            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten));
         }
     }
 
     public Map<String, String> login(LoginRequest loginRequest) {
-        log.info(logHeader + "login: Logging in user with email: " + loginRequest.getEmail());
+        log.info(logHeader + "login: Logging in user with email: " + loginRequest.getEmail() + " and password: " + loginRequest.getPassword());
 
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
@@ -139,6 +139,12 @@ public class AuthenticationService {
             !passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())) {
 
             log.error(logHeader + "login: Invalid credentials");
+
+            if(userOptional.isEmpty()) {
+                log.error(logHeader + "login: User not found");
+            } else {
+                log.error(logHeader + "login: Password does not match. Optional: " + userOptional.get().getPassword() + " Request: " + loginRequest.getPassword());
+            }
             throw new InvalidCredentialsException("Invalid credentials");
         }
         User user = userOptional.get();
