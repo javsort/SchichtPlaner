@@ -56,10 +56,10 @@ const AdminDashboard: React.FC = () => {
   const testSchedulerEndpoint = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
 
-    console.log('Testing scheduler API Endpoint... URL:', `${baseUrl}/api/assignments/test-jwt`);
+    console.log('Testing scheduler API Endpoint... URL:', `${baseUrl}/api/scheduler/assignments/test-jwt`);
 
     try {
-      const response = await axios.get(`${baseUrl}/api/assignments/test-jwt`, {
+      const response = await axios.get(`${baseUrl}/api/scheduler/assignments/test-jwt`, {
         headers: {
           'Content-Type': 'application/json',
           // Provide a default empty string if no token is found

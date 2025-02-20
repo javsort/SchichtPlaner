@@ -20,7 +20,7 @@ import com.LIT.scheduler.service.ShiftService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/auth/shifts")
+@RequestMapping("/api/scheduler/shifts")
 @Slf4j
 public class ShiftController {
     private final ShiftService shiftService;

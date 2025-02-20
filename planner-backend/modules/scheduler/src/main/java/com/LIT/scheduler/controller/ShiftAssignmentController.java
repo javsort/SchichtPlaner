@@ -18,7 +18,7 @@ import com.LIT.scheduler.service.ShiftAssignmentService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/auth/assignments")
+@RequestMapping("/api/scheduler/assignments")
 @Slf4j
 public class ShiftAssignmentController {
     private final ShiftAssignmentService shiftAssignmentService;
