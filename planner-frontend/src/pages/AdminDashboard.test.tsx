@@ -1,4 +1,4 @@
-// AdminDashboard.test.jsx
+// AdminDashboard.test.tsx
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import AdminDashboard from './AdminDashboard';
@@ -29,11 +29,21 @@ describe('AdminDashboard Component', () => {
     expect(screen.getByText(/Admin Panel/i)).toBeInTheDocument();
 
     // Verify that each sidebar button is rendered
-    expect(screen.getByRole('button', { name: /Employee Management/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Shift Management/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Company Shift Calendar/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Shift Approval/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Shift Availability/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Employee Management/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Shift Management/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Company Shift Calendar/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Shift Approval/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Shift Availability/i })
+    ).toBeInTheDocument();
   });
 
   test('navigates correctly when sidebar buttons are clicked', () => {

@@ -1,15 +1,17 @@
-// /src/pages/AdminDashboard.jsx
+// /src/pages/AdminDashboard.tsx
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+// Ensure baseUrl is a string (fallback to an empty string if not defined)
+const baseUrl: string = process.env.REACT_APP_API_BASE_URL || '';
 
-function AdminDashboard() {
+const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  const testEndpoint = async (e) => {
+  // Type the event parameter as a MouseEvent from a button
+  const testEndpoint = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
 
     console.log('Testing API Endpoint... URL:', `${baseUrl}/api/hello`);
@@ -18,18 +20,18 @@ function AdminDashboard() {
       const response = await axios.get(`${baseUrl}/api/hello`, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `${localStorage.getItem('token')}`
+          // Provide a default empty string if no token is found
+          'Authorization': localStorage.getItem('token') || ''
         }
       });
       
-      const data = await response;
-      console.log('API Response:', data);
-
+      // Log the data from the API response
+      console.log('API Response:', response.data);
     } catch (error) {
       console.error('API Error:', error);
     }
   };
-  
+
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
@@ -61,8 +63,7 @@ function AdminDashboard() {
               Shift Availability
             </button>
           </li>
-
-          {/* Added a button to test the backend connection */}
+          {/* Button to test the backend connection */}
           <li>
             <button type="button" onClick={testEndpoint} className="action-btn">
               Test Backend Connection
@@ -107,14 +108,9 @@ function AdminDashboard() {
       </main>
     </div>
   );
-}
+};
 
 export default AdminDashboard;
-
-
-
-
-
 
 
 

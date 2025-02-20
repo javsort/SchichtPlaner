@@ -8,7 +8,9 @@ address:
   scheduler:
     url: ${SCHEDULER_SERVICE_URL:http://localhost:8081}
   auth:
-    url: ${AUTH_SERVICE_URL:http://localhost:8082} 
+    url: ${AUTH_SERVICE_URL:http://localhost:8082}
+  stats:
+    url: ${STATS_SERVICE_URL:http://localhost:8083}
 
 
 jwt:
