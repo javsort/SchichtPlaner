@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/shift-proposals")
+@RequestMapping("/api/scheduler/shift-proposals")
 public class ShiftProposalController {
 
     private final ShiftProposalService proposalService;

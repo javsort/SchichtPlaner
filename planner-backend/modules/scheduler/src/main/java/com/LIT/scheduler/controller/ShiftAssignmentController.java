@@ -15,7 +15,7 @@ import com.LIT.scheduler.model.entity.ShiftAssignment;
 import com.LIT.scheduler.service.ShiftAssignmentService;
 
 @RestController
-@RequestMapping("/api/assignments")
+@RequestMapping("/api/scheduler/assignments")
 public class ShiftAssignmentController {
     private final ShiftAssignmentService shiftAssignmentService;
 

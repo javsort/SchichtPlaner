@@ -17,7 +17,7 @@ import com.LIT.auth.model.entity.Role;
 import com.LIT.auth.service.RoleService;
 
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/api/auth/roles")
 public class RoleController {
     private final RoleService roleService;
 

@@ -16,7 +16,7 @@ import com.LIT.auth.model.entity.User;
 import com.LIT.auth.service.UserService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/auth/users")
 public class UserController {
     private final UserService userService;
 
@@ -46,4 +46,3 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
-
