@@ -83,7 +83,7 @@ public class AuthenticationService {
                     .build();
 
             User shiftSupervisor = User.builder()
-                    .email("shift-supervisor@example.com")
+                    .email("shiftsupervisor@example.com")
                     .username("shiftSupervisor")
                     .password(passwordEncoder.encode("shiftsuper123"))
                     .roles(Set.of(shiftSupervisorRole))
@@ -92,31 +92,46 @@ public class AuthenticationService {
             User technician = User.builder()
                     .email("technician@example.com")
                     .username("technician")
-                    .password(passwordEncoder.encode("technician"))
+                    .password(passwordEncoder.encode("technician123"))
                     .roles(Set.of(technicianRole))
                     .build();
             
             User tester = User.builder()
                     .email("tester@example.com")
                     .username("tester")
-                    .password(passwordEncoder.encode("tester"))
+                    .password(passwordEncoder.encode("tester123"))
                     .roles(Set.of(testerRole))
                     .build();
             
             User incidentManager= User.builder()
-                    .email("incidentManager@example.com")
+                    .email("incidentmanager@example.com")
                     .username("incidentManager")
-                    .password(passwordEncoder.encode("incidentManager"))
+                    .password(passwordEncoder.encode("incidentmanage123"))
                     .roles(Set.of(incidentManagerRole))
                     .build();
 
+            // Trials for Teacher & End-client
+            User trialDavid = User.builder()
+                    .email("david@example.com")
+                    .username("david")
+                    .password(passwordEncoder.encode("david123"))
+                    .roles(Set.of(adminRole))
+                    .build();
+
+            User trialTorsten = User.builder()
+                    .email("torsten@example.com")
+                    .username("torsten")
+                    .password(passwordEncoder.encode("torsten123"))
+                    .roles(Set.of(adminRole))
+                    .build();
+
             log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");
-            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager));
+            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten));
         }
     }
 
     public Map<String, String> login(LoginRequest loginRequest) {
-        log.info(logHeader + "login: Logging in user with email: " + loginRequest.getEmail());
+        log.info(logHeader + "login: Logging in user with email: " + loginRequest.getEmail() + " and password: " + loginRequest.getPassword());
 
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
@@ -124,6 +139,12 @@ public class AuthenticationService {
             !passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())) {
 
             log.error(logHeader + "login: Invalid credentials");
+
+            if(userOptional.isEmpty()) {
+                log.error(logHeader + "login: User not found");
+            } else {
+                log.error(logHeader + "login: Password does not match. Optional: " + userOptional.get().getPassword() + " Request: " + loginRequest.getPassword());
+            }
             throw new InvalidCredentialsException("Invalid credentials");
         }
         User user = userOptional.get();
