@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.checkerframework.checker.units.qual.m;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,18 +49,25 @@ public class AuthenticationService {
         //Create roles if none exist
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                new Role(null, "Admin"),
-                new Role(null, "Manager"),
-                new Role(null, "Employee")
+                Role.builder().name("Admin").build(),
+                Role.builder().name("ShiftSupervisor").build(),
+                Role.builder().name("Technician").build(),
+                Role.builder().name("Tester").build(),
+                Role.builder().name("Incident-manager").build()
             ));
         }
+
         //Create dummy users if none exist
         if (userRepository.count() == 0) {
             Role adminRole = roleRepository.findByName("Admin")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role managerRole = roleRepository.findByName("Manager")
+            Role shiftSupervisorRole = roleRepository.findByName("ShiftSupervisor")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role employeeRole = roleRepository.findByName("Employee")
+            Role technicianRole = roleRepository.findByName("Technician")
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            Role testerRole = roleRepository.findByName("Tester")
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            Role incidentManagerRole = roleRepository.findByName("Incident-manager")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
 
             User admin = User.builder()
@@ -69,21 +77,35 @@ public class AuthenticationService {
                     .roles(Set.of(adminRole))
                     .build();
 
-            User manager = User.builder()
-                    .email("manager@example.com")
-                    .username("manager")
-                    .password(passwordEncoder.encode("manager123"))
-                    .roles(Set.of(managerRole))
+            User shiftSupervisor = User.builder()
+                    .email("shift-supervisor@example.com")
+                    .username("shiftSupervisor")
+                    .password(passwordEncoder.encode("shiftsuper123"))
+                    .roles(Set.of(shiftSupervisorRole))
                     .build();
 
-            User employee = User.builder()
-                    .email("employee@example.com")
-                    .username("employee")
-                    .password(passwordEncoder.encode("employee123"))
-                    .roles(Set.of(employeeRole))
+            User technician = User.builder()
+                    .email("technician@example.com")
+                    .username("technician")
+                    .password(passwordEncoder.encode("technician"))
+                    .roles(Set.of(technicianRole))
+                    .build();
+            
+            User tester = User.builder()
+                    .email("tester@example.com")
+                    .username("tester")
+                    .password(passwordEncoder.encode("tester"))
+                    .roles(Set.of(testerRole))
+                    .build();
+            
+            User incidentManager= User.builder()
+                    .email("incidentManager@example.com")
+                    .username("incidentManager")
+                    .password(passwordEncoder.encode("incidentManager"))
+                    .roles(Set.of(incidentManagerRole))
                     .build();
 
-            userRepository.saveAll(List.of(admin, manager, employee));
+            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager));
         }
     }
 

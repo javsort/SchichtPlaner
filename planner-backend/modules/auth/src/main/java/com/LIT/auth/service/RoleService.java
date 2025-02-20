@@ -4,6 +4,7 @@ package com.LIT.auth.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.LIT.auth.model.entity.Role;
@@ -13,6 +14,7 @@ import com.LIT.auth.model.repository.RoleRepository;
 public class RoleService {
     private final RoleRepository roleRepository;
 
+    @Autowired
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }

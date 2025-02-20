@@ -17,7 +17,7 @@ import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.service.ShiftService;
 
 @RestController
-@RequestMapping("/api/shifts")
+@RequestMapping("/api/auth/shifts")
 public class ShiftController {
     private final ShiftService shiftService;
 

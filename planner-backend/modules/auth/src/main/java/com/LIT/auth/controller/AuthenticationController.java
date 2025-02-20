@@ -31,6 +31,11 @@ public class AuthenticationController {
         return ResponseEntity.ok("Hello from auth module!");
     }
 
+    @GetMapping("/test-jwt")
+    public ResponseEntity<String> testJwt() {
+        return ResponseEntity.ok("JWT is working!");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         log.info("Login request received for user: " + loginRequest.getEmail() + "\nAttempting to log in...");

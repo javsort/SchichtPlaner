@@ -15,12 +15,17 @@ import com.LIT.scheduler.model.entity.ShiftAssignment;
 import com.LIT.scheduler.service.ShiftAssignmentService;
 
 @RestController
-@RequestMapping("/api/assignments")
+@RequestMapping("/api/auth/assignments")
 public class ShiftAssignmentController {
     private final ShiftAssignmentService shiftAssignmentService;
 
     public ShiftAssignmentController(ShiftAssignmentService shiftAssignmentService) {
         this.shiftAssignmentService = shiftAssignmentService;
+    }
+
+    @GetMapping("/test-jwt")
+    public ResponseEntity<String> testJwt() {
+        return ResponseEntity.ok("JWT is working!");
     }
 
     @GetMapping("/user/{userId}")

@@ -58,15 +58,15 @@ const Login: React.FC = () => {
         setUser({ email: email, role: data.data.role});
 
         // Mock role check after login (you would replace this with actual logic)
-        if (data.data.role === 'Shift Supervisor') {    // Update with DB data!!!
+        if (data.data.role === 'ShiftSupervisor') {    // Update with DB data!!!
           navigate('/supervisor-dashboard');
         } else if (data.data.role === 'Admin') {      // THis one is done so far
           navigate('/admin-dashboard');
         } else if (data.data.role === 'Tester') {
           navigate('/tester-dashboard');
-        } else if (data.data.role === 'Incident Manager') {
+        } else if (data.data.role === 'Incident-manager') {
           navigate('/incident-manager-dashboard');
-        } else if (data.data.role === 'Employee') {
+        } else if (data.data.role === 'Technician') {   
           navigate('/employee-dashboard');
         } else {
           setErrorMessage('There was an error logging you in! Please try again.');
