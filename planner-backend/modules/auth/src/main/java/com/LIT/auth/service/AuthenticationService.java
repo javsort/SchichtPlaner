@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.checkerframework.checker.units.qual.m;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ public class AuthenticationService {
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
 
+    private final String logHeader = "[AuthenticationService] - ";
+
     @Autowired
     public AuthenticationService(UserRepository userRepository,
                                  RoleRepository roleRepository,
@@ -45,21 +48,31 @@ public class AuthenticationService {
     //Inserts dummy roles and users (only if DB is empty)
     @PostConstruct
     public void initializeDummyUsers() {
+        log.info(logHeader + "initializeDummyUsers: Initializing dummy users. Starting with roles...");
         //Create roles if none exist
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                new Role(null, "Admin"),
-                new Role(null, "Manager"),
-                new Role(null, "Employee")
+                Role.builder().name("Admin").build(),
+                Role.builder().name("ShiftSupervisor").build(),
+                Role.builder().name("Technician").build(),
+                Role.builder().name("Tester").build(),
+                Role.builder().name("Incident-manager").build()
             ));
         }
+
+        log.info(logHeader + "initializeDummyUsers: Roles initialized. Now initializing users...");
+
         //Create dummy users if none exist
         if (userRepository.count() == 0) {
             Role adminRole = roleRepository.findByName("Admin")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role managerRole = roleRepository.findByName("Manager")
+            Role shiftSupervisorRole = roleRepository.findByName("ShiftSupervisor")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role employeeRole = roleRepository.findByName("Employee")
+            Role technicianRole = roleRepository.findByName("Technician")
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            Role testerRole = roleRepository.findByName("Tester")
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            Role incidentManagerRole = roleRepository.findByName("Incident-manager")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
 
             User admin = User.builder()
@@ -69,37 +82,57 @@ public class AuthenticationService {
                     .roles(Set.of(adminRole))
                     .build();
 
-            User manager = User.builder()
-                    .email("manager@example.com")
-                    .username("manager")
-                    .password(passwordEncoder.encode("manager123"))
-                    .roles(Set.of(managerRole))
+            User shiftSupervisor = User.builder()
+                    .email("shift-supervisor@example.com")
+                    .username("shiftSupervisor")
+                    .password(passwordEncoder.encode("shiftsuper123"))
+                    .roles(Set.of(shiftSupervisorRole))
                     .build();
 
-            User employee = User.builder()
-                    .email("employee@example.com")
-                    .username("employee")
-                    .password(passwordEncoder.encode("employee123"))
-                    .roles(Set.of(employeeRole))
+            User technician = User.builder()
+                    .email("technician@example.com")
+                    .username("technician")
+                    .password(passwordEncoder.encode("technician"))
+                    .roles(Set.of(technicianRole))
+                    .build();
+            
+            User tester = User.builder()
+                    .email("tester@example.com")
+                    .username("tester")
+                    .password(passwordEncoder.encode("tester"))
+                    .roles(Set.of(testerRole))
+                    .build();
+            
+            User incidentManager= User.builder()
+                    .email("incidentManager@example.com")
+                    .username("incidentManager")
+                    .password(passwordEncoder.encode("incidentManager"))
+                    .roles(Set.of(incidentManagerRole))
                     .build();
 
-            userRepository.saveAll(List.of(admin, manager, employee));
+            log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");
+            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager));
         }
     }
 
     public Map<String, String> login(LoginRequest loginRequest) {
+        log.info(logHeader + "login: Logging in user with email: " + loginRequest.getEmail());
 
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
         if (userOptional.isEmpty() ||
             !passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())) {
+
+            log.error(logHeader + "login: Invalid credentials");
             throw new InvalidCredentialsException("Invalid credentials");
         }
         User user = userOptional.get();
         //get the first one (this is assuming each user has AT LEAST one)
         String role = user.getRoles().iterator().next().getName();
 
+        log.info(logHeader + "login: User found. Generating token...");
+
         // Generate token
-        
         String token = "Bearer: " + jwtTokenUtil.generateToken(user.getEmail(), role);
 
          Map<String, String> toReturn = new HashMap<>();
@@ -107,17 +140,22 @@ public class AuthenticationService {
             toReturn.put("email", user.getEmail());
             toReturn.put("role", role);
 
-        log.info("User " + user.getEmail() + " logged in successfully. Returnig token.");
+        log.info(logHeader + "User " + user.getEmail() + " logged in successfully. Returnig token.");
 
         return toReturn;
     }
 
     public void register(RegisterRequest registerRequest) {
+        log.info(logHeader + "register: Registering user with email: " + registerRequest.getEmail());
+
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            log.error(logHeader + "register: User already exists");
             throw new UserAlreadyExistsException("User already exists!");
         }
         Role employeeRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
+
+        log.info(logHeader + "register: User does not exist. Creating new user...");
 
         User newUser = User.builder()
                 .email(registerRequest.getEmail())
@@ -125,6 +163,8 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .roles(Set.of(employeeRole))
                 .build();
+
+        log.info(logHeader + "register: Saving user to DB...");
 
         userRepository.save(newUser);
     }

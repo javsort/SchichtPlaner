@@ -23,6 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
 
+    private final String logHeader = "[JwtAuthenticationFilter] - ";
+
     @Autowired
     public JwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
@@ -33,14 +35,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        log.info(logHeader + "doFilterInternal: Filtering request");
+
         // Since request is moved around, wrap it, and then verify it
         ContentCachingRequestWrapper requestWrap = new ContentCachingRequestWrapper(request);
 
-        log.info("Request: " + requestWrap.getMethod() + " " + requestWrap.getRequestURI());
+        log.info(logHeader + "Request: '" + requestWrap.getMethod() + "' " + requestWrap.getRequestURI());
 
         String authHeader = requestWrap.getHeader("Authorization");
 
-        log.info("Authorization header: " + authHeader);
+        log.info(logHeader + "Auth header: " + authHeader);
         
         /*
          * Catch cases where there's no token provided -> its either invalid req or user is not logged in
@@ -49,13 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(authHeader == null) {
 
             if(requestWrap.getRequestURI().endsWith("/login") || requestWrap.getRequestURI().endsWith("/register") || requestWrap.getRequestURI().endsWith("/hello")) {
-                log.info("No token provided, but it's a login, registration, or hello request, so it's fine");
+                log.info(logHeader + "No token provided, but it's a login / register request -> proceed");
 
                 chain.doFilter(request, response);
                 return;
             }
             
             // If not any of those, then invalid -> reject
+            log.error(logHeader + "No token provided, rejecting request");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No token provided");
             return;
         }
@@ -63,12 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // there IS a token -> Accessed after system auth -> IN system
         if (authHeader.startsWith("Bearer: ")) {
             // Analyze token's validity
-            log.info("Token fulfills basic requirements. Analyzing now the provided tokens: \n'" + authHeader + "'");
+            log.info(logHeader + "Token provided, checking validity");
 
             String token = authHeader.substring(8); //remove "Bearer " prefix
 
             if (!jwtTokenUtil.validateToken(token)) {
-                logger.warn("Invalid JWT token");
+                log.error(logHeader + "Invalid token provided, rejecting request");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                 return;
             }
@@ -76,22 +81,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userEmail = jwtTokenUtil.extractEmail(token);
             String role = "ROLE_" + jwtTokenUtil.extractRole(token);
 
-            log.info("User: " + userEmail + " has role: " + role);
+            log.info(logHeader + "User: " + userEmail + " has role: " + role);
+            log.info(logHeader + "Token is valid, proceeding with request");
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userEmail, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
                     
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            log.info(logHeader + "User: " + userEmail + " is authenticated");
 
         } else {
-            
             // If not any of those, then invalid -> reject
+            log.error(logHeader + "There was an issue reading your token, please try again: '" + authHeader + "'");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "There was an issue reading your token, please try again: '" + authHeader + "'");
             return;
         
         }
 
+        
+        log.info(logHeader + "Request is authenticated, proceeding with request");
         chain.doFilter(request, response);
     }
 }
