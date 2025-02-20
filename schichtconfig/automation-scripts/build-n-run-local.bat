@@ -13,8 +13,8 @@ cd ../schichtconfig/docker
 
 :: Build Docker images without cache
 echo Building Docker images...
-call docker-compose -f docker-compose.yml build --no-cache
+call docker compose -f docker-compose.yml build --no-cache
 
 :: Start the Docker containers
 echo Starting Docker containers...
-call docker-compose -f docker-compose.yml up
+call docker compose -f docker-compose.yml up
