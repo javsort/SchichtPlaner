@@ -36,6 +36,12 @@ case "$APP_NAME" in
       2>&1 | sed 's/^/[Authorization] /' | tee -a /app/logs/auth.log
     ;;
 
+  "statistics")
+    echo "Starting StatisticsApp..."
+    exec java -jar /app/statistics-1.0-SNAPSHOT.jar \
+      2>&1 | sed 's/^/[Statistics] /' | tee -a /app/logs/statistics.log
+    ;;
+
   *)
     echo "Usage: $0 {logicGate|scheduler|auth}"
     echo "Example: ./start-service.sh logicGate"

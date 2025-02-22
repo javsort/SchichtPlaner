@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
+// src/pages/Login.tsx
+import React, { useState } from "react";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './styles.css';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext.tsx";
+
+import "./Login.css";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-function LoginPage() {
-  const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('admin123');
-  const [role, setRole] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
+// Define a type for the authenticated user
+interface AuthUser {
+  email: string;
+  role: string;
+}
 
-  /*
-  
-        <div className="form-group">
-          <label>Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="Technician">Technician</option>
-            <option value="Tester">Tester</option>
-            <option value="Incident Manager">Incident Manager</option>
-            <option value="Shift Supervisor">Shift Supervisor</option>
-            <option value="Administrator">Administrator</option>
-          </select>
-        </div> 
-  */
+// If your AuthContext doesn’t provide proper types, you can cast it:
+const useAuthTyped = () => {
+  return useAuth() as {
+    setUser: (user: AuthUser) => void;
+    // Optionally, you can add: user: AuthUser | null;
+  };
+};
+
+const Login: React.FC = () => {
+  const { setUser } = useAuthTyped();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [email, setEmail] = useState<string>("technician@example.com");
+  const [password, setPassword] = useState<string>("technician123");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,6 +35,8 @@ function LoginPage() {
     // Simulate authentication (replace with your authentication logic)
     if (email && password) {
       console.log('Logging in...', { email, password });
+
+      console.log('API Base URL:', baseUrl);
 
       try {
         const response = await axios.post(`${baseUrl}/api/auth/login`, {
@@ -50,25 +55,26 @@ function LoginPage() {
         // Extract role from response headers
         localStorage.setItem('token', data.data.token)
         
-        setRole(data.data.role);
+        setUser({ email: email, role: data.data.role});
 
         // Mock role check after login (you would replace this with actual logic)
-        if (data.data.role === 'Shift Supervisor') {    // Update with DB data!!!
+        if (data.data.role === 'ShiftSupervisor') {    // Update with DB data!!!
           navigate('/supervisor-dashboard');
         } else if (data.data.role === 'Admin') {      // THis one is done so far
           navigate('/admin-dashboard');
         } else if (data.data.role === 'Tester') {
           navigate('/tester-dashboard');
-        } else if (data.data.role === 'Incident Manager') {
+        } else if (data.data.role === 'Incident-manager') {
           navigate('/incident-manager-dashboard');
-        } else if (data.data.role === 'Employee') {
-          navigate('/employee-dashboard');
+        } else if (data.data.role === 'Technician') {   
+          navigate('/shift-view');
         } else {
           setErrorMessage('There was an error logging you in! Please try again.');
         }
 
       } catch (error) {
         console.error('API Error:', error);
+        navigate('/not-authorized');
       }
 
     } else {
@@ -103,6 +109,6 @@ function LoginPage() {
       </form>
     </div>
   );
-}
+};
 
-export default LoginPage;
+export default Login;

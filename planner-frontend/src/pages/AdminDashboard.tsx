@@ -1,35 +1,80 @@
-// /src/pages/AdminDashboard.jsx
+// /src/pages/AdminDashboard.tsx
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+// Ensure baseUrl is a string (fallback to an empty string if not defined)
+const baseUrl: string = process.env.REACT_APP_API_BASE_URL || '';
 
-function AdminDashboard() {
+const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  const testEndpoint = async (e) => {
+  // Type the event parameter as a MouseEvent from a button
+  const testLogicEndpoint = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
 
-    console.log('Testing API Endpoint... URL:', `${baseUrl}/api/hello`);
+    console.log('Testing logicGate API Endpoint... URL:', `${baseUrl}/api/hello`);
 
     try {
       const response = await axios.get(`${baseUrl}/api/hello`, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `${localStorage.getItem('token')}`
+          // Provide a default empty string if no token is found
+          'Authorization': localStorage.getItem('token') || ''
         }
       });
       
-      const data = await response;
-      console.log('API Response:', data);
-
+      // Log the data from the API response
+      console.log('API Response:', response.data);
     } catch (error) {
       console.error('API Error:', error);
     }
   };
-  
+
+  const testAuthEndpoint = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    e.preventDefault();
+
+    console.log('Testing auth API Endpoint... URL:', `${baseUrl}/api/auth/test-jwt`);
+
+    try {
+      const response = await axios.get(`${baseUrl}/api/auth/test-jwt`, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Provide a default empty string if no token is found
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      });
+      
+      // Log the data from the API response
+      console.log('API Response:', response.data);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  };
+
+  const testSchedulerEndpoint = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    e.preventDefault();
+
+    console.log('Testing scheduler API Endpoint... URL:', `${baseUrl}/api/scheduler/assignments/test-jwt`);
+
+    try {
+      const response = await axios.get(`${baseUrl}/api/scheduler/assignments/test-jwt`, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Provide a default empty string if no token is found
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      });
+      
+      // Log the data from the API response
+      console.log('API Response:', response.data);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  };
+
+
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
@@ -62,10 +107,22 @@ function AdminDashboard() {
             </button>
           </li>
 
-          {/* Added a button to test the backend connection */}
+          {/* Buttons to test the backend connection */}
           <li>
-            <button type="button" onClick={testEndpoint} className="action-btn">
-              Test Backend Connection
+            <button type="button" onClick={testLogicEndpoint} className="action-btn">
+              Test Logic Gate Connection
+            </button>
+          </li>
+          {/* Duplicate button for testing auth */}
+          <li>
+            <button type="button" onClick={testAuthEndpoint} className="action-btn">
+              Test Auth Connection
+            </button>
+          </li>
+          {/* Duplicate button for testing scheduler */}
+          <li>
+            <button type="button" onClick={testSchedulerEndpoint} className="action-btn">
+              Test Scheduler Connection
             </button>
           </li>
         </ul>
@@ -107,14 +164,9 @@ function AdminDashboard() {
       </main>
     </div>
   );
-}
+};
 
 export default AdminDashboard;
-
-
-
-
-
 
 
 

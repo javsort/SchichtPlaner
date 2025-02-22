@@ -45,6 +45,21 @@ services:
     restart: always
     networks:
       - planner-network
+      
+  planner-stats:
+    depends_on:
+      - planner-mariadb
+    container_name: planner-stats
+    build:
+      context: ../../
+      dockerfile: planner-backend/modules/statistics/Dockerfile
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - planner-network
 
   # Database setup
   planner-mariadb:
@@ -62,8 +77,13 @@ services:
       MARIADB_DATABASE: planner
       MARIADB_USER: planner
       MARIADB_PASSWORD: root
+    volumes:
+      - planner_db:/var/lib/mysql
 
 # Networks
 networks:
   planner-network:
     driver: bridge
+
+volumes:
+  planner_db:
