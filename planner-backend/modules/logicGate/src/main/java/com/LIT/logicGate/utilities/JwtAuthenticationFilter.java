@@ -66,11 +66,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // there IS a token -> Accessed after system auth -> IN system
-        if (authHeader.startsWith("Bearer: ")) {
+        if (authHeader.startsWith("Bearer ")) {
             // Analyze token's validity
             log.info(logHeader + "Token provided, checking validity");
 
-            String token = authHeader.substring(8); //remove "Bearer " prefix
+            String token = authHeader.substring(7); //remove "Bearer " prefix
 
             if (!jwtTokenUtil.validateToken(token)) {
                 log.error(logHeader + "Invalid token provided, rejecting request");
