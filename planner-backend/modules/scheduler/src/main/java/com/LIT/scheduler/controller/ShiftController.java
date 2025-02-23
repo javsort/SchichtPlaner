@@ -52,7 +52,7 @@ public class ShiftController {
                     .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public Shift createShift(@RequestBody Shift shift) {
         log.info(logHeader + "createShift: Creating new shift");
         return shiftService.saveShift(shift);

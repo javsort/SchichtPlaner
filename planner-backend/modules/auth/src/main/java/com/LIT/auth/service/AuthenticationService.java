@@ -154,7 +154,7 @@ public class AuthenticationService {
         log.info(logHeader + "login: User found. Generating token...");
 
         // Generate token
-        String token = "Bearer: " + jwtTokenUtil.generateToken(user.getEmail(), role);
+        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role);
 
          Map<String, String> toReturn = new HashMap<>();
             toReturn.put("token", token);

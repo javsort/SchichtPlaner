@@ -30,6 +30,7 @@ public class ShiftAssignmentController {
         this.shiftAssignmentService = shiftAssignmentService;
     }
 
+    // Test JWT -> Button on front-end to check privileges
     @GetMapping("/test-jwt")
     public ResponseEntity<String> testJwt() {
         log.info(logHeader + "testJwt: JWT is working!");
