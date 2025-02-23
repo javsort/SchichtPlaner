@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "Purging volumes..."
           docker volume prune -f
-          docker volume rm planner_db
+          docker volume rm schicht-planer-lit_planner_db
         
       - name: Cleanup unused networks
         run: |

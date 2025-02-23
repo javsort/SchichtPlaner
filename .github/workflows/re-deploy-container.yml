@@ -74,7 +74,7 @@ jobs:
             docker compose -f schichtconfig/docker/docker-compose.yml down planner-mariadb
 
             echo "Removing planner_db volume..."
-            docker volume rm planner_db
+            docker volume rm schicht-planer-lit_planner_db
 
             echo "Starting planner-mariadb..."
             docker compose -f schichtconfig/docker/docker-compose.yml up -d planner-mariadb
