@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext.tsx";
+import { useAuth } from "../../AuthContext.tsx";
+import { login } from "../../Services/api.ts";
 
-import "./Login.css";
+import "../styling/Login.css";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
@@ -39,42 +40,36 @@ const Login: React.FC = () => {
       console.log('API Base URL:', baseUrl);
 
       try {
-        const response = await axios.post(`${baseUrl}/api/auth/login`, {
-          email: email,
-          password: password
-        });
-
-        const data = await response;
+        const loginInfo = await login(email, password);
         
-        console.log('API Response:', data);
+        const retRole = loginInfo.role;
+        const retEmail = loginInfo.email;
+        const token = loginInfo.token;
         
-        console.log('Email:', data.data.email);
-        console.log('Role:', data.data.role);
-        console.log("Token: '" +  data.data.token + "'");
+        console.log('Email:', retEmail);
+        console.log('Role:', retRole);
+        console.log("Token: '" +  token + "'");
 
-        // Extract role from response headers
-        localStorage.setItem('token', data.data.token)
-        
-        setUser({ email: email, role: data.data.role});
+        setUser({ email: retEmail, role: retRole});
 
-        // Mock role check after login (you would replace this with actual logic)
-        if (data.data.role === 'ShiftSupervisor') {    // Update with DB data!!!
+        if (retRole === 'ShiftSupervisor') {    // Update with DB data!!!
           navigate('/supervisor-dashboard');
-        } else if (data.data.role === 'Admin') {      // THis one is done so far
+        } else if (retRole === 'Admin') {      // THis one is done so far
           navigate('/admin-dashboard');
-        } else if (data.data.role === 'Tester') {
+        } else if (retRole === 'Tester') {
           navigate('/tester-dashboard');
-        } else if (data.data.role === 'Incident-manager') {
+        } else if (retRole === 'Incident-manager') {
           navigate('/incident-manager-dashboard');
-        } else if (data.data.role === 'Technician') {   
+        } else if (retRole === 'Technician') {   
           navigate('/shift-view');
         } else {
           setErrorMessage('There was an error logging you in! Please try again.');
         }
 
-      } catch (error) {
-        console.error('API Error:', error);
+      } catch {
+        console.error('API Error:', Error);
         navigate('/not-authorized');
+        
       }
 
     } else {

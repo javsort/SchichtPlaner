@@ -5,7 +5,7 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // Import pages with explicit extensions
-import Login from "./pages/Login.tsx";
+import Login from "./pages/code/Login.tsx";
 import Register from "./pages/Register.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import CreateShift from "./pages/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
