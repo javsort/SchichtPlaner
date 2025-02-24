@@ -24,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LogicGateController {
 
+    private final String logHeader = "[LogicGateController] - ";
+
     /*
      * Addresses
      */
@@ -46,11 +48,13 @@ public class LogicGateController {
 
     @GetMapping("/hello")
     public String hello() {
+        log.info(logHeader + "hello: Hello from logicGate module!");
         return "Hello from logicGate module!";
     }
 
     @GetMapping("/test")
     public String test() {
+        log.info(logHeader + "test: Test from logicGate module! JWT is working!");
         return "Test from logicGate module! JWT is working!";
     }
 
@@ -72,12 +76,14 @@ public class LogicGateController {
      */
     @RequestMapping("/auth/**")
     public ResponseEntity<?> forwardToAuth(HttpServletRequest request, @RequestBody(required = false) String requestBody) {
-
+        log.info(logHeader + "Forwarding request to auth: " + request.getRequestURI());
+        
         if(requestBody != null){
-            log.info("Forwarding request to Auth with the following body: " + requestBody);    
+            log.info(logHeader + "Forwarding request to Auth with the following body: " + requestBody);    
         }
-        log.info("Forwarding request to Auth: " + request.getRequestURI());
+
         String targetUrl = authUrl + request.getRequestURI();
+        log.info(logHeader + "Target url: " + targetUrl);
 
         return forwardGate(request, targetUrl, requestBody, "Auth");
 
@@ -85,10 +91,11 @@ public class LogicGateController {
 
     @RequestMapping("/scheduler/**")
     public ResponseEntity<?> forwardToScheduler(HttpServletRequest request, @RequestBody(required = false) String requestBody) {
+        log.info(logHeader + "Forwarding request to scheduler: " + request.getRequestURI());
 
-        log.info("Forwarding request to scheduler: " + request.getRequestURI());
         String targetUrl = schedulerUrl + request.getRequestURI();
-
+        
+        log.info(logHeader + "Target url: " + targetUrl);
         return forwardGate(request, targetUrl, requestBody, "Scheduler");
 
     }
@@ -96,21 +103,23 @@ public class LogicGateController {
     @RequestMapping("/stats/**")
     public ResponseEntity<?> forwardToStats(HttpServletRequest request, @RequestBody(required = false) String requestBody) {
 
-        log.info("Forwarding request to stats: " + request.getRequestURI());
+        log.info(logHeader + "Forwarding request to statistics: " + request.getRequestURI());
         String targetUrl = statsUrl + request.getRequestURI();
 
+        log.info(logHeader + "Target url: " + targetUrl);
         return forwardGate(request, targetUrl, requestBody, "Statistics");
 
     }
 
     
     public ResponseEntity<?> forwardGate(HttpServletRequest request, String targetUrl, String requestBody, String destinationModule){
-        log.info("Forwarding request to " + destinationModule + "\nTarget url: " + targetUrl + "\nWith the body: " + requestBody);
+        log.info(logHeader + "Forwarding request to " + destinationModule + "\nTarget url: " + targetUrl + "\nWith the body: " + requestBody);
 
         HttpHeaders headers = getHeaders(request);
         HttpEntity<?> httpEntity = new HttpEntity<>(requestBody, headers);
 
-        log.info("Request is being sent to: \n" + targetUrl + "\nProtocol: " + request.getMethod() + "\nHeaders: " + headers + "\nBody: " + requestBody + "\n");
+        log.info(logHeader + "Request is being sent to: '" + targetUrl + "'\nProtocol: " + request.getMethod() + "\nHeaders: " + headers + "\nBody: " + requestBody + "\n");
+        
 
         // Forward the request
         try {
@@ -121,13 +130,13 @@ public class LogicGateController {
                 httpEntity,
                 String.class
             );
-    
-            log.info("Response from '"+ destinationModule +"'' : Body= '" + response.getBody() +  "'', Status= " + response.getStatusCode());
+
+            log.info(logHeader + "Response from '" + destinationModule + "': " + response.getBody());
     
             return new ResponseEntity<>(response.getBody(), response.getStatusCode());
             
         } catch (Exception e) {
-            log.error("Error while forwarding request to '" + destinationModule + "'", e);
+            log.error(logHeader + "An error occurred while forwarding the request: " + e.getMessage());
             return ResponseEntity.status(500).body("An error occurred while forwarding the request.");
 
         }

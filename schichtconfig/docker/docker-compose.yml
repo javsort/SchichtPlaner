@@ -91,8 +91,13 @@ services:
       MARIADB_DATABASE: planner
       MARIADB_USER: planner
       MARIADB_PASSWORD: root
+    volumes:
+      - planner_db:/var/lib/mysql
 
 # Networks
 networks:
   planner-network:
     driver: bridge
+
+volumes:
+  planner_db:

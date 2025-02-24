@@ -66,6 +66,30 @@
                 <version>${springboot.version}</version>
             </dependency>
 
+            <!-- Statistics dependencies -->
+
+                <!-- CSV -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>1.13.0</version>
+            </dependency>
+
+                <!-- Excel -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>5.4.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>5.4.0</version>
+            </dependency>
+           
+            <!-- End Statistics dependencies -->
+
             <!-- Test Dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

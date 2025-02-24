@@ -4,6 +4,7 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CompanyShiftCalendar.css"; // Custom CSS for styling
+import SideBar from "../components/SideBar.tsx";
 
 const localizer = momentLocalizer(moment);
 
@@ -109,43 +110,47 @@ const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => 
     <div className="company-shift-calendar">
       <h2>Company Shift Calendar</h2>
 
-      {/* Filter Buttons */}
-      <div className="calendar-filters">
-        <button
-          className={calendarFilter === "my" ? "active" : ""}
-          onClick={() => setCalendarFilter("my")}
-        >
-          My Shifts
-        </button>
-        <button
-          className={calendarFilter === "all" ? "active" : ""}
-          onClick={() => setCalendarFilter("all")}
-        >
-          All Shifts
-        </button>
-        <button
-          className={calendarFilter === "unoccupied" ? "active" : ""}
-          onClick={() => setCalendarFilter("unoccupied")}
-        >
-          Unoccupied Shifts
-        </button>
-      </div>
+      <SideBar />
 
       {/* Calendar Display */}
-      <div className="calendar-container" style={{ height: "600px" }}>
-        <Calendar
-          localizer={localizer}
-          events={calendarEvents}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 600 }}
-          view={view}
-          onView={(newView) => setView(newView)}
-          eventPropGetter={eventStyleGetter}
-          resources={employees} // Resource data (employees)
-          resourceIdAccessor="id"
-          resourceTitleAccessor="name"
-        />
+      <div className="calendar-container" style={{ height: "calc(100vh - 50px)", width: "100%" }}>
+        {/* Filter Buttons */}
+        <div className="calendar-filters">
+          <button
+            className={calendarFilter === "my" ? "active" : ""}
+            onClick={() => setCalendarFilter("my")}
+          >
+            My Shifts
+          </button>
+          <button
+            className={calendarFilter === "all" ? "active" : ""}
+            onClick={() => setCalendarFilter("all")}
+          >
+            All Shifts
+          </button>
+          <button
+            className={calendarFilter === "unoccupied" ? "active" : ""}
+            onClick={() => setCalendarFilter("unoccupied")}
+          >
+            Unoccupied Shifts
+          </button>
+        </div>
+
+        <div className="calendar-view">
+          <Calendar
+            localizer={localizer}
+            events={calendarEvents}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: "calc(100vh - 50px)", width: "100%" }}
+            view={view}
+            onView={(newView) => setView(newView)}
+            eventPropGetter={eventStyleGetter}
+            resources={employees} // Resource data (employees)
+            resourceIdAccessor="id"
+            resourceTitleAccessor="name"
+          />
+        </div>
       </div>
     </div>
   );
