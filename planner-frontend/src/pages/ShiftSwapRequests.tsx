@@ -1,14 +1,14 @@
-// src/pages/ShiftSwapRequests.tsx
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 // import "../styles/ShiftSwapRequests.css"; // CSS import commented out
 
+
 import { Shift, SwapRequest } from "../App";
 
 interface EmployeeShiftSwapProps {
   currentUser: { id: number; name: string } | null;
-  shifts: Shift[];
+  shifts?: Shift[]; // Allow undefined initially
   swapRequests: SwapRequest[];
   setSwapRequests: React.Dispatch<React.SetStateAction<SwapRequest[]>>;
   dummyEmployees: { id: number; name: string }[];
@@ -23,6 +23,11 @@ const ShiftSwapRequests: React.FC<EmployeeShiftSwapProps> = ({
   setSwapRequests,
   dummyEmployees,
 }) => {
+  // If shifts is not yet available, show a loading message.
+  if (!shifts) {
+    return <div>Loading shifts...</div>;
+  }
+
   const [view, setView] = useState(Views.WEEK);
   const [employeeName, setEmployeeName] = useState(currentUser ? currentUser.name : "");
   const [selectedOwnShift, setSelectedOwnShift] = useState<string>("");
@@ -31,7 +36,7 @@ const ShiftSwapRequests: React.FC<EmployeeShiftSwapProps> = ({
   const [message, setMessage] = useState("");
 
   // Filter available target shifts for the selected target employee
-  const availableTargetShifts = shifts.filter(
+  const availableTargetShifts = (shifts || []).filter(
     (shift) => shift.assignedEmployee === Number(selectedTargetEmployee)
   );
 
@@ -85,7 +90,7 @@ const ShiftSwapRequests: React.FC<EmployeeShiftSwapProps> = ({
 
   const calendarEvents = shifts.map((shift) => ({
     ...shift,
-    title: `${shift.title} - ${dummyEmployees.find((emp) => emp.id === shift.assignedEmployee)?.name}`,
+    title: `${shift.title} - ${dummyEmployees.find((emp) => emp.id === shift.assignedEmployee)?.name || ""}`,
   }));
 
   return (
@@ -113,7 +118,7 @@ const ShiftSwapRequests: React.FC<EmployeeShiftSwapProps> = ({
               value={employeeName}
               onChange={(e) => setEmployeeName(e.target.value)}
               placeholder="Enter your name"
-              disabled={currentUser ? true : false}
+              disabled={!!currentUser}
             />
           </div>
           <div className="form-group">

@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,55 +18,12 @@ import EmployeeManagement from "./pages/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar.tsx";
 import NotAuthorized from "./pages/NotAuthorized.tsx";
 import ShiftSwapRequests from "./pages/ShiftSwapRequests.tsx";
-import ShiftSwapAdmin from "./pages/ShiftSwapAdmin.tsx"; // New admin page for managing swap requests
 
 // Import Auth Context and PrivateRoute with explicit extensions
 import { AuthProvider } from "./AuthContext.tsx";
 import PrivateRoute from "./pages/PrivateRoute.tsx";
 
-// Dummy shifts data for shift swap functionality
-const initialShifts = [
-  {
-    id: 101,
-    title: "Morning Shift",
-    start: new Date(new Date().setHours(8, 0, 0)),
-    end: new Date(new Date().setHours(12, 0, 0)),
-    assignedEmployee: 1,
-  },
-  {
-    id: 102,
-    title: "Afternoon Shift",
-    start: new Date(new Date().setHours(13, 0, 0)),
-    end: new Date(new Date().setHours(17, 0, 0)),
-    assignedEmployee: 2,
-  },
-  {
-    id: 103,
-    title: "Evening Shift",
-    start: new Date(new Date().setHours(18, 0, 0)),
-    end: new Date(new Date().setHours(22, 0, 0)),
-    assignedEmployee: 3,
-  },
-  {
-    id: 104,
-    title: "Extra Shift",
-    start: new Date(new Date().setHours(7, 0, 0)),
-    end: new Date(new Date().setHours(11, 0, 0)),
-    assignedEmployee: 2,
-  },
-];
-
-const dummyEmployees = [
-  { id: 1, name: "Justus Fynn" },
-  { id: 2, name: "Tanha Schmidt" },
-  { id: 3, name: "Miley Cyrus" },
-];
-
 const App: React.FC = () => {
-  // State for shift swap functionality
-  const [shifts, setShifts] = useState(initialShifts);
-  const [swapRequests, setSwapRequests] = useState<any[]>([]);
-
   return (
     <AuthProvider>
       <Router>
@@ -105,34 +62,18 @@ const App: React.FC = () => {
               />
             }
           >
-            <Route
-              path="/shift-swap"
-              element={<ShiftSwapRequests currentUser={{ id: 1, name: "Justus Fynn" }} isAdmin={false} />}
-            />
+            <Route path="/shift-swap" element={<ShiftSwapRequests currentUser={{ id: 1 }} isAdmin={false} />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/shifts" element={<Shifts />} />
             <Route path="/shift-availability" element={<ShiftAvailability />} />
             <Route path="/shift-view" element={<CompanyShiftCalendar />} />
-            {/* New Admin Route for Shift Swap Management */}
-            <Route
-              path="/shift-swap-admin"
-              element={
-                <ShiftSwapAdmin
-                  shifts={shifts}
-                  setShifts={setShifts}
-                  swapRequests={swapRequests}
-                  setSwapRequests={setSwapRequests}
-                  dummyEmployees={dummyEmployees}
-                />
-              }
-            />
           </Route>
 
           {/* Fallback for unmatched routes */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
-    </AuthProvider>
+    </AuthProvider>// src/App.tsx
   );
 };
 
