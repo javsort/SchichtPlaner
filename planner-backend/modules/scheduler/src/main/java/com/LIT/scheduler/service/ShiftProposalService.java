@@ -69,7 +69,7 @@ public class ShiftProposalService {
 
     // Manager accepts a proposal
     public ShiftProposal acceptProposal(Long proposalId) {
-        log.info(logHeader + "Manager is accepting proposal {}.", proposalId);
+        log.info(logHeader + "Manager is accepting proposal: " + proposalId);
 
         Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
 
@@ -89,8 +89,7 @@ public class ShiftProposalService {
                 .build();
         newShift = shiftRepository.save(newShift);
 
-        log.info(logHeader + "Official shift created: {} from {} to {}",
-                newShift.getId(), newShift.getStartTime(), newShift.getEndTime());
+        log.info(logHeader + "Official shift created: " + newShift.getId() + " from " + newShift.getStartTime() + " to " + newShift.getEndTime() + ".");
 
         ShiftAssignment assignment = ShiftAssignment.builder()
                 .userId(proposal.getEmployeeId())
@@ -99,15 +98,14 @@ public class ShiftProposalService {
                 .build();
 
         assignmentService.assignShift(assignment);
-        log.info(logHeader + "Manager accepted proposal {}. Official shift {} created for employee {}.",
-                proposalId, newShift.getId(), proposal.getEmployeeId());
+        log.info(logHeader + "Manager accepted proposal " + proposalId + ". Official shift " + newShift.getId() + " created for employee " + proposal.getEmployeeId() + ".");
 
         return proposalRepository.save(proposal);
     }
 
     // Manager rejects a proposal without an alternative
     public ShiftProposal rejectProposal(Long proposalId, String managerComment) {
-        log.info(logHeader + "Manager is rejecting proposal {}.", proposalId);
+        log.info(logHeader + "Manager is rejecting proposal " + proposalId + ".");
         Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
 
         if (!opt.isPresent()) {
@@ -119,14 +117,14 @@ public class ShiftProposalService {
         proposal.setStatus(ShiftProposalStatus.REJECTED);
         proposal.setManagerComment(managerComment);
 
-        log.info(logHeader + "Manager rejected proposal {} for employee {}.", proposalId, proposal.getEmployeeId());
+        log.info(logHeader + "Manager rejected proposal " + proposalId + " for employee " + proposal.getEmployeeId() + ".");
 
         return proposalRepository.save(proposal);
     }
 
     // Manager rejects a proposal and proposes an alternative
     public ShiftProposal proposeAlternative(Long proposalId, ShiftProposal alternativeDetails) {
-        log.info(logHeader + "Manager is proposing an alternative for proposal {}.", proposalId);
+        log.info(logHeader + "Manager is proposing an alternative for proposal " + proposalId + ".");
 
         Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
 
@@ -142,18 +140,21 @@ public class ShiftProposalService {
         proposal.setManagerAlternativeEndTime(alternativeDetails.getProposedEndTime());
         proposal.setManagerComment(alternativeDetails.getManagerComment());
         
-        log.info(logHeader + "Manager proposed an alternative for proposal {}. Alternative shift: {} from {} to {}.",
-                proposalId, alternativeDetails.getProposedTitle(),
-                alternativeDetails.getProposedStartTime(), alternativeDetails.getProposedEndTime());
-        
+        log.info(logHeader + "Manager proposed an alternative for proposal " + proposalId + " Alternative shift: " + alternativeDetails.getProposedTitle() + " from: " + alternativeDetails.getProposedStartTime() + " to: " + alternativeDetails.getProposedEndTime() + ".");
         return proposalRepository.save(proposal);
     }
 
     public List<ShiftProposal> getProposalsByEmployee(Long employeeId) {
-        return proposalRepository.findByEmployeeId(employeeId);
+        log.info(logHeader + "getProposalsByEmployee: Getting proposals for employee with id: " + employeeId);
+
+        List<ShiftProposal> proposals = proposalRepository.findByEmployeeId(employeeId);
+        return proposals;
     }
 
     public List<ShiftProposal> getAllProposals() {
-        return proposalRepository.findAll();
+        log.info(logHeader + "getAllProposals: Getting all proposals");
+
+        List<ShiftProposal> proposals = proposalRepository.findAll();
+        return proposals;
     }
 }
