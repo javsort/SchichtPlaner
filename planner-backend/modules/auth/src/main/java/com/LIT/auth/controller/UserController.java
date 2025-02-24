@@ -18,8 +18,8 @@ import com.LIT.auth.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/users")
 @Slf4j
+@RequestMapping("/api/auth/users")
 public class UserController {
     private final UserService userService;
 
@@ -55,4 +55,3 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
-

@@ -2,8 +2,7 @@ package com.LIT.auth.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
-//import java.util.Set;
+import java.sql.Date;  // now using java.sql.Date instead of java.time.LocalDate, only tracks days though, will change if needed
 
 @Entity
 @Getter
@@ -21,10 +20,10 @@ public class Absence {
     private String type;
 
     @Column(nullable = false)
-    private LocalDate startDate;
+    private Date startDate;
 
     @Column(nullable = false)
-    private LocalDate endDate;
+    private Date endDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
