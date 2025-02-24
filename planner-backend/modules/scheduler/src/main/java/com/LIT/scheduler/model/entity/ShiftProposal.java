@@ -3,7 +3,7 @@ package com.LIT.scheduler.model.entity;
 import com.LIT.scheduler.model.enums.ShiftProposalStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -26,10 +26,10 @@ public class ShiftProposal {
     private String proposedTitle;
 
     @Column(nullable = false)
-    private Timestamp proposedStartTime;
+    private LocalDateTime proposedStartTime;
 
     @Column(nullable = false)
-    private Timestamp proposedEndTime;
+    private LocalDateTime proposedEndTime;
 
     // Proposal status
     @Enumerated(EnumType.STRING)
@@ -38,8 +38,8 @@ public class ShiftProposal {
 
     // Optional fields for manager alternative proposal
     private String managerAlternativeTitle;
-    private Timestamp managerAlternativeStartTime;
-    private Timestamp managerAlternativeEndTime;
+    private LocalDateTime managerAlternativeStartTime;
+    private LocalDateTime managerAlternativeEndTime;
 
     // Optional comment from the manager
     @Column(length = 1024)
