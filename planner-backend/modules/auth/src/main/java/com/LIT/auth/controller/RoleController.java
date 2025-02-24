@@ -20,8 +20,8 @@ import com.LIT.auth.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/roles")
 @Slf4j
+@RequestMapping("/api/auth/roles")
 public class RoleController {
     private final RoleService roleService;
 
