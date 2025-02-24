@@ -3,6 +3,12 @@ The docker-compose in this file includes a MariaDB image, which establishes the 
 
 # Docker commands for server
 ## Specific commands
+
+### Find docker compose file location
+```bash
+find / -name docker-compose.yml 2>/dev/null
+```
+
 ### Check live status for all containers
 ```bash
 docker stats

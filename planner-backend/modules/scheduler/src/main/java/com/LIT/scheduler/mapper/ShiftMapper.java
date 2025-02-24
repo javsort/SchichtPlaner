@@ -25,8 +25,7 @@ public class ShiftMapper {
             .id(dto.getId())
             .title(dto.getTitle())
             .startTime(dto.getStartTime())
-            .endTime(dto.getEndTime())
+            .endTime(dto.getEndTime())     
             .build();
     }
 }
-

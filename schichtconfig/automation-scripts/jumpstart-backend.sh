@@ -21,25 +21,25 @@ case "$APP_NAME" in
     echo "Starting LogicGate..."
     # Using 'exec' so that the Java process is PID 1 (cleaner Docker container behavior).
     exec java -jar /app/logicGate-1.0-SNAPSHOT.jar \
-      2>&1 | sed 's/^/[LogicGate] /' | tee -a /app/logs/logicGate.log
+      2>&1 | sed 's/^/[LogicGate] /' | tee -a /app/logs/planner-logic-gate.log
     ;;
 
   "scheduler")
     echo "Starting SchedulerApp..."
     exec java -jar /app/scheduler-1.0-SNAPSHOT.jar \
-      2>&1 | sed 's/^/[Scheduler] /' | tee -a /app/logs/scheduler.log
+      2>&1 | sed 's/^/[Scheduler] /' | tee -a /app/logs/planner-scheduler.log
     ;;
 
   "auth")
     echo "Starting AuthorizationApp..."
     exec java -jar /app/auth-1.0-SNAPSHOT.jar \
-      2>&1 | sed 's/^/[Authorization] /' | tee -a /app/logs/auth.log
+      2>&1 | sed 's/^/[Authorization] /' | tee -a /app/logs/planner-auth.log
     ;;
 
   "statistics")
     echo "Starting StatisticsApp..."
     exec java -jar /app/statistics-1.0-SNAPSHOT.jar \
-      2>&1 | sed 's/^/[Statistics] /' | tee -a /app/logs/statistics.log
+      2>&1 | sed 's/^/[Statistics] /' | tee -a /app/logs/planner-stats.log
     ;;
 
   *)
