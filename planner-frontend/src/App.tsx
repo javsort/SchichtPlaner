@@ -12,7 +12,7 @@ import CreateShift from "./pages/ShiftCreationForm.tsx"; // Assuming you want Sh
 import Employees from "./pages/Employees.tsx";
 import Shifts from "./pages/Shifts.tsx";
 import ShiftManagement from "./pages/ShiftManagement.tsx";
-import ShiftAvailability from "./pages/ShiftAvailability.tsx";
+import ShiftAvailability from "./pages/code/ShiftAvailability.tsx";
 import CompanyShiftCalendar from "./pages/CompanyShiftCalendar.tsx";
 import EmployeeManagement from "./pages/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar.tsx";

@@ -5,6 +5,84 @@ const baseUrl = process.env.REACT_APP_API_BASE_URL;
 /*
  * Working endpoints:
 */
+// Test logicGate
+export const testLogicGate = async (): Promise<void> => {
+  // e.preventDefault();
+
+  console.log('Testing logicGate API Endpoint... URL:', `${baseUrl}/api/hello`);
+
+  try {
+    const response = await axios.get(`${baseUrl}/api/hello`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+  });
+
+  // Log the data from the API response
+  console.log('API Response:', response.data);
+
+  return response.data;
+
+  } catch (error) {
+    console.error('API Error:', error);
+  
+  }
+};
+
+// Test scheduler
+export const testScheduler = async (): Promise<void> => {
+  // e.preventDefault();
+
+  console.log('Testing scheduler API Endpoint... URL:', `${baseUrl}/api/scheduler/assignments/test-jwt`);
+
+  try {
+    const response = await axios.get(`${baseUrl}/api/scheduler/assignments/test-jwt`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    // Log the data from the API response
+    console.log('API Response:', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('API Error:', error);
+
+  }
+};
+
+// Test auth
+export const testAuth = async (): Promise<void> => {
+  // e.preventDefault();
+
+  console.log('Testing auth API Endpoint... URL:', `${baseUrl}/api/auth/test-jwt`);
+
+  try {
+    const response = await axios.get(`${baseUrl}/api/auth/test-jwt`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    // Log the data from the API response
+    console.log('API Response:', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('API Error:', error);
+
+  }
+};
+
 
 // Login endpoint
 /*
@@ -57,9 +135,16 @@ export const proposeShift = async (employeeId: number, proposedTitle: string, pr
       proposedStartTime: proposedStartTime,
       proposedEndTime: proposedEndTime,
       status: status
+    }, {
+      headers: {
+      'Content-Type': 'application/json',
+      'Authorization': localStorage.getItem('token') || ''
+      }
     });
 
     const data = await response;
+
+    console.log('Shift proposed successfully', data);
 
     if (data.status === 200) {
       console.log('Shift proposed successfully', data);
@@ -72,7 +157,7 @@ export const proposeShift = async (employeeId: number, proposedTitle: string, pr
     }
     
   } catch (error) {
-    console.error('Error logging in', error);
+    console.error('Error submitting proposed shift', error);
 
   }
 };
