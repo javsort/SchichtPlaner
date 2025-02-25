@@ -1,6 +1,8 @@
 // src/components/ShiftAvailability.tsx
 import React, { useState, useEffect } from "react";
 import "./ShiftAvailability.css";
+import { proposeShift } from "./code/api.ts";
+
 
 /** Returns an array of Date objects for each day in the given month/year. */
 function getDaysInMonth(year: number, month: number): Date[] {
@@ -42,7 +44,6 @@ const ShiftAvailability: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth());
   const [days, setDays] = useState<Date[]>(getDaysInMonth(selectedYear, selectedMonth));
-  
   const timeOptions = generateTimeOptions();
 
   // Store availability for each day in the month by date string "YYYY-MM-DD".
@@ -55,7 +56,7 @@ const ShiftAvailability: React.FC = () => {
     return init;
   });
 
-  // When selectedMonth or selectedYear changes, update days and reset availability.
+  // Update days and reset availability when month/year changes.
   useEffect(() => {
     const newDays = getDaysInMonth(selectedYear, selectedMonth);
     setDays(newDays);
@@ -74,18 +75,40 @@ const ShiftAvailability: React.FC = () => {
     }));
   };
 
-  const handleSave = () => {
-    alert("Availability saved! Check console for details.");
-    console.log("Saved availability:", availability);
+  // Combine the date (YYYY-MM-DD) and time (HH:mm) into an ISO string.
+  const formatDateTime = (dateStr: string, time: string) => {
+    return new Date(`${dateStr}T${time}:00`).toISOString();
   };
 
-  // Create a simple list of years for selection (e.g., current year ± 5 years).
+  const handleSave = async () => {
+    const employeeId = 3; // Replace with the actual employee ID as needed.
+    const proposedTitle = "Test Shift II";
+    const status = "PROPOSED";
+
+    // Loop through each day and if both times are selected, call the backend.
+    for (const dateStr in availability) {
+      const { from, to } = availability[dateStr];
+      if (from && to) {
+        const proposedStartTime = formatDateTime(dateStr, from);
+        const proposedEndTime = formatDateTime(dateStr, to);
+
+        try {
+          await proposeShift(employeeId, proposedTitle, proposedStartTime, proposedEndTime, status);
+          console.log(`Shift proposed for ${dateStr}`);
+        } catch (error) {
+          console.error(`Error proposing shift for ${dateStr}:`, error);
+        }
+      }
+    }
+    alert("Availability saved! Check console for details.");
+  };
+
+  // Create a list of years (e.g., current year ±5 years).
   const yearOptions = Array.from({ length: 11 }, (_, i) => today.getFullYear() - 5 + i);
 
   return (
     <div className="shift-availability-container">
       <h2>Shift Availability</h2>
-      
       <div className="month-year-selector">
         <label>
           Month:{" "}
@@ -114,7 +137,6 @@ const ShiftAvailability: React.FC = () => {
           </select>
         </label>
       </div>
-      
       <div className="table-container">
         <table className="shift-table">
           <thead>
@@ -166,7 +188,6 @@ const ShiftAvailability: React.FC = () => {
           </tbody>
         </table>
       </div>
-      
       <button className="save-btn" onClick={handleSave}>
         Save
       </button>
