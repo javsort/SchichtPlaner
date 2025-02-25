@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,12 +30,10 @@ public class ShiftProposalController {
     public ResponseEntity<List<ShiftProposal>> getAllProposals(@RequestHeader("X-User-Role") String role) {
         log.info(logHeader + "getAllProposals: Getting all proposals");
 
-
         if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
             log.error(logHeader + "User is not authorized to view all proposals");
             return ResponseEntity.status(403).build();
         }
-
         
         log.info(logHeader + "getAllProposals: Role has been verified, proceeding to get all proposals for: " + role);
 

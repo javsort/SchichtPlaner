@@ -77,6 +77,8 @@ services:
       MARIADB_DATABASE: planner
       MARIADB_USER: planner
       MARIADB_PASSWORD: root
+      MARIADB_BIND_ADDRESS: "0.0.0.0"
+    command: --max-connections=500 --connect-timeout=600 --wait_timeout=600 --interactive_timeout=600
     volumes:
       - planner_db:/var/lib/mysql
 
@@ -84,6 +86,7 @@ services:
 networks:
   planner-network:
     driver: bridge
+    name: planner-network
 
 volumes:
   planner_db:
