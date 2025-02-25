@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -115,11 +116,23 @@ public class LogicGateController {
     public ResponseEntity<?> forwardGate(HttpServletRequest request, String targetUrl, String requestBody, String destinationModule){
         log.info(logHeader + "Forwarding request to " + destinationModule + "\nTarget url: " + targetUrl + "\nWith the body: " + requestBody);
 
-        HttpHeaders headers = getHeaders(request);
-        HttpEntity<?> httpEntity = new HttpEntity<>(requestBody, headers);
+        ContentCachingRequestWrapper requestWrap = new ContentCachingRequestWrapper(request);
+        
+        log.info(logHeader + "Request is authenticated, proceeding with request. " + requestWrap.getMethod() + " " + requestWrap.getRequestURI() + " " + requestWrap.getAttributeNames() + " " + requestWrap.getAttribute("userEmail") + " " + requestWrap.getAttribute("role"));
+
+        HttpHeaders headers = getHeaders(requestWrap);
 
         log.info(logHeader + "Request is being sent to: '" + targetUrl + "'\nProtocol: " + request.getMethod() + "\nHeaders: " + headers + "\nBody: " + requestBody + "\n");
         
+
+        // Add the role as attribute for the request -> turn into header
+        String role = (String) requestWrap.getAttribute("role");
+        if(role != null){
+            headers.set("X-User-Role", role);
+        }
+        
+        // Form entity to send for the request
+        HttpEntity<?> httpEntity = new HttpEntity<>(requestBody, headers);
 
         // Forward the request
         try {

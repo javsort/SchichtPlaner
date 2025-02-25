@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(requestWrap.getRequestURI().endsWith("/login") || requestWrap.getRequestURI().endsWith("/register") || requestWrap.getRequestURI().endsWith("/hello")) {
                 log.info(logHeader + "No token provided, but it's a login / register request -> proceed");
 
-                chain.doFilter(request, response);
+                chain.doFilter(requestWrap, response);
                 return;
             }
             
@@ -89,7 +89,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            requestWrap.setAttribute("userEmail", userEmail);
+            requestWrap.setAttribute("role", role);
+
             log.info(logHeader + "User: " + userEmail + " is authenticated");
+
+            log.info(logHeader + "Request is authenticated, proceeding with request. " + requestWrap.getMethod() + " " + requestWrap.getRequestURI() + " " + requestWrap.getAttributeNames() + " " + requestWrap.getAttribute("userEmail") + " " + requestWrap.getAttribute("role"));
+
+            chain.doFilter(requestWrap, response);
 
         } else {
             // If not any of those, then invalid -> reject
@@ -98,9 +105,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         
         }
-
-        
-        log.info(logHeader + "Request is authenticated, proceeding with request");
-        chain.doFilter(request, response);
     }
 }
