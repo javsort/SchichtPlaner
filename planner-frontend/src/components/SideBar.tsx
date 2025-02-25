@@ -5,9 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { testLogicGate, testAuth, testScheduler } from '../Services/api.ts';
 import './SideBar.css';
 
-// Ensure baseUrl is a string (fallback to an empty string if not defined)
-const baseUrl: string = process.env.REACT_APP_API_BASE_URL || '';
-
 const SideBar: React.FC = () => {
   const navigate = useNavigate();
 

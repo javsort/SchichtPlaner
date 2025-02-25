@@ -2,6 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
+import SideBar from "../components/SideBar.tsx";
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
+      {/* <SideBar />*/}
       <aside className="admin-sidebar">
         <h2 className="sidebar-title">Admin Panel</h2>
         <ul className="sidebar-nav">

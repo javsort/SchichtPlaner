@@ -1,82 +1,80 @@
-// /src/pages/ShiftApprovalCalendar.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./ShiftApprovalCalendar.css";
+import { fetchShifts } from "../Services/api.ts";
 
 const localizer = momentLocalizer(moment);
 
 const ShiftApprovalCalendar = () => {
-  // Dummy pending shift requests (with dates in February 2025)
-  // Note: The 'title' property is intentionally omitted to simulate missing data.
-  const [pendingRequests, setPendingRequests] = useState([
-    {
-      id: 1,
-      employee: "Justus Fynn",
-      start: new Date("2025-02-10T08:00"),
-      end: new Date("2025-02-10T12:00"),
-    },
-    {
-      id: 2,
-      employee: "Amina Ali",
-      start: new Date("2025-02-12T14:00"),
-      end: new Date("2025-02-12T18:00"),
-    },
-    {
-      id: 3,
-      employee: "Magdy Talaat",
-      start: new Date("2025-02-15T20:00"),
-      end: new Date("2025-02-15T23:00"),
-    },
-    {
-      id: 4,
-      employee: "Tanja Schmidt",
-      start: new Date("2025-02-18T13:00"),
-      end: new Date("2025-02-18T17:00"),
-    },
-  ]);
-
-  // Approved shifts that will be displayed on the calendar
+  // State for pending shifts fetched from API
+  const [pendingRequests, setPendingRequests] = useState([]);
+  
+  // State for approved shifts
   const [approvedShifts, setApprovedShifts] = useState([]);
-
-  // Calendar view state; default to Week view.
+  
+  // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
 
-  // Handler to approve a pending shift request
+  // Fetch shifts when the component mounts
+  useEffect(() => {
+    const getShifts = async () => {
+      const shifts = await fetchShifts();
+      if (shifts.length > 0) {
+        // Map API response to the format used in the component
+        const formattedShifts = shifts.map((shift) => ({
+          id: shift.id,
+          employee: `Employee ${shift.employeeId}`, // Replace with actual employee name if available
+          title: shift.proposedTitle || "Unnamed Shift",
+          start: new Date(shift.proposedStartTime),
+          end: new Date(shift.proposedEndTime),
+          status: shift.status
+        }));
+
+        // Filter shifts based on status
+        const pending = formattedShifts.filter(shift => shift.status === "PROPOSED");
+        const approved = formattedShifts.filter(shift => shift.status === "APPROVED");
+
+        setPendingRequests(pending);
+        setApprovedShifts(approved);
+      }
+    };
+
+    getShifts();
+  }, []);
+
+  // Handler to approve a shift request
   const handleApprove = (id) => {
     const shiftToApprove = pendingRequests.find((req) => req.id === id);
     if (shiftToApprove) {
       // Remove from pending requests
       setPendingRequests(pendingRequests.filter((req) => req.id !== id));
-      // Add to approved shifts with a status field
-      // Here we explicitly set title to a fallback value if it's missing.
+
+      // Add to approved shifts
       setApprovedShifts([
         ...approvedShifts,
-        { ...shiftToApprove, title: shiftToApprove.title || "Unnamed Shift", status: "approved" },
+        { ...shiftToApprove, status: "APPROVED" }
       ]);
     }
   };
 
-  // Prepare events for the calendar from approved shifts.
-  // We format the event title as "Shift Title - Employee", using a fallback if title is missing.
+  // Prepare events for the calendar from approved shifts
   const calendarEvents = approvedShifts.map((shift) => ({
     ...shift,
-    title: `${shift.title || "Unnamed Shift"} - ${shift.employee}`,
+    title: `${shift.title} - ${shift.employee}`,
   }));
 
-  // Custom event style getter: use a green background for approved shifts.
-  const eventStyleGetter = (event) => {
-    return {
-      style: {
-        backgroundColor: "#27ae60", // Green for approved shifts
-        borderRadius: "5px",
-        opacity: 0.9,
-        color: "white",
-        border: "none",
-      },
-    };
-  };
+  // Custom event style getter for the calendar
+  const eventStyleGetter = (event) => ({
+    style: {
+      backgroundColor: "#27ae60", // Green for approved shifts
+      borderRadius: "5px",
+      opacity: 0.9,
+      color: "white",
+      border: "none",
+    },
+  });
 
   return (
     <div className="shift-approval-calendar">
@@ -97,7 +95,7 @@ const ShiftApprovalCalendar = () => {
         </select>
       </div>
 
-      {/* Approved Shifts Calendar */}
+      {/* Calendar */}
       <div className="calendar-container" style={{ height: "500px" }}>
         <Calendar
           localizer={localizer}
@@ -108,13 +106,12 @@ const ShiftApprovalCalendar = () => {
           view={view}
           onView={(newView) => setView(newView)}
           eventPropGetter={eventStyleGetter}
-          // Display full 24 hours:
           min={new Date(1970, 1, 1, 0, 0)}
           max={new Date(1970, 1, 1, 23, 59)}
         />
       </div>
 
-      {/* Pending Shift Requests Table */}
+      {/* Pending Shift Requests */}
       <h3>Pending Shift Requests</h3>
       <table className="pending-table">
         <thead>
@@ -129,7 +126,6 @@ const ShiftApprovalCalendar = () => {
         <tbody>
           {pendingRequests.map((req) => (
             <tr key={req.id}>
-              {/* Use fallback value for title if undefined */}
               <td>{req.title || "Unnamed Shift"}</td>
               <td>{req.employee}</td>
               <td>{moment(req.start).format("YYYY-MM-DD")}</td>
