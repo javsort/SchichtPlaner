@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { testLogicGate, testAuth, testScheduler } from '../Services/api.ts';
+import './SideBar.css';
 
 // Ensure baseUrl is a string (fallback to an empty string if not defined)
 const baseUrl: string = process.env.REACT_APP_API_BASE_URL || '';
@@ -12,7 +13,7 @@ const SideBar: React.FC = () => {
 
   return (
     <div className="sidebar">
-      <h3>Shift Planner</h3>
+      <h3 onClick={() => navigate('/shift-view')}>Shift Planner</h3>
       <nav>
         <ul>
           <li>
@@ -31,21 +32,18 @@ const SideBar: React.FC = () => {
             <Link to="/shift-swap">Shift Swap</Link>
           </li>
           <li>
-            <button type="button" onClick={testLogicGate} className="action-btn">
-              Test Logic Gate Connection
-            </button>
+            <Link to="/shift-availability">Submit Shift Proposal</Link>
+          </li>
+          <li>
+            <a onClick={testLogicGate}>Test Logic Gate Connection</a>
           </li>
           {/* Duplicate button for testing auth */}
           <li>
-            <button type="button" onClick={testAuth} className="action-btn">
-              Test Auth Connection
-            </button>
+            <a onClick={testAuth}>Test Auth Connection</a>
           </li>
           {/* Duplicate button for testing scheduler */}
           <li>
-            <button type="button" onClick={testScheduler} className="action-btn">
-              Test Scheduler Connection
-            </button>
+            <a onClick={testScheduler}>Test Scheduler Connection</a>
           </li>
         </ul>
       </nav>

@@ -2,8 +2,8 @@ import React, { useState, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./CompanyShiftCalendar.css"; // Custom CSS if needed
-import SideBar from "../components/SideBar.tsx"; // Adjust import if needed
+import "../styling/CompanyShiftCalendar.css"; // Custom CSS if needed
+import SideBar from "../../components/SideBar.tsx"; // Adjust import if needed
 
 // Initialize the localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -201,7 +201,8 @@ const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => 
             boxSizing: "border-box",
           }}
         >
-          <SideBar />
+          
+        <SideBar />
         </aside>
 
         {/* MAIN CONTENT: The 3 filter buttons ABOVE the calendar, plus the calendar */}

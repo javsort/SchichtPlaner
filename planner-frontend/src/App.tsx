@@ -13,7 +13,7 @@ import Employees from "./pages/Employees.tsx";
 import Shifts from "./pages/Shifts.tsx";
 import ShiftManagement from "./pages/ShiftManagement.tsx";
 import ShiftAvailability from "./pages/code/ShiftAvailability.tsx";
-import CompanyShiftCalendar from "./pages/CompanyShiftCalendar.tsx";
+import CompanyShiftCalendar from "./pages/code/CompanyShiftCalendar.tsx";
 import EmployeeManagement from "./pages/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar.tsx";
 import NotAuthorized from "./pages/NotAuthorized.tsx";
@@ -77,7 +77,9 @@ const App: React.FC = () => {
             <Route path="/shift-swap" element={<ShiftSwapRequests />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/shifts" element={<Shifts />} />
+            
             <Route path="/shift-availability" element={<ShiftAvailability />} />
+
             <Route path="/shift-view" element={<CompanyShiftCalendar />} />
             {/* New routes for Tester and Technician dashboards */}
             <Route path="/tester-dashboard" element={<TesterDashboard />} />
