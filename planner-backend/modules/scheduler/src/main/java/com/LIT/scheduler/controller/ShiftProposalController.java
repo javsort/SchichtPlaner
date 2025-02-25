@@ -2,13 +2,10 @@ package com.LIT.scheduler.controller;
 
 import com.LIT.scheduler.model.entity.ShiftProposal;
 import com.LIT.scheduler.service.ShiftProposalService;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Slf4j
@@ -17,7 +14,6 @@ import java.util.List;
 public class ShiftProposalController {
 
     private final ShiftProposalService proposalService;
-
     private final static String logHeader = "[ShiftProposalController] - ";
 
     @Autowired
@@ -25,20 +21,35 @@ public class ShiftProposalController {
         this.proposalService = proposalService;
     }
 
-    // Employee submits new shift proposal
-    @PostMapping("/create")
-    public ResponseEntity<ShiftProposal> createProposal(@RequestBody ShiftProposal proposal) {
-        log.info(logHeader + "createProposal: Creating new shift proposal");
+    // Employee submits new shift change request, must include currentShiftId
+    @PostMapping("/request-change")
+    public ResponseEntity<ShiftProposal> requestShiftChange(@RequestBody ShiftProposal proposal) {
+        log.info(logHeader + "requestShiftChange: Received shift change request from employee " + proposal.getEmployeeId());
         ShiftProposal savedProposal = proposalService.createProposal(proposal);
         return ResponseEntity.ok(savedProposal);
     }
 
-    // Employee retrieves their proposal
+    // Manager accepts shift change request and specifies the swap employee id as a request parameter
+    @PutMapping("/{proposalId}/accept-change")
+    public ResponseEntity<ShiftProposal> acceptShiftChange(@PathVariable Long proposalId, @RequestParam Long swapEmployeeId) {
+        log.info(logHeader + "acceptShiftChange: Manager accepting shift change for proposal " + proposalId + " with swap employee " + swapEmployeeId);
+        ShiftProposal updatedProposal = proposalService.acceptShiftChange(proposalId, swapEmployeeId);
+        return ResponseEntity.ok(updatedProposal);
+    }
+
+    // Manager declines shift change request
+    @PutMapping("/{proposalId}/decline-change")
+    public ResponseEntity<ShiftProposal> declineShiftChange(@PathVariable Long proposalId, @RequestBody(required = false) String managerComment) {
+        log.info(logHeader + "declineShiftChange: Manager declining shift change for proposal " + proposalId);
+        ShiftProposal updatedProposal = proposalService.declineShiftChange(proposalId, managerComment);
+        return ResponseEntity.ok(updatedProposal);
+    }
+
+    // Employee retrieves their proposals
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<ShiftProposal>> getProposalsByEmployee(@PathVariable Long employeeId) {
         log.info(logHeader + "getProposalsByEmployee: Getting proposals for employee with id: " + employeeId);
         List<ShiftProposal> proposals = proposalService.getProposalsByEmployee(employeeId);
-
         return ResponseEntity.ok(proposals);
     }
 
@@ -49,31 +60,4 @@ public class ShiftProposalController {
         List<ShiftProposal> proposals = proposalService.getAllProposals();
         return ResponseEntity.ok(proposals);
     }
-
-    // Manager accepts proposal
-    @PutMapping("/{proposalId}/accept")
-    public ResponseEntity<ShiftProposal> acceptProposal(@PathVariable Long proposalId) {
-        log.info(logHeader + "Manager accepted proposal with id: " + proposalId);
-        ShiftProposal updatedProposal = proposalService.acceptProposal(proposalId);
-        return ResponseEntity.ok(updatedProposal);
-    }
-
-    // Manager rejects proposal
-    @PutMapping("/{proposalId}/reject")
-    public ResponseEntity<ShiftProposal> rejectProposal(@PathVariable Long proposalId,
-                                                        @RequestBody(required = false) String managerComment) {
-        log.info(logHeader + "Manager rejected proposal with id: " + proposalId);
-        ShiftProposal updatedProposal = proposalService.rejectProposal(proposalId, managerComment);
-        return ResponseEntity.ok(updatedProposal);
-    }
-
-    // Manager proposes alternative
-    @PutMapping("/{proposalId}/alternative")
-    public ResponseEntity<ShiftProposal> proposeAlternative(@PathVariable Long proposalId,
-                                                            @RequestBody ShiftProposal alternativeDetails) {
-        log.info(logHeader + "Manager proposed alternative for proposal with id: " + proposalId);
-        ShiftProposal updatedProposal = proposalService.proposeAlternative(proposalId, alternativeDetails);
-        return ResponseEntity.ok(updatedProposal);
-    }
 }
-
