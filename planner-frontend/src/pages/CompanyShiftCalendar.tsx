@@ -11,9 +11,10 @@ const localizer = momentLocalizer(moment);
 const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => {
   // Example employees
   const [employees] = useState([
-    { id: 1, name: "David Marrco" },
+    { id: 1, name: "David Marco" },
     { id: 2, name: "Justus Magdy" },
     { id: 3, name: "Hany Ali" },
+    // Add more employees as needed
   ]);
 
   // Example shifts: use explicit dates for easy testing

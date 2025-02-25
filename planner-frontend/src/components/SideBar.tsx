@@ -1,9 +1,15 @@
-// src/components/SideBar.tsx
-import React from "react";
-import { Link } from "react-router-dom";
-import "./SideBar.css"; // Optional: create a CSS file for custom styles
+// src/components/Calendar.js
+import React, { useEffect } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { testLogicGate, testAuth, testScheduler } from '../Services/api.ts';
+
+// Ensure baseUrl is a string (fallback to an empty string if not defined)
+const baseUrl: string = process.env.REACT_APP_API_BASE_URL || '';
 
 const SideBar: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="sidebar">
       <h3>Shift Planner</h3>
@@ -25,7 +31,21 @@ const SideBar: React.FC = () => {
             <Link to="/shift-swap">Shift Swap</Link>
           </li>
           <li>
-            <Link to="/shift-view">Calendar View</Link>
+            <button type="button" onClick={testLogicGate} className="action-btn">
+              Test Logic Gate Connection
+            </button>
+          </li>
+          {/* Duplicate button for testing auth */}
+          <li>
+            <button type="button" onClick={testAuth} className="action-btn">
+              Test Auth Connection
+            </button>
+          </li>
+          {/* Duplicate button for testing scheduler */}
+          <li>
+            <button type="button" onClick={testScheduler} className="action-btn">
+              Test Scheduler Connection
+            </button>
           </li>
         </ul>
       </nav>
