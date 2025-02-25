@@ -5,14 +5,14 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // Import pages with explicit extensions
-import Login from "./pages/Login.tsx";
+import Login from "./pages/code/Login.tsx";
 import Register from "./pages/Register.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import CreateShift from "./pages/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
 import Employees from "./pages/Employees.tsx";
 import Shifts from "./pages/Shifts.tsx";
 import ShiftManagement from "./pages/ShiftManagement.tsx";
-import ShiftAvailability from "./pages/ShiftAvailability.tsx";
+import ShiftAvailability from "./pages/code/ShiftAvailability.tsx";
 import CompanyShiftCalendar from "./pages/CompanyShiftCalendar.tsx";
 import EmployeeManagement from "./pages/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar.tsx";
