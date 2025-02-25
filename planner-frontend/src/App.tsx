@@ -20,7 +20,11 @@ import NotAuthorized from "./pages/NotAuthorized.tsx";
 import ShiftSwapRequests from "./pages/ShiftSwapRequests.tsx";
 import ShiftSwapAdmin from "./pages/ShiftSwapAdmin.tsx";
 import ShiftSupervisorDashboard from "./pages/ShiftSupervisorDashboard.tsx";
-import EmployeeDashboard from "./pages/EmployeeDashboard.tsx"; // <-- New import
+import EmployeeDashboard from "./pages/EmployeeDashboard.tsx";
+import MyShifts from "./pages/MyShifts.tsx";
+
+import TesterDashboard from "./pages/TesterDashboard.tsx";
+import TechnicianDashboard from "./pages/TechnicianDashboard.tsx";
 
 // Import Auth Context and PrivateRoute with explicit extensions
 import { AuthProvider } from "./AuthContext.tsx";
@@ -44,6 +48,9 @@ const App: React.FC = () => {
             <Route path="/shift-approval" element={<ShiftApprovalCalendar />} />
             <Route path="/shift-swap-admin" element={<ShiftSwapAdmin />} />
             <Route path="/shift-supervisor-dashboard" element={<ShiftSupervisorDashboard />} />
+            <Route element={<PrivateRoute allowedRoles={["Employee", "Technician", "Tester"]} />}>
+  <Route path="/my-shifts" element={<MyShifts />} />
+</Route>
           </Route>
 
           {/* Protected Routes Group: Shift Supervisor & Extra Role */}
@@ -72,6 +79,9 @@ const App: React.FC = () => {
             <Route path="/shifts" element={<Shifts />} />
             <Route path="/shift-availability" element={<ShiftAvailability />} />
             <Route path="/shift-view" element={<CompanyShiftCalendar />} />
+            {/* New routes for Tester and Technician dashboards */}
+            <Route path="/tester-dashboard" element={<TesterDashboard />} />
+            <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
             {/* New route for Employee Dashboard */}
             <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
           </Route>
