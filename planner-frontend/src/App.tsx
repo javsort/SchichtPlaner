@@ -18,6 +18,9 @@ import EmployeeManagement from "./pages/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar.tsx";
 import NotAuthorized from "./pages/NotAuthorized.tsx";
 import ShiftSwapRequests from "./pages/ShiftSwapRequests.tsx";
+import ShiftSwapAdmin from "./pages/ShiftSwapAdmin.tsx";
+import ShiftSupervisorDashboard from "./pages/ShiftSupervisorDashboard.tsx";
+import EmployeeDashboard from "./pages/EmployeeDashboard.tsx"; // <-- New import
 
 // Import Auth Context and PrivateRoute with explicit extensions
 import { AuthProvider } from "./AuthContext.tsx";
@@ -39,6 +42,8 @@ const App: React.FC = () => {
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/employee-management" element={<EmployeeManagement />} />
             <Route path="/shift-approval" element={<ShiftApprovalCalendar />} />
+            <Route path="/shift-swap-admin" element={<ShiftSwapAdmin />} />
+            <Route path="/shift-supervisor-dashboard" element={<ShiftSupervisorDashboard />} />
           </Route>
 
           {/* Protected Routes Group: Shift Supervisor & Extra Role */}
@@ -62,18 +67,20 @@ const App: React.FC = () => {
               />
             }
           >
-            <Route path="/shift-swap" element={<ShiftSwapRequests currentUser={{ id: 1 }} isAdmin={false} />} />
+            <Route path="/shift-swap" element={<ShiftSwapRequests />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/shifts" element={<Shifts />} />
             <Route path="/shift-availability" element={<ShiftAvailability />} />
             <Route path="/shift-view" element={<CompanyShiftCalendar />} />
+            {/* New route for Employee Dashboard */}
+            <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
           </Route>
 
           {/* Fallback for unmatched routes */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
-    </AuthProvider>// src/App.tsx
+    </AuthProvider>
   );
 };
 
