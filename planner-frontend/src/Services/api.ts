@@ -135,9 +135,16 @@ export const proposeShift = async (employeeId: number, proposedTitle: string, pr
       proposedStartTime: proposedStartTime,
       proposedEndTime: proposedEndTime,
       status: status
+    }, {
+      headers: {
+      'Content-Type': 'application/json',
+      'Authorization': localStorage.getItem('token') || ''
+      }
     });
 
     const data = await response;
+
+    console.log('Shift proposed successfully', data);
 
     if (data.status === 200) {
       console.log('Shift proposed successfully', data);
@@ -150,7 +157,7 @@ export const proposeShift = async (employeeId: number, proposedTitle: string, pr
     }
     
   } catch (error) {
-    console.error('Error logging in', error);
+    console.error('Error submitting proposed shift', error);
 
   }
 };

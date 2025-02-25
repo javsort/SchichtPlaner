@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "../styling/ShiftAvailability.css";
 import SideBar from "../../components/SideBar.tsx";
+import { proposeShift } from '../../Services/api.ts';
+
 
 const generateTimeSlots = () => {
   const slots = [];
@@ -24,7 +26,7 @@ const ShiftAvailability = () => {
 
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [selectedSlots, setSelectedSlots] = useState<{ day: string; startTime: string; endTime: string }[]>([]);
+  const [selectedSlots, setSelectedSlots] = useState<any[]>([]);
 
   const handleMouseDown = (day: string, slot: string) => {
     setIsSelecting(true);
@@ -51,39 +53,69 @@ const ShiftAvailability = () => {
     });
   };
 
-  const prepareShiftData = () => {
-    const shifts: { day: string; startTime: string; endTime: string }[] = [];
+  const formatTime = (day: string, time: string) => {
+    const dayIndex = days.indexOf(day);
+    const now = new Date();
+    now.setDate(now.getDate() - now.getDay() + dayIndex + 1);
+    now.setHours(parseInt(time.split(":")[0]), 0, 0, 0);
+    return now.toISOString();
+  };
+
+  // Prepare and submit shift data
+  const prepareNSubmitShiftData = () => {
+    const employeeId = 3;
+    const shifts: any[] = [];
     
     Object.entries(availability).forEach(([day, slots]) => {
       let startTime: string | null = null;
       let endTime: string | null = null;
       
       Object.entries(slots).forEach(([time, selected]) => {
+        // If the first slot is selected, set the start time
         if (selected && startTime === null) {
           startTime = time;
         }
+
+        // If the last slot is selected, set the end time
         if (selected) {
           endTime = time;
         }
+
+        // If the last slot is not selected, add the shift
         if (!selected && startTime !== null && endTime !== null) {
-          shifts.push({ day, startTime, endTime });
+          shifts.push({
+            employeeId,
+            proposedTitle: "Test Shift II",
+            proposedStartTime: formatTime(day, startTime),
+            proposedEndTime: formatTime(day, endTime),
+            status: "PROPOSED",
+          });
           startTime = null;
           endTime = null;
         }
       });
+
+      // If the last slot is selected, add the shift
       if (startTime !== null && endTime !== null) {
-        shifts.push({ day, startTime, endTime });
+        shifts.push({
+          employeeId,
+          proposedTitle: "Test Shift II",
+          proposedStartTime: formatTime(day, startTime),
+          proposedEndTime: formatTime(day, endTime),
+          status: "PROPOSED",
+        });
       }
     });
     setSelectedSlots(shifts);
+
+    shifts.forEach((shift) => {
+      proposeShift(shift.employeeId, shift.proposedTitle, shift.proposedStartTime, shift.proposedEndTime, shift.status);
+    });
   };
 
   return (
     <div className="shift-availability-container" onMouseUp={handleMouseUp}>
-      
-      <div className="sidebar-container">
-        <SideBar />
-      </div>
+      <SideBar />
       <div className="calendar-container">
         <h2>Shift Availability</h2>
 
@@ -114,8 +146,11 @@ const ShiftAvailability = () => {
             </tbody>
           </table>
         </div>
-        <button className="submit-button" onClick={prepareShiftData}>Submit Availability</button>
-        <pre>{JSON.stringify(selectedSlots, null, 2)}</pre>
+        <button className="submit-button" onClick={prepareNSubmitShiftData}>Submit Availability</button>
+        <div className="selected-slots-display">
+          <h3>Formatted Shift Data:</h3>
+          <pre>{JSON.stringify(selectedSlots, null, 2)}</pre>
+        </div>
       </div>
     </div>
   );
