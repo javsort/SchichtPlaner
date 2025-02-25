@@ -11,9 +11,9 @@ const localizer = momentLocalizer(moment);
 const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => {
   // Dummy employee data (resources)
   const [employees] = useState([
-    { id: 1, name: "david Marrco" },
-    { id: 2, name: "justus Magdy" },
-    { id: 3, name: "hany Ali" },
+    { id: 1, name: "David Marco" },
+    { id: 2, name: "Justus Magdy" },
+    { id: 3, name: "Hany Ali" },
     // Add more employees as needed
   ]);
 
