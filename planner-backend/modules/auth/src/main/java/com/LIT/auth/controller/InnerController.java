@@ -1,3 +1,7 @@
+/*
+
+Will be utilised to get user details from the user service to be shared with other services.
+
 package com.LIT.auth.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,3 +35,4 @@ public class InnerController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 }
+*/
