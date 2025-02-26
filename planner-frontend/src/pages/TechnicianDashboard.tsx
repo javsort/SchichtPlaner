@@ -1,12 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./EmployeeDashboard.css";
+import "./TechnicianDashboard.css";
 
-const EmployeeDashboard: React.FC = () => {
+const TechnicianDashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  // Overview cards for employee functions
   const overviewCards = [
     {
       title: "Company Shift Calendar",
@@ -41,16 +40,12 @@ const EmployeeDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="employee-dashboard-container">
-      {/* Sidebar Navigation */}
-      <aside className="employee-sidebar">
-        <h2 className="sidebar-title">Employee Panel</h2>
+    <div className="technician-dashboard-container">
+      <aside className="technician-sidebar">
+        <h2 className="sidebar-title">Technician Panel</h2>
         <ul className="sidebar-nav">
           <li>
-            <button
-              onClick={() => navigate("/employee-dashboard")}
-              className="sidebar-btn"
-            >
+            <button onClick={() => navigate("/technician-dashboard")} className="sidebar-btn">
               Dashboard
             </button>
           </li>
@@ -87,20 +82,14 @@ const EmployeeDashboard: React.FC = () => {
         </ul>
       </aside>
 
-      {/* Main Content */}
-      <main className="employee-content">
-        <header className="employee-header">
-          <h1>Employee Dashboard</h1>
+      <main className="technician-content">
+        <header className="technician-header">
+          <h1>Technician Dashboard</h1>
         </header>
 
-        {/* Overview Cards using CSS Grid */}
-        <section className="employee-overview">
+        <section className="technician-overview">
           {overviewCards.map((card, index) => (
-            <div
-              key={index}
-              className="employee-card"
-              onClick={() => navigate(card.route)}
-            >
+            <div key={index} className="technician-card" onClick={() => navigate(card.route)}>
               <h3>{card.title}</h3>
               <p>{card.description}</p>
             </div>
@@ -111,4 +100,4 @@ const EmployeeDashboard: React.FC = () => {
   );
 };
 
-export default EmployeeDashboard;
+export default TechnicianDashboard;

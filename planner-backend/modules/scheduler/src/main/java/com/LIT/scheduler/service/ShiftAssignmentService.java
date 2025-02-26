@@ -1,5 +1,6 @@
 package com.LIT.scheduler.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class ShiftAssignmentService {
-    private static final Logger log = LoggerFactory.getLogger(ShiftAssignmentService.class);
     
     private final ShiftAssignmentRepository shiftAssignmentRepository;
 
@@ -45,8 +45,9 @@ public class ShiftAssignmentService {
         if (newShift == null) {
             throw new IllegalArgumentException("Shift must be provided for assignment.");
         }
-        Timestamp newShiftStart = newShift.getStartTime();
-        Timestamp newShiftEnd = newShift.getEndTime();
+        
+        LocalDateTime newShiftStart = newShift.getStartTime();
+        LocalDateTime newShiftEnd = newShift.getEndTime();
 
         // query for conflicting assignments for the same user
         List<ShiftAssignment> conflicts = shiftAssignmentRepository.findConflictingAssignments(
@@ -58,7 +59,7 @@ public class ShiftAssignmentService {
             throw new ShiftConflictException("Shift conflict detected: The user has an overlapping assignment.");
         }
 
-        log.info("No conflicts detected. Proceeding to assign shift for user {}.", assignment.getUserId());
+        log.info(logHeader + "No conflicts detected. Proceeding to assign shift for user {}.", assignment.getUserId());
 
         return shiftAssignmentRepository.save(assignment);
     }
