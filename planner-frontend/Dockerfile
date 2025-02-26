@@ -1,17 +1,22 @@
 
-FROM node:18
+FROM node:20
 
 WORKDIR /app
 
-RUN npm install -g npm@latest || true
+# Ensure clean npm cache to prevent corrupted installs
+RUN npm cache clean --force
+
+RUN npm install -g npm@latest
 
 COPY planner-frontend/package*.json ./
 # Only this container -> COPY ./package*.json ./
 
-RUN npm install --legacy-peer-deps || true
+RUN npm install --force --legacy-peer-deps
 
-COPY planner-frontend/ . 
-# Only this container -> COPY . . 
+# Ensure ajv dependencies are installed
+RUN npm i ajv-keywords ajv -D
+
+COPY planner-frontend/ .
 
 RUN npm run build
 
