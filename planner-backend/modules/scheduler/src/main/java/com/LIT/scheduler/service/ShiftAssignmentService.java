@@ -59,13 +59,36 @@ public class ShiftAssignmentService {
     
     // Update assignment to swap shift to a new employee
     public ShiftAssignment updateAssignmentForSwap(Long currentUserId, Long shiftId, Long newUserId) {
-        log.info(logHeader + "updateAssignmentForSwap: Updating assignment for shift id: " + shiftId + " from user " + currentUserId + " to new user " + newUserId);
+        log.info(logHeader + "Attempting to update assignment: shifting assignment for shift id {} from user {} to user {}", shiftId, currentUserId, newUserId);
+        
         Optional<ShiftAssignment> optionalAssignment = shiftAssignmentRepository.findByUserIdAndShiftId(currentUserId, shiftId);
         if (optionalAssignment.isEmpty()) {
-            throw new RuntimeException("Shift assignment not found for user " + currentUserId + " and shift " + shiftId);
+            String errorMsg = "Shift assignment not found for user " + currentUserId + " and shift " + shiftId;
+            log.error(logHeader + errorMsg);
+            throw new RuntimeException(errorMsg);
         }
+        
         ShiftAssignment assignment = optionalAssignment.get();
+        /*
+        // Optional: Check for conflicting assignments for the new user
+        List<ShiftAssignment> newUserConflicts = shiftAssignmentRepository.findConflictingAssignments(
+            newUserId, assignment.getShift().getStartTime(), assignment.getShift().getEndTime());
+        if (!newUserConflicts.isEmpty()) {
+            String conflictMsg = "Conflict detected: New user " + newUserId + " has overlapping assignment(s)";
+            log.error(logHeader + conflictMsg);
+            throw new ShiftConflictException(conflictMsg);
+        }
+        */
+        
         assignment.setUserId(newUserId);
-        return shiftAssignmentRepository.save(assignment);
-    }
+        
+        try {
+            ShiftAssignment updatedAssignment = shiftAssignmentRepository.save(assignment);
+            log.info(logHeader + "Successfully updated assignment. New assignment: " + updatedAssignment);
+            return updatedAssignment;
+        } catch (Exception e) {
+            log.error(logHeader + "Error saving updated assignment: " + e.getMessage());
+            throw new RuntimeException("Error saving updated assignment: " + e.getMessage());
+        }
+    }    
 }
