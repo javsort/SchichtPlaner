@@ -88,4 +88,19 @@
   .save-btn:hover {
     background-color: #555;
   }
+
+  .shift-availability-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+  }
   
+  /* Main content should take the remaining space */
+  .shift-availability-container {
+      flex-grow: 1;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      box-sizing: border-box;
+      overflow: auto;
+  }

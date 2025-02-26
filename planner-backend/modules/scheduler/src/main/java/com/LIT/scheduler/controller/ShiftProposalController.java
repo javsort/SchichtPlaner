@@ -76,4 +76,3 @@ public class ShiftProposalController {
         return ResponseEntity.ok(updatedProposal);
     }
 }
-

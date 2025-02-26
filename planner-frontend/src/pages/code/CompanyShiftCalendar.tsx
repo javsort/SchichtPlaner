@@ -2,8 +2,8 @@ import React, { useState, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./CompanyShiftCalendar.css"; // Custom CSS if needed
-import SideBar from "../components/SideBar.tsx"; // Adjust import if needed
+import "../styling/CompanyShiftCalendar.css"; // Custom CSS if needed
+import SideBar from "../../components/SideBar.tsx"; // Adjust import if needed
 
 // Initialize the localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -11,9 +11,10 @@ const localizer = momentLocalizer(moment);
 const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => {
   // Example employees
   const [employees] = useState([
-    { id: 1, name: "David Marrco" },
+    { id: 1, name: "David Marco" },
     { id: 2, name: "Justus Magdy" },
     { id: 3, name: "Hany Ali" },
+    // Add more employees as needed
   ]);
 
   // Example shifts: use explicit dates for easy testing
@@ -201,7 +202,8 @@ const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => 
             boxSizing: "border-box",
           }}
         >
-          <SideBar />
+          
+        <SideBar />
         </aside>
 
         {/* MAIN CONTENT: The 3 filter buttons ABOVE the calendar, plus the calendar */}
@@ -227,17 +229,20 @@ const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => 
           </div>
 
           {/* THE CALENDAR */}
-          <Calendar
-            localizer={localizer}
-            events={calendarEvents}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: "calc(100vh - 140px)" }}
-            view={view}
-            onView={(newView) => setView(newView)}
-            eventPropGetter={eventStyleGetter}
-            defaultDate={today} // Start on "today"
-          />
+          
+          <div className="calendar-container">
+            <Calendar
+              localizer={localizer}
+              events={calendarEvents}
+              startAccessor="start"
+              endAccessor="end"
+              view={view}
+              onView={(newView) => setView(newView)}
+              eventPropGetter={eventStyleGetter}
+              min={new Date(1970, 1, 1, 0, 0)}
+              max={new Date(1970, 1, 1, 23, 59)}
+            />
+          </div>
         </main>
       </div>
     </div>

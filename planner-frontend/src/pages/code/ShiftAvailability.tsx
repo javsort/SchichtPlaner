@@ -1,8 +1,7 @@
-// src/components/ShiftAvailability.tsx
 import React, { useState, useEffect } from "react";
-import "./ShiftAvailability.css";
-import { proposeShift } from "./code/api.ts";
-
+import "../styling/ShiftAvailability.css";
+import SideBar from "../../components/SideBar.tsx";
+import { proposeShift } from '../../Services/api.ts';
 
 /** Returns an array of Date objects for each day in the given month/year. */
 function getDaysInMonth(year: number, month: number): Date[] {
@@ -107,90 +106,96 @@ const ShiftAvailability: React.FC = () => {
   const yearOptions = Array.from({ length: 11 }, (_, i) => today.getFullYear() - 5 + i);
 
   return (
-    <div className="shift-availability-container">
-      <h2>Shift Availability</h2>
-      <div className="month-year-selector">
-        <label>
-          Month:{" "}
-          <select
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(Number(e.target.value))}
-          >
-            {MONTH_NAMES.map((name, index) => (
-              <option key={index} value={index}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Year:{" "}
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(Number(e.target.value))}
-          >
-            {yearOptions.map((yr) => (
-              <option key={yr} value={yr}>
-                {yr}
-              </option>
-            ))}
-          </select>
-        </label>
+    <div className="shift-availability-layout">
+      <SideBar />
+
+      <div className="shift-availability-container">
+        <h2>Shift Availability</h2>
+        <div className="month-year-selector">
+          <label>
+            Month:{" "}
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+            >
+              {MONTH_NAMES.map((name, index) => (
+                <option key={index} value={index}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Year:{" "}
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+            >
+              {yearOptions.map((yr) => (
+                <option key={yr} value={yr}>
+                  {yr}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div>
+          <div className="table-container">
+          <table className="shift-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>From</th>
+                <th>To</th>
+              </tr>
+            </thead>
+            <tbody>
+              {days.map((date) => {
+                const dateStr = date.toISOString().split("T")[0];
+                return (
+                  <tr key={dateStr}>
+                    <td>{date.getDate()}</td>
+                    <td>
+                      <select
+                        value={availability[dateStr].from}
+                        onChange={(e) =>
+                          handleChange(dateStr, "from", e.target.value)
+                        }
+                      >
+                        <option value="">Select</option>
+                        {timeOptions.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        value={availability[dateStr].to}
+                        onChange={(e) =>
+                          handleChange(dateStr, "to", e.target.value)
+                        }
+                      >
+                        <option value="">Select</option>
+                        {timeOptions.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <button className="save-btn" onClick={handleSave}>
+          Save
+        </button>
+        </div>
       </div>
-      <div className="table-container">
-        <table className="shift-table">
-          <thead>
-            <tr>
-              <th>Day</th>
-              <th>From</th>
-              <th>To</th>
-            </tr>
-          </thead>
-          <tbody>
-            {days.map((date) => {
-              const dateStr = date.toISOString().split("T")[0];
-              return (
-                <tr key={dateStr}>
-                  <td>{date.getDate()}</td>
-                  <td>
-                    <select
-                      value={availability[dateStr].from}
-                      onChange={(e) =>
-                        handleChange(dateStr, "from", e.target.value)
-                      }
-                    >
-                      <option value="">Select</option>
-                      {timeOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <select
-                      value={availability[dateStr].to}
-                      onChange={(e) =>
-                        handleChange(dateStr, "to", e.target.value)
-                      }
-                    >
-                      <option value="">Select</option>
-                      {timeOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <button className="save-btn" onClick={handleSave}>
-        Save
-      </button>
     </div>
   );
 };

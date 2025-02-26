@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.googleId = ?1")
     Optional<User> findByGoogleId(String googleId);
+
+    Optional<User> findFirstByRoles_Name(String role);
 }
