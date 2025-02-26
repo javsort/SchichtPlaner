@@ -111,11 +111,6 @@ export const login = async (email: string, password: string) => {
   }
 };
 
-
-/*
-  Untested endpoints:
-*/
-
 // Shift proposal
 /*
   Body sample expected in the backend:
@@ -162,11 +157,54 @@ export const proposeShift = async (employeeId: number, proposedTitle: string, pr
   }
 };
 
-const fetchShifts = async () => {
+export const fetchShifts = async () => {
   try {
-    const response = await axios.get('/api/shifts');
-    setShifts(response.data);
+    const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+    
+    console.log('Shifts fetched successfully', response.data);
+
+    return response.data;
+
   } catch (error) {
-    console.error('Error fetching shifts', error);
-}
+    console.error('Error with the request', error);
+    return [];
+  }
 };
+
+export const approveShift = async (shiftId: string) => {
+  console.log('Approving shift with ID:', shiftId);
+
+  const token = localStorage.getItem('token') || '';
+
+  console.log('Approving shift with token:', token);
+
+  try {
+    const response = await axios.put(`${baseUrl}/api/scheduler/shift-proposals/${shiftId}/accept`,
+      {}, 
+      {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      }
+    });
+    
+    console.log('Shifts approved successfully', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error("Error approving shift:", error.response ? error.response.data : error);  
+    throw error;
+  }
+};
+
+
+/*
+  Untested endpoints:
+*/
