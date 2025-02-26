@@ -228,17 +228,20 @@ const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => 
           </div>
 
           {/* THE CALENDAR */}
-          <Calendar
-            localizer={localizer}
-            events={calendarEvents}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: "calc(100vh - 140px)" }}
-            view={view}
-            onView={(newView) => setView(newView)}
-            eventPropGetter={eventStyleGetter}
-            defaultDate={today} // Start on "today"
-          />
+          
+          <div className="calendar-container">
+            <Calendar
+              localizer={localizer}
+              events={calendarEvents}
+              startAccessor="start"
+              endAccessor="end"
+              view={view}
+              onView={(newView) => setView(newView)}
+              eventPropGetter={eventStyleGetter}
+              min={new Date(1970, 1, 1, 0, 0)}
+              max={new Date(1970, 1, 1, 23, 59)}
+            />
+          </div>
         </main>
       </div>
     </div>

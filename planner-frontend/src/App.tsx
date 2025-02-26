@@ -15,7 +15,7 @@ import ShiftManagement from "./pages/ShiftManagement.tsx";
 import ShiftAvailability from "./pages/code/ShiftAvailability.tsx";
 import CompanyShiftCalendar from "./pages/code/CompanyShiftCalendar.tsx";
 import EmployeeManagement from "./pages/EmployeeManagement.tsx";
-import ShiftApprovalCalendar from "./pages/ShiftApprovalCalendar.tsx";
+import ShiftApprovalCalendar from "./pages/code/ShiftApprovalCalendar.tsx";
 import NotAuthorized from "./pages/NotAuthorized.tsx";
 import ShiftSwapRequests from "./pages/ShiftSwapRequests.tsx";
 import ShiftSwapAdmin from "./pages/ShiftSwapAdmin.tsx";

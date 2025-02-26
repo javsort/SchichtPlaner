@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
-import SideBar from "../components/SideBar.tsx";
+import AdminSidebar from "../components/AdminSidebar.tsx";
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -10,48 +10,14 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
-      {/* <SideBar />*/}
-      <aside className="admin-sidebar">
-        <h2 className="sidebar-title">Admin Panel</h2>
-        <ul className="sidebar-nav">
-          <li>
-            <button onClick={() => navigate('/employee-management')} className="sidebar-btn">
-              Employee Management
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-management')} className="sidebar-btn">
-              Shift Management
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-view')} className="sidebar-btn">
-              Company Shift Calendar
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-approval')} className="sidebar-btn">
-              Shift Approval
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-availability')} className="sidebar-btn">
-              Shift Availability
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-swap-admin')} className="sidebar-btn">
-              Shift Swap Management
-            </button>
-          </li>
-        </ul>
-      </aside>
 
       {/* Main Content */}
       <main className="admin-content">
         <header className="admin-header">
           <h1>Administrator Dashboard</h1>
         </header>
+
+        <AdminSidebar />
 
         {/* Dashboard Overview */}
         <section className="admin-overview">

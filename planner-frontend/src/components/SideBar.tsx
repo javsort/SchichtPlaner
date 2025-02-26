@@ -14,18 +14,6 @@ const SideBar: React.FC = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/admin-dashboard">Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/employee-management">Employees</Link>
-          </li>
-          <li>
-            <Link to="/shift-management">Shifts</Link>
-          </li>
-          <li>
-            <Link to="/shift-approval">Shift Approval</Link>
-          </li>
-          <li>
             <Link to="/shift-swap">Shift Swap</Link>
           </li>
           <li>
