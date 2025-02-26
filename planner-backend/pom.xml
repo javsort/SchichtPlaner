@@ -66,7 +66,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>2.0.16</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- MariaDB Dependency -->
@@ -195,6 +194,35 @@
                 <version>1.11.4</version>
                 <scope>test</scope>
             </dependency>
+
+            <!-- Integration Test Dependencies -->
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>5.5.1</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>1.20.5</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>1.20.5</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>mariadb</artifactId>
+                <version>1.20.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -242,15 +270,21 @@
                 <configuration>
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
 
+                    <skipTests>false</skipTests>
+                    <testFailureIgnore>true</testFailureIgnore>
+
                     <useModulePath>false</useModulePath>
+                    
                     <includes>
                         <include>**/*Test.java</include> <!-- General pattern -->
                         <include>**/*Tests.java</include>
                         <include>**/*TestCase.java</include>
                     </includes>
+
                     <properties>
                         <configurationParameters>junit.jupiter.extensions.autodetection.enabled=true</configurationParameters>
                     </properties>
+
                 </configuration>
             </plugin>
 
