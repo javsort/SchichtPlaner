@@ -337,4 +337,3 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 };
 
 export default ShiftManagement;
-

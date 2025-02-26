@@ -11,11 +11,20 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --write ."
   },
-  
-  
   "jest": {
-    "transformIgnorePatterns": [
-      "/node_modules/(?!axios)"
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "testMatch": [
+      "**/?(*.)+(test).tsx"
     ]
   },
   "dependencies": {
@@ -46,6 +55,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",
     "identity-obj-proxy": "^3.0.0",
