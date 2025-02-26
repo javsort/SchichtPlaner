@@ -183,6 +183,7 @@ const CompanyShiftCalendar = ({ currentUser = { id: 1, name: "John Doe" } }) => 
             ref={fileInputRef}
             onChange={handleFileChange}
             style={{ display: "none" }}
+            data-testid="file-input"
           />
         </div>
       </header>

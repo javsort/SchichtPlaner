@@ -23,7 +23,7 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // Sidebar navigation
+    // Sidebar navigation items
     expect(screen.getByText("Admin Panel")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Employee Management/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Shift Management/i })).toBeInTheDocument();
@@ -35,14 +35,15 @@ describe("AdminDashboard Component", () => {
     // Header
     expect(screen.getByRole("heading", { name: /Administrator Dashboard/i })).toBeInTheDocument();
 
-    // Overview cards (assumed to be rendered as <h3> elements)
+    // Overview cards: Assume they are rendered as <h3> elements
     const overviewHeadings = screen.getAllByRole("heading", { level: 3 });
     expect(overviewHeadings.length).toBeGreaterThan(0);
-    // Verify that an overview card for "Employee Management" exists
-    const empCard = overviewHeadings.find((heading) =>
+    
+    // Verify one of the overview cards—for example, Employee Management—is rendered
+    const empManagementCard = overviewHeadings.find((heading) =>
       heading.textContent?.includes("Employee Management")
     );
-    expect(empCard).toBeDefined();
+    expect(empManagementCard).toBeDefined();
   });
 
   test("navigates when clicking on an overview card", () => {
@@ -52,14 +53,14 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // For example, clicking on the "Shift Swap Management" overview card should navigate to '/shift-swap-admin'
+    // Find the overview card heading that includes "Shift Swap Management"
     const overviewHeadings = screen.getAllByRole("heading", { level: 3 });
     const swapCardHeading = overviewHeadings.find((heading) =>
       heading.textContent?.includes("Shift Swap Management")
     );
     expect(swapCardHeading).toBeDefined();
 
-    // Assume the clickable container is the card with the class "overview-card"
+    // Assume the clickable container is the element with the class "overview-card"
     const clickableCard = swapCardHeading?.closest(".overview-card");
     expect(clickableCard).toBeInTheDocument();
 
@@ -67,7 +68,8 @@ describe("AdminDashboard Component", () => {
       fireEvent.click(clickableCard);
     }
 
-    // Verify that navigate was called with the expected route
+    // Verify that navigate was called with the expected route.
+    // According to the component, clicking this card should navigate to "/shift-swap-admin"
     expect(mockedUsedNavigate).toHaveBeenCalledWith("/shift-swap-admin");
   });
 });
