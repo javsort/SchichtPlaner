@@ -94,10 +94,6 @@ public class LogicGateController {
         log.info(logHeader + "Forwarding request to scheduler: " + request.getRequestURI());
 
         String targetUrl = schedulerUrl + request.getRequestURI();
-        String queryString = request.getQueryString();
-        if (queryString != null && !queryString.isEmpty()) {
-            targetUrl += "?" + queryString;
-        }
         
         log.info(logHeader + "Target url: " + targetUrl);
         return forwardGate(request, targetUrl, requestBody, "Scheduler");
