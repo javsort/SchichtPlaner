@@ -11,13 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    // Since logicGate checks entrances, disable sec for this module
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()
+//                .anyRequest().authenticated()
             )
             .formLogin(login -> login.disable())
             .httpBasic(Customizer.withDefaults());

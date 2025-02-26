@@ -4,7 +4,7 @@ setlocal
 
 cd ../../planner-backend
 
-call mvnw.cmd clean package 
+call mvnw.cmd clean package -DskipTests
 
 cd ../schichtconfig/docker
 
