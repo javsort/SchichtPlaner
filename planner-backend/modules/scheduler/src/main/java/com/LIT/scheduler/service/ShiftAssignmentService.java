@@ -69,8 +69,8 @@ public class ShiftAssignmentService {
         }
         
         ShiftAssignment assignment = optionalAssignment.get();
-        /*
-        // Optional: Check for conflicting assignments for the new user
+        
+        // Check for conflicting assignments for the new user
         List<ShiftAssignment> newUserConflicts = shiftAssignmentRepository.findConflictingAssignments(
             newUserId, assignment.getShift().getStartTime(), assignment.getShift().getEndTime());
         if (!newUserConflicts.isEmpty()) {
@@ -78,7 +78,7 @@ public class ShiftAssignmentService {
             log.error(logHeader + conflictMsg);
             throw new ShiftConflictException(conflictMsg);
         }
-        */
+        
         
         assignment.setUserId(newUserId);
         

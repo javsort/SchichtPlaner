@@ -1,5 +1,12 @@
 package com.LIT.scheduler.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.LIT.scheduler.exception.ShiftConflictException;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.entity.ShiftAssignment;
@@ -8,12 +15,8 @@ import com.LIT.scheduler.model.enums.ShiftProposalStatus;
 import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
 import com.LIT.scheduler.model.repository.ShiftProposalRepository;
 import com.LIT.scheduler.model.repository.ShiftRepository;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -60,51 +63,73 @@ public class ShiftProposalService {
     public ShiftProposal acceptShiftChange(Long proposalId, Long swapEmployeeId) {
         log.info(logHeader + "Manager is accepting shift change proposal: " + proposalId);
         
+        // Retrieve the proposal.
         Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
         if (!opt.isPresent()) {
             throw new IllegalArgumentException("Shift proposal not found.");
         }
         ShiftProposal proposal = opt.get();
-        proposal.setStatus(ShiftProposalStatus.ACCEPTED);
-    
-        // 1. Retrieve User1's assignment (Assignment A) for the shift specified in the proposal
+        
+        // Retrieve all assignments for the swap employee.
+        List<ShiftAssignment> swapUserAssignments = assignmentRepository.findByUserId(swapEmployeeId);
+        
+        // Find a candidate assignment for the swap employee whose shift details match the proposed target details.
+        Optional<ShiftAssignment> optAssignmentB = swapUserAssignments.stream()
+            .filter(assignment ->
+                assignment.getShift().getTitle().equals(proposal.getProposedTitle()) &&
+                assignment.getShift().getStartTime().equals(proposal.getProposedStartTime()) &&
+                assignment.getShift().getEndTime().equals(proposal.getProposedEndTime())
+            )
+            .findFirst();
+        if (!optAssignmentB.isPresent()) {
+             throw new RuntimeException("No matching assignment found for swap employee " + swapEmployeeId + " with the proposed shift details.");
+        }
+        ShiftAssignment assignmentB = optAssignmentB.get();
+        
+        // Additional conflict check: Ensure that aside from the candidate assignment, 
+        // the swap employee has no other assignments overlapping with the target shift's time window.
+        List<ShiftAssignment> newUserConflicts = assignmentRepository.findConflictingAssignments(
+                swapEmployeeId, assignmentB.getShift().getStartTime(), assignmentB.getShift().getEndTime());
+        // Exclude the candidate assignment from the conflict check.
+        newUserConflicts = newUserConflicts.stream()
+                .filter(a -> !a.getId().equals(assignmentB.getId()))
+                .toList();
+        if (!newUserConflicts.isEmpty()) {
+            String conflictMsg = "Conflict detected: New user " + swapEmployeeId + " has overlapping assignment(s)";
+            log.error(logHeader + conflictMsg);
+            throw new ShiftConflictException(conflictMsg);
+        }
+        
+        // Retrieve the requesting user's assignment (Assignment A) for the shift to be swapped.
         Optional<ShiftAssignment> optAssignmentA = assignmentRepository.findByUserIdAndShiftId(proposal.getEmployeeId(), proposal.getCurrentShiftId());
-        if(optAssignmentA.isEmpty()) {
+        if (optAssignmentA.isEmpty()) {
              throw new RuntimeException("Assignment for user " + proposal.getEmployeeId() + " and shift " + proposal.getCurrentShiftId() + " not found.");
         }
         ShiftAssignment assignmentA = optAssignmentA.get();
         
-        // 2. Retrieve User2's assignment (Assignment B) that matches the proposed shift details.
-        // We'll find a candidate assignment for swapEmployeeId whose shift start and end times match the proposal.
-        List<ShiftAssignment> candidateAssignments = assignmentRepository.findByUserId(swapEmployeeId);
-        ShiftAssignment assignmentB = null;
-        for(ShiftAssignment sa : candidateAssignments) {
-             if(sa.getShift().getStartTime().equals(proposal.getProposedStartTime()) &&
-                sa.getShift().getEndTime().equals(proposal.getProposedEndTime())) {
-                  assignmentB = sa;
-                  break;
-             }
-        }
-        if(assignmentB == null) {
-             throw new RuntimeException("No matching assignment found for swap employee " + swapEmployeeId + " with the proposed shift details.");
-        }
+        // At this point, all conflict checks have passed.
+        // Mark the proposal as accepted.
+        proposal.setStatus(ShiftProposalStatus.ACCEPTED);
         
-        // 3. Swap the shift references between the two assignments.
+        // Swap the shift references between the two assignments.
         Shift tempShift = assignmentA.getShift();
         assignmentA.setShift(assignmentB.getShift());
         assignmentB.setShift(tempShift);
         
-        // 4. Save the updated assignments.
+        // Save the updated assignments.
         assignmentRepository.save(assignmentA);
         assignmentRepository.save(assignmentB);
         
-        log.info(logHeader + "Manager accepted proposal " + proposalId + ". Shift details swapped: User " + proposal.getEmployeeId() 
-                 + " now has shift: " + assignmentA.getShift().getTitle() + ", and user " + swapEmployeeId 
-                 + " now has shift: " + assignmentB.getShift().getTitle());
-                 
+        log.info(logHeader + "Manager accepted proposal " + proposalId + ". Shift swap executed: User " + proposal.getEmployeeId() +
+                 " now has shift: " + assignmentA.getShift().getTitle() + ", and user " + swapEmployeeId +
+                 " now has shift: " + assignmentB.getShift().getTitle());
+        
         // Save and return the updated proposal.
         return proposalRepository.save(proposal);
     }
+    
+    
+    
     
 
     // Manager declines a shift change request
