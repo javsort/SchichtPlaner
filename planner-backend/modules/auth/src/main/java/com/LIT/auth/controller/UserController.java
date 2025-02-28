@@ -39,19 +39,21 @@ public class UserController {
 
     @GetMapping("/{id}")    
     public ResponseEntity<User> getUserById(@PathVariable Long id, @RequestHeader("X-User-Role") String role) {
-        log.info(logHeader + "getUserById: Getting user by id: " + id);
+        log.info(logHeader + "getUserById: User with role: '" + role + "' wants to retrieve user info with the id: " + id);
 
         if(role == null) {
-            log.error(logHeader + "getUserById: User role is not provided in the header");
+            log.error(logHeader + "getUserById: ERROR! User role is not provided in the header");
 
             return ResponseEntity.badRequest().build();
         }
 
         if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
-            log.error(logHeader + "getUserById: User does not have permission to get user by id. The user role is: " + role);
+            log.error(logHeader + "getUserById: ERROR! User does not have the clearance to get a user by id. The user role is: " + role);
 
             return ResponseEntity.badRequest().build();
         }
+
+        log.info(logHeader + "getUserById: Role is valid. Getting user by id: " + id);
 
         Optional<User> user = userService.getUserById(id);
 
@@ -67,18 +69,21 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestHeader("X-User-Role") String role) {
-        log.info(logHeader + "deleteUser: Deleting user by id: " + id);
+        log.info(logHeader + "deleteUser: Deleting user by id: " + id + " with role: " + role);
 
         if(role == null) {
-            log.error(logHeader + "getUserById: User role is not provided in the header");
+            log.error(logHeader + "getUserById: ERROR! User role is not provided in the header");
 
             return ResponseEntity.badRequest().build();
         }
 
         if(!role.equals("ROLE_Admin")) {
-            log.error(logHeader + "deleteUser: User does not have permission to delete user. The user role is: " + role);
+            log.error(logHeader + "deleteUser: ERROR! User does not have permission to delete user. The user role is: " + role);
+
             return ResponseEntity.badRequest().build();
         }
+
+        log.info(logHeader + "deleteUser: Role is valid. Deleting user by id: " + id);
 
         userService.deleteUser(id);
         
