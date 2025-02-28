@@ -12,6 +12,12 @@ This README is a guide to the repository, where you'll find the following folder
 ## Live Application Access
 The application running on server can be accessed through here! `http://138.199.161.219:3000/login`
 
+- To login, there are some sample accounts you can use right [here](./schichtconfig/README.md)
+
+- To consult functioning endpoints, each module now has a README of its own describing the requirements per REST request. These READMEs will be updated as the full application integrates them.
+    - If you want to test other endpoints, feel free to consult them directly at each Controller class available at any existing module.
+    - Also, feel free to check the [`api.ts`](./planner-frontend/src/Services/api.ts) file in the frontend folder to verify these endpoints
+
 ## Tools currenly used:
 **:warning:!** - The tools marked with a '*' are the ones needed at your local machine before deployment
 
