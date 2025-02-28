@@ -30,6 +30,7 @@ public class ShiftAssignmentService {
     }
 
     public ShiftAssignment assignShift(ShiftAssignment assignment) {
+        
         // extract new shift time details
         Shift newShift = assignment.getShift();
         if (newShift == null) {

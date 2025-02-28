@@ -1,6 +1,6 @@
 package com.LIT.scheduler.model.dto;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import lombok.*;
 
 @Getter
@@ -11,7 +11,6 @@ import lombok.*;
 public class ShiftDTO {
     private Long id;
     private String title;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Timestamp startTime;
+    private Timestamp endTime;
 }
-
