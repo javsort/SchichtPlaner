@@ -24,7 +24,7 @@ The application running on server can be accessed through here! `http://138.199.
 ### - Backend
 - The backend is running currently thanks to:
     - Java - v.21 *
-    - Apache Maven - v.3.6.3 *
+    - Apache Maven - v.3.6.3
     - SpringBoot - v.3.3.5
     - MariaDB - v.11.6.2
 
@@ -60,6 +60,11 @@ $ ./build-n-run-local.sh
 
 Whenever running locally, to check the front-end, once the application is built and running, access the site through: `http://localhost:3000`
 
+### Tests!
+If you'd like to run the build tests for the backend (even though these are run upon building), these are also automated thanks to `run_tests.bat` & `run_tests.sh`!
+
+If on linux, again, rememnber to perform `$ chmod +x ./run_tests.sh` to ensure its runnable in your system.
+
 ### Production Deployment
 On the server end, the GitHub Workflows described above take charge in all the deployment operations.
 
@@ -93,12 +98,13 @@ Here, you'll find all the Java files that support the backend.
 According to the current architecture design, the backend of the application is divided into different modules or containers.
 
 The modules divide as follows:
-| Container Name       | Java Module Name                                       |
-|:--------------------:|:------------------------------------------------------:|
-| planner-logic-gate   | [logicGate](./planner-backend/modules/logicGate/)      |
-| planner-scheduler    | [scheduler](./planner-backend/modules/scheduler/)      |
-| planner-auth         | [auth](./planner-backend/modules/auth/)                |
-| Coming Soon!         | -                                                      |
+| Container Name       | Java Module Name                                                       |
+|:--------------------:|:----------------------------------------------------------------------:|
+| planner-logic-gate   | [logicGate](./planner-backend/modules/logicGate/)                      |
+| planner-scheduler    | [scheduler](./planner-backend/modules/scheduler/)                      |
+| planner-auth         | [auth](./planner-backend/modules/auth/)                                |
+| planner-stats        | [statistics](./planner-backend/modules/statistics/) (work in progress) |
+| Coming Soon!         | -                                                                      |
 
 
 To run the full backend, it is sufficient to simply go back to [./schichtconfig/automation-scripts/](./schichtconfig/automation-scripts/) and run [`./no-front-buildnrun-loc.sh`](./schichtconfig/automation-scripts/no-front-buildnrun-loc.sh) / [`./no-front-buildnrun-loc.bat`](./schichtconfig/automation-scripts/no-front-buildnrun-loc.bat) depending of your OS.
