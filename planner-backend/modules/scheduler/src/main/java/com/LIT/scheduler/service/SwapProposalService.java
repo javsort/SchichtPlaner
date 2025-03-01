@@ -14,7 +14,6 @@ import com.LIT.scheduler.model.entity.SwapProposal;
 import com.LIT.scheduler.model.enums.ShiftProposalStatus;
 import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
 import com.LIT.scheduler.model.repository.SwapProposalRepository;
-import com.LIT.scheduler.model.repository.ShiftRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -115,6 +114,15 @@ public class SwapProposalService {
              throw new RuntimeException("Assignment for user " + proposal.getEmployeeId() + " and shift " + proposal.getCurrentShiftId() + " not found.");
         }
         ShiftAssignment assignmentA = optAssignmentA.get();
+
+        // **** Enhanced Check ****
+        // Ensure that the swap employee does NOT already have an assignment for the shift being swapped away from (Assignment A).
+        Optional<ShiftAssignment> duplicateAssignment = assignmentRepository.findByUserIdAndShiftId(swapEmployeeId, assignmentA.getShift().getId());
+        if (duplicateAssignment.isPresent()) {
+            String conflictMsg = "Swap conflict: Employee " + swapEmployeeId + " already has an assignment for shift " + assignmentA.getShift().getTitle();
+            log.error(logHeader + conflictMsg);
+            throw new ShiftConflictException(conflictMsg);
+        }
         
         // At this point, all conflict checks have passed.
         // Mark the proposal as accepted.
