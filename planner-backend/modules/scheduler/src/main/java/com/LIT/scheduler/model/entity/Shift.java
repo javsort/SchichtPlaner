@@ -34,4 +34,7 @@ public class Shift {
 
     @Column(nullable = false)
     private LocalDateTime endTime;
+
+    @Column(name = "minimum_required_employees", nullable = false)
+    private Integer minimumRequiredEmployees;
 }
