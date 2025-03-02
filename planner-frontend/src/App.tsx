@@ -5,21 +5,21 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // Import pages with explicit extensions
-import Login from "./pages/code/Login.tsx";
-import Register from "./pages/Register.tsx";
-import AdminDashboard from "./pages/AdminDashboard.tsx";
+import Login from "./pages/general/Login.tsx";
+import Register from "./pages/general/Register.tsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import CreateShift from "./pages/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
 import Employees from "./pages/Employees.tsx";
 import Shifts from "./pages/Shifts.tsx";
 import ShiftManagement from "./pages/ShiftManagement.tsx";
 import ShiftAvailability from "./pages/code/ShiftAvailability.tsx";
 import CompanyShiftCalendar from "./pages/code/CompanyShiftCalendar.tsx";
-import EmployeeManagement from "./pages/EmployeeManagement.tsx";
-import ShiftApprovalCalendar from "./pages/code/ShiftApprovalCalendar.tsx";
-import NotAuthorized from "./pages/NotAuthorized.tsx";
+import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
+import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
+import NotAuthorized from "./pages/general/NotAuthorized.tsx";
 import ShiftSwapRequests from "./pages/ShiftSwapRequests.tsx";
-import ShiftSwapAdmin from "./pages/ShiftSwapAdmin.tsx";
-import ShiftSupervisorDashboard from "./pages/ShiftSupervisorDashboard.tsx";
+import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
+import ShiftSupervisorDashboard from "./pages/admin/ShiftSupervisorDashboard.tsx";
 import EmployeeDashboard from "./pages/EmployeeDashboard.tsx";
 import MyShifts from "./pages/MyShifts.tsx";
 
@@ -49,7 +49,7 @@ const App: React.FC = () => {
             <Route path="/shift-swap-admin" element={<ShiftSwapAdmin />} />
             <Route path="/shift-supervisor-dashboard" element={<ShiftSupervisorDashboard />} />
             <Route element={<PrivateRoute allowedRoles={["Employee", "Technician", "Tester"]} />}>
-  <Route path="/my-shifts" element={<MyShifts />} />
+            <Route path="/my-shifts" element={<MyShifts />} />
 </Route>
           </Route>
 
