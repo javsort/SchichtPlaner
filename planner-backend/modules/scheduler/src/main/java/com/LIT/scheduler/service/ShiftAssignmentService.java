@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.LIT.auth.service.UserService;
 import com.LIT.scheduler.exception.ShiftConflictException;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.entity.ShiftAssignment;
@@ -21,14 +20,12 @@ public class ShiftAssignmentService {
     
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final NotificationService notificationService;
-    private final UserService userService;
     private final String logHeader = "[ShiftAssignmentService] - ";
 
     @Autowired
-    public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository, NotificationService notificationService, UserService userService) {
+    public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository, NotificationService notificationService) {
         this.shiftAssignmentRepository = shiftAssignmentRepository;
         this.notificationService = notificationService;
-        this.userService = userService;
     }
 
     public List<ShiftAssignment> getAssignmentsByUserId(Long userId) {
