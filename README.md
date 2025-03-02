@@ -66,11 +66,6 @@ $ ./build-n-run-local.sh
 
 Whenever running locally, to check the front-end, once the application is built and running, access the site through: `http://localhost:3000`
 
-### Tests!
-If you'd like to run the build tests for the backend (even though these are run upon building), these are also automated thanks to `run_tests.bat` & `run_tests.sh`!
-
-If on linux, again, rememnber to perform `$ chmod +x ./run_tests.sh` to ensure its runnable in your system.
-
 ### Production Deployment
 On the server end, the GitHub Workflows described above take charge in all the deployment operations.
 
@@ -92,6 +87,13 @@ To deploy on production follow these next steps:
 The remaining scripts are to be used by the containers themselves or to connect to the server.
 
 **:warning:!** - Whenever running access to the servers you still need a password to login, so only do it if you have that.
+
+## Tests!
+If you'd like to run the build tests for the backend (even though these are run upon building), these are also automated thanks to `run_tests.bat` & `run_tests.sh`!
+
+If on linux, again, rememnber to perform `$ chmod +x ./run_tests.sh` to ensure its runnable in your system.
+
+For the test files themselves, be sure to visit the `/test` folders in the module. So far most being implemented at the [Auth Module](./planner-backend/modules/auth/src/test/java/com/LIT/auth/).
 
 ## .Github - [/.github](./.github)
 Here you'll find the Github workflow files which are in charge of the CI/CD deployment process (specifically at [`pipeline-cicd.yml`](./.github/workflows/pipeline-cicd.yml) & at [`re-reploy-container.yml`](./.github/workflows/re-reploy-container.yml))

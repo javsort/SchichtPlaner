@@ -1,22 +1,22 @@
 package com.LIT.auth.tests.controller;
 
-import com.LIT.auth.controller.UserController;
-import com.LIT.auth.service.UserService;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.anyLong;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
+import com.LIT.auth.controller.UserController;
+import com.LIT.auth.service.UserService;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -25,7 +25,6 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    // Mock your service so there's no DB interaction
     @MockBean
     private UserService userService;
 
@@ -39,7 +38,6 @@ class UserControllerTest {
         // Given: we do not actually perform deletion, so mock it to do nothing
         Mockito.doNothing().when(userService).deleteUser(anyLong());
 
-        // When & Then
         mockMvc.perform(
                 delete("/api/auth/users/{id}", 1L)
                   .header("X-User-Role", "ROLE_Admin")
@@ -54,7 +52,6 @@ class UserControllerTest {
         // Given: same mocking, still do nothing
         Mockito.doNothing().when(userService).deleteUser(anyLong());
 
-        // When & Then
         mockMvc.perform(
                 delete("/api/auth/users/{id}", 1L)
                   .header("X-User-Role", "ROLE_ShiftSupervisor")
@@ -72,7 +69,6 @@ class UserControllerTest {
         // Given: mock the user service to return an empty optional
         Mockito.when(userService.getUserById(anyLong())).thenReturn(Optional.empty());
 
-        // When & Then
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
                   .header("X-User-Role", "ROLE_Admin")
@@ -87,7 +83,6 @@ class UserControllerTest {
         // Given: mock the user service to return an empty optional
         Mockito.when(userService.getUserById(anyLong())).thenReturn(Optional.empty());
 
-        // When & Then
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
                   .header("X-User-Role", "ROLE_ShiftSupervisor")
@@ -102,7 +97,7 @@ class UserControllerTest {
         // Given: mock the user service to return an empty optional
         Mockito.when(userService.getUserById(anyLong())).thenReturn(Optional.empty());
 
-        // When & Then
+
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
                   .header("X-User-Role", "ROLE_Technician")
