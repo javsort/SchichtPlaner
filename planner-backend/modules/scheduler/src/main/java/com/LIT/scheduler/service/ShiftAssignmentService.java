@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.LIT.auth.service.UserService;
 import com.LIT.scheduler.exception.ShiftConflictException;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.entity.ShiftAssignment;
@@ -20,13 +21,14 @@ public class ShiftAssignmentService {
     
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final NotificationService notificationService;
-
+    private final UserService userService;
     private final String logHeader = "[ShiftAssignmentService] - ";
 
     @Autowired
-    public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository, NotificationService notificationService) {
+    public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository, NotificationService notificationService, UserService userService) {
         this.shiftAssignmentRepository = shiftAssignmentRepository;
         this.notificationService = notificationService;
+        this.userService = userService;
     }
 
     public List<ShiftAssignment> getAssignmentsByUserId(Long userId) {
@@ -62,6 +64,11 @@ public class ShiftAssignmentService {
         }
 
         log.info(logHeader + "No conflicts detected. Proceeding to assign shift for user: " + assignment.getUserId());
+        notificationService.sendEmail(
+            getEmployeeEmail(assignment.getUserId()),
+            "Shift Assignment Confirmed",
+            "You have been assigned to shift: " + assignment.getShift().getTitle()
+        );
         return shiftAssignmentRepository.save(assignment);
     }
 
@@ -80,5 +87,8 @@ public class ShiftAssignmentService {
 
     private String getEmployeeEmail(Long employeeId) {
         return "eddie.pekaric@hotmail.com";
+        //return userService.getUserById(employeeId)
+        //                  .map(User::getEmail)
+        //                  .orElse("eddie.pekaric@hotmail.com");
     }
 }

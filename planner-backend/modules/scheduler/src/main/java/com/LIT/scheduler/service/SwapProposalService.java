@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.LIT.auth.service.UserService;
 import com.LIT.scheduler.exception.ShiftConflictException;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.entity.ShiftAssignment;
@@ -24,15 +25,18 @@ public class SwapProposalService {
     private final SwapProposalRepository proposalRepository;
     private final ShiftAssignmentRepository assignmentRepository; // For conflict detection.
     private final NotificationService notificationService;
+    private final UserService userService;
     private final String logHeader = "[ShiftProposalService] - ";
 
     @Autowired
     public SwapProposalService(SwapProposalRepository proposalRepository,
                                 ShiftAssignmentRepository assignmentRepository,
-                                NotificationService notificationService) {
+                                NotificationService notificationService,
+                                UserService userService) {
         this.proposalRepository = proposalRepository;
         this.assignmentRepository = assignmentRepository;
         this.notificationService = notificationService;
+        this.userService = userService;
     }
 
     // Employee submits new shift change request (with conflict detection)
@@ -198,5 +202,8 @@ public class SwapProposalService {
 
     private String getEmployeeEmail(Long employeeId) {
         return "eddie.pekaric@hotmail.com"; // Hardcoded as all of the mails are not real mails
+        //return userService.getUserById(employeeId)
+        //                  .map(User::getEmail)
+        //                  .orElse("eddie.pekaric@hotmail.com");
     }
 }
