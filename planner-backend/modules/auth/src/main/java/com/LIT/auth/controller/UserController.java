@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,26 +33,60 @@ public class UserController {
     @GetMapping
     public List<User> getAllUsers() {
         log.info(logHeader + "getAllUsers: Getting all users");
+
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        log.info(logHeader + "getUserById: Getting user by id: " + id);
+    @GetMapping("/{id}")    
+    public ResponseEntity<User> getUserById(@PathVariable Long id, @RequestHeader("X-User-Role") String role) {
+        log.info(logHeader + "getUserById: User with role: '" + role + "' wants to retrieve user info with the id: " + id);
+
+        if(role == null) {
+            log.error(logHeader + "getUserById: ERROR! User role is not provided in the header");
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
+            log.error(logHeader + "getUserById: ERROR! User does not have the clearance to get a user by id. The user role is: " + role);
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        log.info(logHeader + "getUserById: Role is valid. Getting user by id: " + id);
+
         Optional<User> user = userService.getUserById(id);
+
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping    
     public User createUser(@RequestBody User user) {
         log.info(logHeader + "createUser: Creating user: " + user);
+        
         return userService.saveUser(user);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        log.info(logHeader + "deleteUser: Deleting user by id: " + id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestHeader("X-User-Role") String role) {
+        log.info(logHeader + "deleteUser: Deleting user by id: " + id + " with role: " + role);
+
+        if(role == null) {
+            log.error(logHeader + "getUserById: ERROR! User role is not provided in the header");
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(!role.equals("ROLE_Admin")) {
+            log.error(logHeader + "deleteUser: ERROR! User does not have permission to delete user. The user role is: " + role);
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        log.info(logHeader + "deleteUser: Role is valid. Deleting user by id: " + id);
+
         userService.deleteUser(id);
+        
         return ResponseEntity.noContent().build();
     }
 }

@@ -14,7 +14,6 @@ import com.LIT.scheduler.model.entity.SwapProposal;
 import com.LIT.scheduler.model.enums.ShiftProposalStatus;
 import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
 import com.LIT.scheduler.model.repository.SwapProposalRepository;
-import com.LIT.scheduler.model.repository.ShiftRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +23,7 @@ public class SwapProposalService {
 
     private final SwapProposalRepository proposalRepository;
     private final ShiftAssignmentRepository assignmentRepository; // For conflict detection.
-    private final String logHeader = "[ShiftProposalService] - ";
+    private final String logHeader = "[SwapProposalService] - ";
 
     @Autowired
     public SwapProposalService(SwapProposalRepository proposalRepository,
