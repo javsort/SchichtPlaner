@@ -40,6 +40,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/not-authorized" element={<NotAuthorized />} />
+          <Route path="/my-shifts" element={<MyShifts />} />
 
           {/* Protected Routes Group: Admin & Shift Supervisor */}
           <Route element={<PrivateRoute allowedRoles={["Admin", "Shift Supervisor"]} />}>
@@ -48,48 +49,48 @@ const App: React.FC = () => {
             <Route path="/shift-approval" element={<ShiftApprovalCalendar />} />
             <Route path="/shift-swap-admin" element={<ShiftSwapAdmin />} />
             <Route path="/shift-supervisor-dashboard" element={<ShiftSupervisorDashboard />} />
-            <Route element={<PrivateRoute allowedRoles={["Employee", "Technician", "Tester"]} />}>
-            <Route path="/my-shifts" element={<MyShifts />} />
-</Route>
-          </Route>
 
-          {/* Protected Routes Group: Shift Supervisor & Extra Role */}
-          <Route element={<PrivateRoute allowedRoles={["Shift Supervisor", "Extra Role"]} />}>
-            <Route path="/create-shift" element={<CreateShift />} />
-            <Route path="/shift-management" element={<ShiftManagement />} />
-          </Route>
-
-          {/* Protected Routes Group: Multiple Roles */}
-          <Route
-            element={
-              <PrivateRoute
-                allowedRoles={[
-                  "Admin",
-                  "Shift Supervisor",
-                  "Technician",
-                  "Tester",
-                  "Incident Manager",
-                  "Extra Role",
-                ]}
-              />
-            }
-          >
-            <Route path="/shift-swap" element={<ShiftSwapRequests />} />
-            <Route path="/employees" element={<Employees />} />
-            <Route path="/shifts" element={<Shifts />} />
             
-            <Route path="/shift-availability" element={<ShiftAvailability />} />
-
-            <Route path="/shift-view" element={<CompanyShiftCalendar />} />
-            {/* New routes for Tester and Technician dashboards */}
-            <Route path="/tester-dashboard" element={<TesterDashboard />} />
-            <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
-            {/* New route for Employee Dashboard */}
-            <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+            <Route element={<PrivateRoute allowedRoles={["Employee", "Technician", "Tester"]} />}> </Route>
           </Route>
+
+        {/* Protected Routes Group: Shift Supervisor & Extra Role */}
+        <Route element={<PrivateRoute allowedRoles={["Shift Supervisor", "Extra Role"]} />}>
+          <Route path="/create-shift" element={<CreateShift />} />
+          <Route path="/shift-management" element={<ShiftManagement />} />
+        </Route>
+
+        {/* Protected Routes Group: Multiple Roles */}
+        <Route
+          element={
+            <PrivateRoute
+              allowedRoles={[
+                "Admin",
+                "Shift Supervisor",
+                "Technician",
+                "Tester",
+                "Incident Manager",
+                "Extra Role",
+              ]}
+            />
+          }
+        >
+          <Route path="/shift-swap" element={<ShiftSwapRequests />} />
+          <Route path="/employees" element={<Employees />} />
+          <Route path="/shifts" element={<Shifts />} />
+          
+          <Route path="/shift-availability" element={<ShiftAvailability />} />
+        
+          <Route path="/shift-view" element={<CompanyShiftCalendar />} />
+          {/* New routes for Tester and Technician dashboards */}
+          <Route path="/tester-dashboard" element={<TesterDashboard />} />
+          <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
+          {/* New route for Employee Dashboard */}
+          <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+        </Route>
 
           {/* Fallback for unmatched routes */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

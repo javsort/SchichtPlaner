@@ -27,8 +27,8 @@ const Login: React.FC = () => {
   const { setUser } = useAuthTyped();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(''); 
-  const [email, setEmail] = useState<string>("admin@example.com");
-  const [password, setPassword] = useState<string>("admin123");
+  const [email, setEmail] = useState<string>("technician@example.com");
+  const [password, setPassword] = useState<string>("technician123");
 
   const handleLogin = async (e) => {
     e.preventDefault();
