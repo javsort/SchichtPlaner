@@ -24,6 +24,7 @@ import com.LIT.scheduler.model.entity.SwapProposal;
 import com.LIT.scheduler.model.enums.ShiftProposalStatus;
 import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
 import com.LIT.scheduler.model.repository.SwapProposalRepository;
+import com.LIT.scheduler.service.NotificationService;
 import com.LIT.scheduler.service.SwapProposalService;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +35,9 @@ public class SwapProposalServiceTest {
 
     @Mock
     private ShiftAssignmentRepository assignmentRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private SwapProposalService swapProposalService;
