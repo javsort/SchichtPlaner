@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../AuthContext.tsx";
+import { useAuth } from "../../AuthContext.tsx";
 import "./EmployeeManagement.css";
 
 // Define a props interface with an optional allowDelete flag.
