@@ -93,6 +93,7 @@ services:
       MARIADB_PASSWORD: root
     volumes:
       - planner_db:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 # Networks
 networks:
