@@ -93,6 +93,7 @@ services:
       MARIADB_PASSWORD: root
     volumes:
       - planner_db:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 # Networks
 networks:
@@ -101,3 +102,5 @@ networks:
 
 volumes:
   planner_db:
+    name: schicht-planer-lit_planner_db
+    external: true
