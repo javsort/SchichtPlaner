@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "shift_proposals")
-public class ShiftProposal {
+@Table(name = "swap_proposals")
+public class SwapProposal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +20,10 @@ public class ShiftProposal {
     // Employee id who created proposal
     @Column(name = "employee_id", nullable = false)
     private Long employeeId;
+    
+    // Current shift assignment id that the employee wants to change
+    @Column(name = "current_shift_id", nullable = false)
+    private Long currentShiftId;
 
     // Proposed shift details by employee
     @Column(nullable = false)

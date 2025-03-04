@@ -52,8 +52,8 @@ const Login: React.FC = () => {
 
         setUser({ email: retEmail, role: retRole});
 
-        if (retRole === 'ShiftSupervisor') {    // Update with DB data!!!
-          navigate('/supervisor-dashboard');
+        if (retRole === 'ShiftSupervisor') {
+          navigate('/admin-dashboard');
         } else if (retRole === 'Admin') {      // THis one is done so far
           navigate('/admin-dashboard');
         } else if (retRole === 'Tester') {

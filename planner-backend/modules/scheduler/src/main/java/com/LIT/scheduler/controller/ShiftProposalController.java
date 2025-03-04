@@ -44,9 +44,19 @@ public class ShiftProposalController {
 
     // Manager retrieves all proposals
     @GetMapping
-    public ResponseEntity<List<ShiftProposal>> getAllProposals() {
+    public ResponseEntity<List<ShiftProposal>> getAllProposals(@RequestHeader("X-User-Role") String role) {
         log.info(logHeader + "getAllProposals: Getting all proposals");
+
+        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
+            log.error(logHeader + "User is not authorized to view all proposals");
+            return ResponseEntity.status(403).build();
+        }
+        
+        log.info(logHeader + "getAllProposals: Role has been verified, proceeding to get all proposals for: " + role);
+
         List<ShiftProposal> proposals = proposalService.getAllProposals();
+
+
         return ResponseEntity.ok(proposals);
     }
 
@@ -76,4 +86,3 @@ public class ShiftProposalController {
         return ResponseEntity.ok(updatedProposal);
     }
 }
-
