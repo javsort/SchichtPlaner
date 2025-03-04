@@ -1,3 +1,4 @@
+// src/pages/TechnicianDashboard.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -45,37 +46,58 @@ const TechnicianDashboard: React.FC = () => {
         <h2 className="sidebar-title">Technician Panel</h2>
         <ul className="sidebar-nav">
           <li>
-            <button onClick={() => navigate("/technician-dashboard")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/technician-dashboard")}
+              className="sidebar-btn"
+            >
               Dashboard
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/shift-view")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/shift-view")}
+              className="sidebar-btn"
+            >
               Company Shift Calendar
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/my-shifts")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/my-shifts")}
+              className="sidebar-btn"
+            >
               My Shifts
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/shift-availability")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/shift-availability")}
+              className="sidebar-btn"
+            >
               Shift Availability
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/shift-swap")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/shift-swap")}
+              className="sidebar-btn"
+            >
               Shift Swap Requests
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/notifications")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/notifications")}
+              className="sidebar-btn"
+            >
               Notifications
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/settings")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/settings")}
+              className="sidebar-btn"
+            >
               Settings
             </button>
           </li>
@@ -89,7 +111,11 @@ const TechnicianDashboard: React.FC = () => {
 
         <section className="technician-overview">
           {overviewCards.map((card, index) => (
-            <div key={index} className="technician-card" onClick={() => navigate(card.route)}>
+            <div
+              key={index}
+              className="technician-card"
+              onClick={() => navigate(card.route)}
+            >
               <h3>{card.title}</h3>
               <p>{card.description}</p>
             </div>

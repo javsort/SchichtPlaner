@@ -1,0 +1,22 @@
+.global-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: var(--main-bg, #ecf0f1); /* Uses a global theme variable */
+  }
+  
+  .site-title {
+    font-family: var(--font-primary, sans-serif);
+    color: var(--header-text, #2c3e50);
+  }
+  
+  /* Position the logo in the top right */
+  .company-logo {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    height: 50px; /* Adjust as needed */
+  }
+  

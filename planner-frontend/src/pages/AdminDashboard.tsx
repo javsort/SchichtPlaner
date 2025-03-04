@@ -10,6 +10,8 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
+      {/* If AdminSidebar is a separate component, it can have its own CSS or share the same file */}
+      <AdminSidebar />
 
       {/* Main Content */}
       <main className="admin-content">
@@ -17,41 +19,56 @@ const AdminDashboard: React.FC = () => {
           <h1>Administrator Dashboard</h1>
         </header>
 
-        <AdminSidebar />
-
         {/* Dashboard Overview */}
         <section className="admin-overview">
-          <div className="overview-card" onClick={() => navigate('/employee-management')}>
+          <div
+            className="overview-card"
+            onClick={() => navigate("/employee-management")}
+          >
             <h3>Employee Management</h3>
             <p>Add, edit, and manage employees.</p>
           </div>
 
-          <div className="overview-card" onClick={() => navigate('/shift-management')}>
+          <div
+            className="overview-card"
+            onClick={() => navigate("/shift-management")}
+          >
             <h3>Shift Management</h3>
             <p>Create, edit, and delete shifts.</p>
           </div>
 
-          <div className="overview-card" onClick={() => navigate('/shift-view')}>
+          <div
+            className="overview-card"
+            onClick={() => navigate("/shift-view")}
+          >
             <h3>Company Shift Calendar</h3>
             <p>View all scheduled shifts across the company.</p>
           </div>
 
-          <div className="overview-card" onClick={() => navigate('/shift-approval')}>
+          <div
+            className="overview-card"
+            onClick={() => navigate("/shift-approval")}
+          >
             <h3>Shift Approval</h3>
             <p>Review and approve pending shift requests.</p>
           </div>
 
-          <div className="overview-card" onClick={() => navigate('/shift-availability')}>
+          <div
+            className="overview-card"
+            onClick={() => navigate("/shift-availability")}
+          >
             <h3>Shift Availability</h3>
             <p>Set available times for shifts.</p>
           </div>
 
           {/* NEW CARD: Shift Swap Admin */}
-          <div className="overview-card" onClick={() => navigate('/shift-swap-admin')}>
+          <div
+            className="overview-card"
+            onClick={() => navigate("/shift-swap-admin")}
+          >
             <h3>Shift Swap Management</h3>
             <p>Manage shift swap requests and approvals.</p>
           </div>
-
         </section>
       </main>
     </div>
@@ -59,4 +76,3 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
-

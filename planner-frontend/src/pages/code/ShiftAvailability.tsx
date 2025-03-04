@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styling/ShiftAvailability.css";
 import SideBar from "../../components/SideBar.tsx";
-import { proposeShift } from '../../Services/api.ts';
+import { proposeShift } from "../../Services/api.ts";
 
 /** Returns an array of Date objects for each day in the given month/year. */
 function getDaysInMonth(year: number, month: number): Date[] {
@@ -139,8 +139,7 @@ const ShiftAvailability: React.FC = () => {
             </select>
           </label>
         </div>
-        <div>
-          <div className="table-container">
+        <div className="table-container">
           <table className="shift-table">
             <thead>
               <tr>
@@ -194,7 +193,6 @@ const ShiftAvailability: React.FC = () => {
         <button className="save-btn" onClick={handleSave}>
           Save
         </button>
-        </div>
       </div>
     </div>
   );

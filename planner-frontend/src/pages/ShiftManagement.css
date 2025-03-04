@@ -1,72 +1,67 @@
 /* /src/pages/ShiftManagement.css */
 .shift-management {
   margin: 20px;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-primary, Arial, sans-serif);
+  background-color: var(--main-bg, #ecf0f1);
 }
 
-.shift-management h2,
-.shift-management h3 {
+/* Calendar Filters */
+.calendar-filters {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-/* Vertical (classic) layout for the creation/edit form */
-.shift-creation {
-  max-width: 500px;
-  margin: 0 auto 30px auto;
-  padding: 15px;
-  border: 1px solid #ddd;
+.calendar-filters button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: var(--calendar-filter-bg, #eee);
   border-radius: 4px;
-  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.shift-creation form {
-  display: block;
+.calendar-filters button.active {
+  background-color: var(--button-bg, #007bff);
+  color: var(--button-text, #fff);
 }
 
-.shift-creation .form-row {
-  margin-bottom: 10px;
+/* Calendar Container */
+.calendar-container {
+  margin-bottom: 30px;
 }
 
-.shift-creation .form-group {
+/* Shift Creation Form */
+.shift-creation form > div {
   margin-bottom: 10px;
 }
 
 .shift-creation label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  color: var(--header-text, #333);
 }
 
 .shift-creation input {
   padding: 5px;
   width: 100%;
-  border: 1px solid #ccc;
+  max-width: 300px;
+  border: 1px solid var(--card-border, #ccc);
   border-radius: 4px;
 }
 
-.shift-creation .form-actions {
-  text-align: center;
-  margin-top: 10px;
-}
-
+/* Shift Creation Button */
 .shift-creation button {
   padding: 8px 16px;
-  margin: 0 5px;
-  background-color: #27ae60;
-  color: white;
+  background-color: var(--button-bg, #27ae60);
+  color: var(--button-text, white);
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.shift-creation button[type="button"] {
-  background-color: #c0392b;
-}
-
-.calendar-container {
-  margin-bottom: 30px;
-}
-
+/* Shift Overview Table */
 .shift-overview table {
   width: 100%;
   border-collapse: collapse;
@@ -75,11 +70,12 @@
 
 .shift-overview th,
 .shift-overview td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--card-border, #ddd);
   padding: 8px;
   text-align: center;
 }
 
 .shift-overview th {
-  background-color: #f2f2f2;
+  background-color: var(--card-heading, #f2f2f2);
+  color: var(--card-text, #fff);
 }

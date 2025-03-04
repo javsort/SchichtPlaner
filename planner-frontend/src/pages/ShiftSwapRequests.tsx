@@ -4,6 +4,7 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useAuth } from "../AuthContext.tsx";
+import "./ShiftSwapRequests.css"; // Updated CSS using theme variables
 
 // --------------------
 // Types
@@ -59,7 +60,7 @@ const defaultShifts: Shift[] = [
     end: new Date(2025, 1, 24, 21, 0),
     assignedEmployee: 2,
   },
-  // Added dummy shift for testing purposes (for current user John Doe)
+  // Dummy shift for testing (for current user John Doe)
   {
     id: 105,
     title: "Night Shift (Dummy)",
@@ -96,23 +97,16 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
   dummyEmployees = defaultEmployees,
 }) => {
   const { user } = useAuth();
-
-  // Fallback user if not authenticated
   const currentUser = user || { id: 1, name: "John Doe" };
 
-  // State
+  // State for form inputs
   const [selectedOwnShift, setSelectedOwnShift] = useState("");
   const [selectedTargetEmployee, setSelectedTargetEmployee] = useState("");
   const [selectedTargetShift, setSelectedTargetShift] = useState("");
   const [message, setMessage] = useState("");
   const [view, setView] = useState(Views.WEEK);
 
-  // Debug
-  console.log("currentUser:", currentUser);
-  console.log("shifts:", shifts);
-  console.log("dummyEmployees:", dummyEmployees);
-
-  // Filter target shifts
+  // Filter available target shifts based on selected target employee
   const availableTargetShifts = shifts.filter(
     (shift) => shift.assignedEmployee === Number(selectedTargetEmployee)
   );
@@ -121,8 +115,12 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
   const handleSubmitSwapRequest = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const ownShift = shifts.find((shift) => shift.id === Number(selectedOwnShift));
-    const targetShift = shifts.find((shift) => shift.id === Number(selectedTargetShift));
+    const ownShift = shifts.find(
+      (shift) => shift.id === Number(selectedOwnShift)
+    );
+    const targetShift = shifts.find(
+      (shift) => shift.id === Number(selectedTargetShift)
+    );
 
     if (!ownShift || !targetShift || !selectedTargetEmployee) {
       alert("Please select your shift, target employee, and target shift.");
@@ -155,7 +153,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
   };
 
   return (
-    <div className="container mt-4">
+    <div className="shift-swap-container">
       <h2>Request a Shift Swap</h2>
       <div className="row">
         {/* Calendar */}
@@ -173,8 +171,8 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
 
         {/* Swap Form */}
         <div className="col-md-4">
-          <form onSubmit={handleSubmitSwapRequest} className="p-3 border rounded">
-            <div className="mb-3">
+          <form onSubmit={handleSubmitSwapRequest} className="request-form">
+            <div className="form-group">
               <label>Your Shift:</label>
               <select
                 className="form-select"
@@ -193,7 +191,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
               </select>
             </div>
 
-            <div className="mb-3">
+            <div className="form-group">
               <label>Target Employee:</label>
               <select
                 className="form-select"
@@ -215,7 +213,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
             </div>
 
             {selectedTargetEmployee && (
-              <div className="mb-3">
+              <div className="form-group">
                 <label>Target Shift:</label>
                 <select
                   className="form-select"
@@ -233,7 +231,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
               </div>
             )}
 
-            <div className="mb-3">
+            <div className="form-group">
               <label>Message (optional):</label>
               <textarea
                 className="form-control"
@@ -251,9 +249,10 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
       </div>
 
       {/* Pending Requests */}
-      <div className="mt-4">
+      <div className="mt-4 request-list">
         <h3>My Pending Swap Requests</h3>
-        {swapRequests.filter((req) => req.employeeId === Number(currentUser.id)).length === 0 ? (
+        {swapRequests.filter((req) => req.employeeId === Number(currentUser.id))
+          .length === 0 ? (
           <p>No pending requests.</p>
         ) : (
           <ul className="list-group">

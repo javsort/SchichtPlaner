@@ -1,0 +1,43 @@
+/* src/pages/styling/theme.css */
+/*
+  Brand Manual from your images:
+    - Blue:   #2693FF (RGB 38, 147, 255)
+    - Green:  #5AC92D (RGB 90, 201, 45)
+    - Black:  #000000
+    - White:  #FFFFFF
+    - Gradient: Green -> Blue (135deg)
+  Fonts:
+    - Source Sans Pro (light, regular, bold)
+    - Consolas (regular, bold)
+*/
+
+:root {
+    /* Primary Brand Colors */
+    --color-blue: #2693FF;
+    --color-green: #5AC92D;
+    --color-black: #000000;
+    --color-white: #ffffff;
+  
+    /* Gradient: Green to Blue */
+    --gradient-green-blue: linear-gradient(135deg, #5AC92D 0%, #2693FF 100%);
+  
+    /* Typography */
+    --font-primary: 'Source Sans Pro', sans-serif;
+    --font-monospace: 'Consolas', monospace;
+  
+    /*
+     * Additional variables for UI usage:
+     * Sidebar, main content background, card styles, etc.
+     */
+    --sidebar-bg: #2c3e50; /* Dark sidebar background */
+    --sidebar-text: #ecf0f1; /* Light text for sidebar */
+    --sidebar-btn: #34495e;
+    --sidebar-btn-hover: #3d566e;
+    --main-bg: #ecf0f1;
+    --header-text: #2c3e50;
+    --card-bg: #ffffff;
+    --card-border: #dddddd;
+    --card-heading: #2c3e50;
+    --card-desc: #7f8c8d;
+  }
+  

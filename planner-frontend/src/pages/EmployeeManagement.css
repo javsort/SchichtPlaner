@@ -1,104 +1,108 @@
+/* Container with a maximum width and centered alignment */
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-    padding: 10px;
-  }
-  
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  /* Employee Form */
-  .employee-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-  
-  .form-row {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-row label {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .employee-form input {
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-  }
-  
-  .form-actions {
-    text-align: center;
-    margin-top: 10px;
-  }
-  
-  .employee-form button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
-  }
-  
-  .employee-form button[type="button"] {
-    background-color: #c0392b;
-  }
-  
-  .error {
-    color: red;
-    font-size: 14px;
-  }
-  
-  /* Employee Table */
-  .employee-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .employee-table th,
-  .employee-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .employee-table th {
-    background-color: #f2f2f2;
-  }
-  
-  .employee-table button {
-    margin-right: 5px;
-    padding: 5px 10px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .employee-table button:first-of-type {
-    background-color: #2980b9;
-    color: white;
-  }
-  
-  .employee-table button:last-of-type {
-    background-color: #c0392b;
-    color: white;
-  }
-  
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+  font-family: var(--font-primary, Arial, sans-serif);
+  background-color: var(--main-bg, #ecf0f1);
+}
+
+/* Employee Form */
+.employee-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid var(--card-border, #ddd);
+  border-radius: 4px;
+  background-color: var(--card-bg, #f9f9f9);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--header-text, #333);
+}
+
+.employee-form input {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid var(--card-border, #ccc);
+  border-radius: 4px;
+  width: 100%;
+  background-color: var(--card-bg, #fff);
+  color: var(--color-black, #333);
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.employee-form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: var(--button-bg, #27ae60);
+  color: var(--button-text, #fff);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background 0.3s ease;
+}
+
+.employee-form button[type="button"] {
+  background-color: var(--button-hover-bg, #c0392b);
+}
+
+/* Error messages */
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+/* Employee Table */
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.employee-table th,
+.employee-table td {
+  border: 1px solid var(--card-border, #ddd);
+  padding: 8px;
+  text-align: left;
+}
+
+.employee-table th {
+  background-color: var(--card-heading, #f2f2f2);
+  color: var(--card-text, #fff);
+}
+
+/* Table Buttons */
+.employee-table button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.employee-table button:first-of-type {
+  background-color: var(--button-bg, #2980b9);
+  color: var(--button-text, #fff);
+}
+
+.employee-table button:last-of-type {
+  background-color: var(--button-hover-bg, #c0392b);
+  color: var(--button-text, #fff);
+}

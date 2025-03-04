@@ -1,14 +1,19 @@
 // src/App.tsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import "./index.css";
+
+/* 1) Import your theme and global styles here */
+import "./pages/styling/theme.css";
+import "./pages/styling/global.css";
+
+/* 2) If you still want Bootstrap, keep this import */
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// Import pages with explicit extensions
+/* 3) Import your pages */
 import Login from "./pages/code/Login.tsx";
 import Register from "./pages/Register.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
-import CreateShift from "./pages/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
+import CreateShift from "./pages/ShiftCreationForm.tsx";
 import Employees from "./pages/Employees.tsx";
 import Shifts from "./pages/Shifts.tsx";
 import ShiftManagement from "./pages/ShiftManagement.tsx";
@@ -22,18 +27,21 @@ import ShiftSwapAdmin from "./pages/ShiftSwapAdmin.tsx";
 import ShiftSupervisorDashboard from "./pages/ShiftSupervisorDashboard.tsx";
 import EmployeeDashboard from "./pages/EmployeeDashboard.tsx";
 import MyShifts from "./pages/MyShifts.tsx";
-
 import TesterDashboard from "./pages/TesterDashboard.tsx";
 import TechnicianDashboard from "./pages/TechnicianDashboard.tsx";
 
-// Import Auth Context and PrivateRoute with explicit extensions
+/* 4) Import Auth context and PrivateRoute */
 import { AuthProvider } from "./AuthContext.tsx";
 import PrivateRoute from "./pages/PrivateRoute.tsx";
+
+/* 5) Import Global Header component */
+import Header from "./components/Header.tsx";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
+        <Header />  {/* Global header with company logo */}
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
@@ -49,8 +57,8 @@ const App: React.FC = () => {
             <Route path="/shift-swap-admin" element={<ShiftSwapAdmin />} />
             <Route path="/shift-supervisor-dashboard" element={<ShiftSupervisorDashboard />} />
             <Route element={<PrivateRoute allowedRoles={["Employee", "Technician", "Tester"]} />}>
-  <Route path="/my-shifts" element={<MyShifts />} />
-</Route>
+              <Route path="/my-shifts" element={<MyShifts />} />
+            </Route>
           </Route>
 
           {/* Protected Routes Group: Shift Supervisor & Extra Role */}
@@ -77,14 +85,10 @@ const App: React.FC = () => {
             <Route path="/shift-swap" element={<ShiftSwapRequests />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/shifts" element={<Shifts />} />
-            
             <Route path="/shift-availability" element={<ShiftAvailability />} />
-
             <Route path="/shift-view" element={<CompanyShiftCalendar />} />
-            {/* New routes for Tester and Technician dashboards */}
             <Route path="/tester-dashboard" element={<TesterDashboard />} />
             <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
-            {/* New route for Employee Dashboard */}
             <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
           </Route>
 

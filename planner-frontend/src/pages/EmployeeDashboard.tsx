@@ -1,3 +1,4 @@
+// src/pages/EmployeeDashboard.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -65,7 +66,10 @@ const EmployeeDashboard: React.FC = () => {
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/shift-availability")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/shift-availability")}
+              className="sidebar-btn"
+            >
               Shift Availability
             </button>
           </li>
@@ -75,7 +79,10 @@ const EmployeeDashboard: React.FC = () => {
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/notifications")} className="sidebar-btn">
+            <button
+              onClick={() => navigate("/notifications")}
+              className="sidebar-btn"
+            >
               Notifications
             </button>
           </li>

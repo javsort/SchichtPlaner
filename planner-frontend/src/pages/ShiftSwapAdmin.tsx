@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import "./ShiftSwapAdmin.css"; // Ensure this file exists (even if empty for now)
+import "./ShiftSwapAdmin.css"; // Updated CSS using theme variables
 
 // --------------------
 // Data Types
@@ -90,18 +90,17 @@ const initialSwapRequests: SwapRequest[] = [
 ];
 
 // --------------------
-// Props Interface
-// --------------------
-interface ShiftSwapAdminProps {
-  initialRequests?: SwapRequest[];
-}
-
-// --------------------
 // Component
 // --------------------
 const localizer = momentLocalizer(moment);
 
-const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initialSwapRequests }) => {
+interface ShiftSwapAdminProps {
+  initialRequests?: SwapRequest[];
+}
+
+const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({
+  initialRequests = initialSwapRequests,
+}) => {
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialRequests);
   const [view, setView] = useState(Views.WEEK);
 

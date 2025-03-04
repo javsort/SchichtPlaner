@@ -1,0 +1,39 @@
+/* /src/pages/ShiftSwapAdmin.css */
+
+/* Container styles */
+.shift-swap-admin-container {
+    padding: 20px;
+    font-family: var(--font-primary, Arial, sans-serif);
+    background-color: var(--main-bg, #ecf0f1);
+  }
+  
+  /* Heading styles */
+  .shift-swap-admin-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--header-text, #2c3e50);
+  }
+  
+  /* (Optional) Override Bootstrap table styles if desired */
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--card-bg, #ffffff);
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid var(--card-border, #ddd);
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .table th {
+    background-color: var(--card-heading, #f2f2f2);
+    color: var(--card-text, #fff);
+  }
+  
+  /* Approved row styling */
+  .approved-row {
+    background-color: var(--button-bg, #27ae60) !important;
+    color: var(--button-text, #ffffff);
+  }
+  

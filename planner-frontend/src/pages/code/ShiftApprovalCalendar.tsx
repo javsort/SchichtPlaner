@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+// src/pages/ShiftApprovalCalendar.jsx
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "../styling/ShiftApprovalCalendar.css";
+import "../styling/ShiftApprovalCalendar.css"; // Custom CSS using theme variables
 import { fetchShifts, approveShift } from "../../Services/api.ts";
 import AdminSidebar from "../../components/AdminSidebar.tsx";
 
@@ -11,12 +12,12 @@ const localizer = momentLocalizer(moment);
 const ShiftApprovalCalendar = () => {
   // State for pending shifts fetched from API
   const [pendingRequests, setPendingRequests] = useState([]);
-  
   // State for approved shifts
   const [approvedShifts, setApprovedShifts] = useState([]);
-  
   // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
+  // Filter state if needed (not used in this component but you may add later)
+  // const [calendarFilter, setCalendarFilter] = useState("all");
 
   // Fetch shifts when the component mounts
   useEffect(() => {
@@ -30,12 +31,16 @@ const ShiftApprovalCalendar = () => {
           title: shift.proposedTitle || "Unnamed Shift",
           start: new Date(shift.proposedStartTime),
           end: new Date(shift.proposedEndTime),
-          status: shift.status
+          status: shift.status,
         }));
 
         // Filter shifts based on status
-        const pending = formattedShifts.filter(shift => shift.status === "PROPOSED");
-        const approved = formattedShifts.filter(shift => shift.status === "APPROVED");
+        const pending = formattedShifts.filter(
+          (shift) => shift.status === "PROPOSED"
+        );
+        const approved = formattedShifts.filter(
+          (shift) => shift.status === "APPROVED"
+        );
 
         setPendingRequests(pending);
         setApprovedShifts(approved);
@@ -49,23 +54,23 @@ const ShiftApprovalCalendar = () => {
   const handleApprove = async (id) => {
     try {
       const approvedShift = await approveShift(id);
-  
+
       if (approvedShift.status === "ACCEPTED") {
         // Update state: remove from pending and add to approved
         setPendingRequests(pendingRequests.filter((req) => req.id !== id));
-  
+
         setApprovedShifts((prevApproved) => [
           ...prevApproved,
           {
             id: approvedShift.id,
-            employee: `Employee ${approvedShift.employeeId}`, // Replace if actual name is available
+            employee: `Employee ${approvedShift.employeeId}`, // Replace if actual name available
             title: approvedShift.proposedTitle || "Unnamed Shift",
             start: new Date(approvedShift.proposedStartTime),
             end: new Date(approvedShift.proposedEndTime),
-            status: approvedShift.status, 
+            status: approvedShift.status,
           },
         ]);
-  
+
         console.log(`Shift ${id} approved successfully`);
       }
     } catch (error) {
@@ -80,10 +85,10 @@ const ShiftApprovalCalendar = () => {
     title: `${shift.title} - ${shift.employee}`,
   }));
 
-  // Custom event style getter for the calendar
+  // Optional event styling using CSS variables (fallback to hardcoded value if needed)
   const eventStyleGetter = (event) => ({
     style: {
-      backgroundColor: "#27ae60", // Green for approved shifts
+      backgroundColor: "var(--button-bg, #27ae60)",
       borderRadius: "5px",
       opacity: 0.9,
       color: "white",
@@ -91,13 +96,31 @@ const ShiftApprovalCalendar = () => {
     },
   });
 
+  // File import reference and handlers (for demonstration)
+  const fileInputRef = useRef(null);
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log("Imported file contents:", e.target.result);
+      // parse and update data as needed
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="shift-approval-layout">
       <AdminSidebar />
       <div className="shift-approval-content">
         <h2>Shift Approval</h2>
 
-        {/* Calendar View Selector */}
+        {/* Calendar View Selector (if needed, you can move this into CSS) */}
         <div className="view-selector">
           <label htmlFor="calendar-view">Calendar View: </label>
           <select
@@ -112,22 +135,7 @@ const ShiftApprovalCalendar = () => {
           </select>
         </div>
 
-        {/* Calendar 
-        <div className="calendar-container" style={{ height: "500px" }}>
-          <Calendar
-            localizer={localizer}
-            events={calendarEvents}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500 }}
-            view={view}
-            onView={(newView) => setView(newView)}
-            eventPropGetter={eventStyleGetter}
-            min={new Date(1970, 1, 1, 0, 0)}
-            max={new Date(1970, 1, 1, 23, 59)}
-          />
-        </div>*/}
-
+        {/* Calendar */}
         <div className="calendar-container">
           <Calendar
             localizer={localizer}
@@ -165,7 +173,9 @@ const ShiftApprovalCalendar = () => {
                   {moment(req.end).format("hh:mm A")}
                 </td>
                 <td>
-                  <button onClick={() => handleApprove(req.id)}>Approve</button>
+                  <button className="approve-btn" onClick={() => handleApprove(req.id)}>
+                    Approve
+                  </button>
                 </td>
               </tr>
             ))}
@@ -178,6 +188,15 @@ const ShiftApprovalCalendar = () => {
             )}
           </tbody>
         </table>
+
+        {/* Hidden file input for data import */}
+        <input
+          type="file"
+          accept=".csv, .xlsx, .xls"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
       </div>
     </div>
   );
