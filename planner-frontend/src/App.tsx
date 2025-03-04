@@ -8,23 +8,23 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./pages/general/Login.tsx";
 import Register from "./pages/general/Register.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
-import CreateShift from "./pages/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
-import Employees from "./pages/Employees.tsx";
-import Shifts from "./pages/Shifts.tsx";
-import ShiftManagement from "./pages/ShiftManagement.tsx";
-import ShiftAvailability from "./pages/code/ShiftAvailability.tsx";
-import CompanyShiftCalendar from "./pages/code/CompanyShiftCalendar.tsx";
+import CreateShift from "./pages/admin/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
+import Employees from "./pages/admin/Employees.tsx";
+import Shifts from "./pages/employee/Shifts.tsx";
+import ShiftManagement from "./pages/admin/ShiftManagement.tsx";
+import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
+import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
 import NotAuthorized from "./pages/general/NotAuthorized.tsx";
-import ShiftSwapRequests from "./pages/ShiftSwapRequests.tsx";
+import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
 import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
 import ShiftSupervisorDashboard from "./pages/admin/ShiftSupervisorDashboard.tsx";
-import EmployeeDashboard from "./pages/EmployeeDashboard.tsx";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard.tsx";
 import MyShifts from "./pages/MyShifts.tsx";
 
-import TesterDashboard from "./pages/TesterDashboard.tsx";
-import TechnicianDashboard from "./pages/TechnicianDashboard.tsx";
+import TesterDashboard from "./pages/employee/TesterDashboard.tsx";
+import TechnicianDashboard from "./pages/employee/TechnicianDashboard.tsx";
 
 // Import Auth Context and PrivateRoute with explicit extensions
 import { AuthProvider } from "./AuthContext.tsx";
@@ -43,7 +43,7 @@ const App: React.FC = () => {
           <Route path="/my-shifts" element={<MyShifts />} />
 
           {/* Protected Routes Group: Admin & Shift Supervisor */}
-          <Route element={<PrivateRoute allowedRoles={["Admin", "Shift Supervisor"]} />}>
+          <Route element={<PrivateRoute allowedRoles={["Admin", "ShiftSupervisor"]} />}>
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/employee-management" element={<EmployeeManagement />} />
             <Route path="/shift-approval" element={<ShiftApprovalCalendar />} />
@@ -55,7 +55,7 @@ const App: React.FC = () => {
           </Route>
 
         {/* Protected Routes Group: Shift Supervisor & Extra Role */}
-        <Route element={<PrivateRoute allowedRoles={["Shift Supervisor", "Extra Role"]} />}>
+        <Route element={<PrivateRoute allowedRoles={["ShiftSupervisor", "Extra Role"]} />}>
           <Route path="/create-shift" element={<CreateShift />} />
           <Route path="/shift-management" element={<ShiftManagement />} />
         </Route>
@@ -66,7 +66,7 @@ const App: React.FC = () => {
             <PrivateRoute
               allowedRoles={[
                 "Admin",
-                "Shift Supervisor",
+                "ShiftSupervisor",
                 "Technician",
                 "Tester",
                 "Incident Manager",

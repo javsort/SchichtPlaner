@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styling/ShiftAvailability.css";
+import "./ShiftAvailability.css";
 import SideBar from "../../components/SideBar.tsx";
 import { proposeShift } from '../../Services/api.ts';
 
