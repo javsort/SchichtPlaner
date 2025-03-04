@@ -101,3 +101,5 @@ networks:
 
 volumes:
   planner_db:
+    name: schicht-planer-lit_planner_db
+    external: true
