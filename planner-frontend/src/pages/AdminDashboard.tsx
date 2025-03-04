@@ -1,82 +1,23 @@
-// /src/pages/AdminDashboard.tsx
-import React from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './AdminDashboard.css';
-
-// Ensure baseUrl is a string (fallback to an empty string if not defined)
-const baseUrl: string = process.env.REACT_APP_API_BASE_URL || '';
+// src/pages/AdminDashboard.tsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./AdminDashboard.css";
+import AdminSidebar from "../components/AdminSidebar.tsx";
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  // Type the event parameter as a MouseEvent from a button
-  const testEndpoint = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
-    e.preventDefault();
-
-    console.log('Testing API Endpoint... URL:', `${baseUrl}/api/hello`);
-
-    try {
-      const response = await axios.get(`${baseUrl}/api/hello`, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Provide a default empty string if no token is found
-          'Authorization': localStorage.getItem('token') || ''
-        }
-      });
-      
-      // Log the data from the API response
-      console.log('API Response:', response.data);
-    } catch (error) {
-      console.error('API Error:', error);
-    }
-  };
-
   return (
     <div className="admin-dashboard-container">
       {/* Sidebar Navigation */}
-      <aside className="admin-sidebar">
-        <h2 className="sidebar-title">Admin Panel</h2>
-        <ul className="sidebar-nav">
-          <li>
-            <button onClick={() => navigate('/employee-management')} className="sidebar-btn">
-              Employee Management
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-management')} className="sidebar-btn">
-              Shift Management
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-view')} className="sidebar-btn">
-              Company Shift Calendar
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-approval')} className="sidebar-btn">
-              Shift Approval
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigate('/shift-availability')} className="sidebar-btn">
-              Shift Availability
-            </button>
-          </li>
-          {/* Button to test the backend connection */}
-          <li>
-            <button type="button" onClick={testEndpoint} className="action-btn">
-              Test Backend Connection
-            </button>
-          </li>
-        </ul>
-      </aside>
 
       {/* Main Content */}
       <main className="admin-content">
         <header className="admin-header">
           <h1>Administrator Dashboard</h1>
         </header>
+
+        <AdminSidebar />
 
         {/* Dashboard Overview */}
         <section className="admin-overview">
@@ -94,7 +35,7 @@ const AdminDashboard: React.FC = () => {
             <h3>Company Shift Calendar</h3>
             <p>View all scheduled shifts across the company.</p>
           </div>
-          
+
           <div className="overview-card" onClick={() => navigate('/shift-approval')}>
             <h3>Shift Approval</h3>
             <p>Review and approve pending shift requests.</p>
@@ -104,6 +45,13 @@ const AdminDashboard: React.FC = () => {
             <h3>Shift Availability</h3>
             <p>Set available times for shifts.</p>
           </div>
+
+          {/* NEW CARD: Shift Swap Admin */}
+          <div className="overview-card" onClick={() => navigate('/shift-swap-admin')}>
+            <h3>Shift Swap Management</h3>
+            <p>Manage shift swap requests and approvals.</p>
+          </div>
+
         </section>
       </main>
     </div>
@@ -111,17 +59,4 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -12,8 +12,8 @@ public class ShiftMapper {
         return ShiftDTO.builder()
             .id(shift.getId())
             .title(shift.getTitle())
-            .startTime(shift.getStartTime()) // now timestamp
-            .endTime(shift.getEndTime())     // now timestamp
+            .startTime(shift.getStartTime())
+            .endTime(shift.getEndTime())
             .build();
     }
 
@@ -24,8 +24,8 @@ public class ShiftMapper {
         return Shift.builder()
             .id(dto.getId())
             .title(dto.getTitle())
-            .startTime(dto.getStartTime()) // expects a java.sql.Timestamp
-            .endTime(dto.getEndTime())     // expects a java.sql.Timestamp
+            .startTime(dto.getStartTime())
+            .endTime(dto.getEndTime())     
             .build();
     }
 }

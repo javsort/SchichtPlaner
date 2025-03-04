@@ -68,4 +68,17 @@ jobs:
       - name: Re-deploy container
         run: |
           echo "Re-deploying the container..."
-          docker compose -f schichtconfig/docker/docker-compose.yml up -d ${{ github.event.inputs.container-to-redeploy }}
+
+          if [ "${{ github.event.inputs.container-to-redeploy }}" = "planner-mariadb" ]; then
+            echo "Stopping and removing planner-mariadb..."
+            docker compose -f schichtconfig/docker/docker-compose.yml down planner-mariadb
+
+            echo "Removing planner_db volume..."
+            docker volume rm schicht-planer-lit_planner_db
+
+            echo "Starting planner-mariadb..."
+            docker compose -f schichtconfig/docker/docker-compose.yml up -d planner-mariadb
+          else
+            echo "Re-deploying ${{ github.event.inputs.container-to-redeploy }}..."
+            docker compose -f schichtconfig/docker/docker-compose.yml up -d ${{ github.event.inputs.container-to-redeploy }}
+          fi

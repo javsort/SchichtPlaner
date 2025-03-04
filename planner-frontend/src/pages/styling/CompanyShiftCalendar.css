@@ -1,31 +1,50 @@
 /* /src/pages/CompanyShiftCalendar.css */
-.company-shift-calendar {
-    margin: 20px;
-    font-family: Arial, sans-serif;
+  .company-shift-calendar {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
   }
   
   .company-shift-calendar h2 {
     text-align: center;
+    font-size: 24px;
+    color: #2c3e50;
     margin-bottom: 20px;
   }
-  
+ 
+  .calendar-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto;
+    min-width: 0;
+  }
+
   .calendar-filters {
     text-align: center;
     margin-bottom: 10px;
   }
   
   .calendar-filters button {
-    margin: 0 5px;
-    padding: 8px 12px;
+    background-color: #3174ad;
+    color: white;
     border: none;
-    background-color: #eee;
-    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background 0.3s ease-in-out;
   }
   
   .calendar-filters button.active {
-    background-color: #007bff;
-    color: #fff;
+    background-color: #1e5b8c;
+  }
+
+  .calendar-filters button:hover {
+    background-color: #265f96;
   }
   
   .calendar-container {

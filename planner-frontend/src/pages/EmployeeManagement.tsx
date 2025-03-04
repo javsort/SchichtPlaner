@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../AuthContext.tsx";
 import "./EmployeeManagement.css";
 
-const EmployeeManagement = () => {
+// Define a props interface with an optional allowDelete flag.
+interface EmployeeManagementProps {
+  allowDelete?: boolean;
+}
+
+const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = false }) => {
+  const { user } = useAuth(); // Get the current user
   const {
     register,
     handleSubmit,
@@ -11,7 +18,7 @@ const EmployeeManagement = () => {
     formState: { errors },
   } = useForm();
 
-  // Pre-populated list of 4 employees
+  // Pre-populated list of employees
   const [employees, setEmployees] = useState([
     {
       id: 1,
@@ -52,10 +59,10 @@ const EmployeeManagement = () => {
   ]);
 
   // When editing, store the employee id; null means adding a new employee.
-  const [editingEmployeeId, setEditingEmployeeId] = useState(null);
+  const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
 
   // Handle form submission for adding/updating an employee
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     const employeeData = {
       ...data,
       absences: Number(data.absences),
@@ -78,7 +85,7 @@ const EmployeeManagement = () => {
   };
 
   // Pre-fill the form with an employee's data for editing
-  const editEmployee = (emp) => {
+  const editEmployee = (emp: any) => {
     setEditingEmployeeId(emp.id);
     setValue("name", emp.name);
     setValue("address", emp.address);
@@ -88,8 +95,8 @@ const EmployeeManagement = () => {
     setValue("absences", emp.absences);
   };
 
-  // Delete an employee (for this demo, deletion is allowed for all)
-  const deleteEmployee = (id) => {
+  // Delete an employee
+  const deleteEmployee = (id: number) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       setEmployees(employees.filter((emp) => emp.id !== id));
     }
@@ -109,7 +116,6 @@ const EmployeeManagement = () => {
           />
           {errors.name && <p className="error">{errors.name.message}</p>}
         </div>
-
         <div className="form-row">
           <label>Address:</label>
           <input
@@ -118,7 +124,6 @@ const EmployeeManagement = () => {
           />
           {errors.address && <p className="error">{errors.address.message}</p>}
         </div>
-
         <div className="form-row">
           <label>Phone Number:</label>
           <input
@@ -130,7 +135,6 @@ const EmployeeManagement = () => {
           />
           {errors.phone && <p className="error">{errors.phone.message}</p>}
         </div>
-
         <div className="form-row">
           <label>E-mail Address:</label>
           <input
@@ -142,7 +146,6 @@ const EmployeeManagement = () => {
           />
           {errors.email && <p className="error">Invalid Email</p>}
         </div>
-
         <div className="form-row">
           <label>Role:</label>
           <input
@@ -151,7 +154,6 @@ const EmployeeManagement = () => {
           />
           {errors.role && <p className="error">{errors.role.message}</p>}
         </div>
-
         <div className="form-row">
           <label>Number of Absences:</label>
           <input
@@ -161,7 +163,6 @@ const EmployeeManagement = () => {
           />
           {errors.absences && <p className="error">{errors.absences.message}</p>}
         </div>
-
         <div className="form-actions">
           <button type="submit">
             {editingEmployeeId ? "Update Employee" : "Add Employee"}
@@ -204,7 +205,10 @@ const EmployeeManagement = () => {
               <td>{emp.absences}</td>
               <td>
                 <button onClick={() => editEmployee(emp)}>Edit</button>
-                <button onClick={() => deleteEmployee(emp.id)}>Delete</button>
+                {/* Only render the delete button if allowDelete is true and the logged-in user is an Administrator */}
+                {allowDelete && user?.role === "Administrator" && (
+                  <button onClick={() => deleteEmployee(emp.id)}>Delete</button>
+                )}
               </td>
             </tr>
           ))}
