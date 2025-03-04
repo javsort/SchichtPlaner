@@ -1,7 +1,7 @@
 // ShiftCreationForm.test.jsx
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ShiftCreationForm from './ShiftCreationForm';
+import ShiftCreationForm from '../admin/ShiftCreationForm';
 
 describe('ShiftCreationForm', () => {
   test('renders the form fields and submit button', () => {

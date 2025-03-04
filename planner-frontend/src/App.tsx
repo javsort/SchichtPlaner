@@ -4,27 +4,32 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// Import pages with explicit extensions
+// Paths to general pages
 import Login from "./pages/general/Login.tsx";
 import Register from "./pages/general/Register.tsx";
+import NotAuthorized from "./pages/general/NotAuthorized.tsx";
+
+// Paths to admin/shift supervisor only
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import CreateShift from "./pages/admin/ShiftCreationForm.tsx"; // Assuming you want ShiftCreationForm as CreateShift
 import Employees from "./pages/admin/Employees.tsx";
-import Shifts from "./pages/employee/Shifts.tsx";
 import ShiftManagement from "./pages/admin/ShiftManagement.tsx";
-import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
-import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
-import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
-import NotAuthorized from "./pages/general/NotAuthorized.tsx";
-import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
 import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
 import ShiftSupervisorDashboard from "./pages/admin/ShiftSupervisorDashboard.tsx";
-import EmployeeDashboard from "./pages/employee/EmployeeDashboard.tsx";
-import MyShifts from "./pages/MyShifts.tsx";
+import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
 
+// Paths to employees
+import Shifts from "./pages/employee/Shifts.tsx";
+import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
+import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
+import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard.tsx";
 import TesterDashboard from "./pages/employee/TesterDashboard.tsx";
 import TechnicianDashboard from "./pages/employee/TechnicianDashboard.tsx";
+
+// Still to organize:
+import MyShifts from "./pages/MyShifts.tsx";
 
 // Import Auth Context and PrivateRoute with explicit extensions
 import { AuthProvider } from "./AuthContext.tsx";
