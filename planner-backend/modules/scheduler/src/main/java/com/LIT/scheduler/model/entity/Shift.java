@@ -1,6 +1,5 @@
 package com.LIT.scheduler.model.entity;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -31,8 +30,17 @@ public class Shift {
     private String title;
 
     @Column(nullable = false)
-    private Timestamp startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private Timestamp endTime;
+    private LocalDateTime endTime;
+
+    @Column(nullable = false)
+    private String userName;
+
+    @Column(name = "employee_id")
+    private Long assignedEmployeeId;
+    
+    @Column(name = "employee_name")
+    private String assignedEmployeeName;
 }
