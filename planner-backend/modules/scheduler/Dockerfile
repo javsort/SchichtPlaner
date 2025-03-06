@@ -12,11 +12,4 @@ COPY planner-backend/modules/scheduler/target/scheduler-1.0-SNAPSHOT.jar /app/sc
 # Expose port:
 EXPOSE 8080
 
-COPY schichtconfig/automation-scripts/jumpstart-backend.sh /app/jumpstart-backend.sh
-
-RUN sed -i 's/\r$//' /app/jumpstart-backend.sh
-
-RUN chmod +x /app/jumpstart-backend.sh
-
-# Run the script
-CMD ["/app/jumpstart-backend.sh", "scheduler"]
+ENTRYPOINT [ "java", "-jar", "scheduler-1.0-SNAPSHOT.jar" ]

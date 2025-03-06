@@ -12,11 +12,4 @@ COPY planner-backend/modules/statistics/target/statistics-1.0-SNAPSHOT.jar /app/
 # Expose port:
 EXPOSE 8083
 
-COPY schichtconfig/automation-scripts/jumpstart-backend.sh /app/jumpstart-backend.sh
-
-RUN sed -i 's/\r$//' /app/jumpstart-backend.sh
-
-RUN chmod +x /app/jumpstart-backend.sh
-
-# Run the script
-CMD ["/app/jumpstart-backend.sh", "statistics"]
+ENTRYPOINT [ "java", "-jar", "statistics-1.0-SNAPSHOT.jar" ]

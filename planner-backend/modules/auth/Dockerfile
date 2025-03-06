@@ -12,11 +12,4 @@ COPY planner-backend/modules/auth/target/auth-1.0-SNAPSHOT.jar /app/auth-1.0-SNA
 # Expose port:
 EXPOSE 8082
 
-COPY schichtconfig/automation-scripts/jumpstart-backend.sh /app/jumpstart-backend.sh
-
-RUN sed -i 's/\r$//' /app/jumpstart-backend.sh
-
-RUN chmod +x /app/jumpstart-backend.sh
-
-# Run the script
-CMD ["/app/jumpstart-backend.sh", "auth"]
+ENTRYPOINT [ "java", "-jar", "auth-1.0-SNAPSHOT.jar" ]
