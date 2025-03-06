@@ -111,6 +111,27 @@ export const login = async (email: string, password: string) => {
   }
 };
 
+// Shifts
+export const fetchShifts = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/scheduler/shifts`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    console.log('Shifts fetched successfully', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
 // Shift proposal
 /*
   Body sample expected in the backend:
@@ -157,7 +178,7 @@ export const proposeShift = async (employeeId: number, proposedTitle: string, pr
   }
 };
 
-export const fetchShifts = async () => {
+export const fetchProposalShifts = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals`, {
       headers: {

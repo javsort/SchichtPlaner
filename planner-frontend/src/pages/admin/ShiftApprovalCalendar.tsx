@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./ShiftApprovalCalendar.css";
-import { fetchShifts, approveShift } from "../../Services/api.ts";
+import { fetchProposalShifts, approveShift } from "../../Services/api.ts";
 import AdminSidebar from "../../components/AdminSidebar.tsx";
 
 const localizer = momentLocalizer(moment);
@@ -21,7 +21,7 @@ const ShiftApprovalCalendar = () => {
   // Fetch shifts when the component mounts
   useEffect(() => {
     const getShifts = async () => {
-      const shifts = await fetchShifts();
+      const shifts = await fetchProposalShifts();
       if (shifts.length > 0) {
         // Map API response to the format used in the component
         const formattedShifts = shifts.map((shift) => ({

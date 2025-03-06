@@ -1,5 +1,7 @@
 package com.LIT.scheduler.service;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.repository.ShiftRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -22,6 +25,31 @@ public class ShiftService {
     public ShiftService(ShiftRepository shiftRepository) {
         this.shiftRepository = shiftRepository;
     }
+
+    @PostConstruct
+public void initializeDummyShifts() {
+    log.info(logHeader + "initializeDummyShifts: Initializing dummy shifts. Starting with shifts...");
+
+    if (shiftRepository.count() == 0) {
+        shiftRepository.saveAll(List.of(
+            Shift.builder()
+                .title("Test Shift")
+                .startTime(LocalDateTime.of(2025, Month.MARCH, 5, 8, 0))
+                .endTime(LocalDateTime.of(2025, Month.MARCH, 5, 16, 0))
+                .build(),
+            Shift.builder()
+                .title("Test Shift II")
+                .startTime(LocalDateTime.of(2025, Month.MARCH, 6, 8, 0))
+                .endTime(LocalDateTime.of(2025, Month.MARCH, 6, 16, 0))
+                .build(),
+            Shift.builder()
+                .title("Test Shift III")
+                .startTime(LocalDateTime.of(2025, Month.MARCH, 7, 8, 0))
+                .endTime(LocalDateTime.of(2025, Month.MARCH, 7, 16, 0))
+                .build()
+        ));
+    }
+}
 
     public List<Shift> getAllShifts() {
         log.info(logHeader + "getAllShifts: Getting all shifts");
