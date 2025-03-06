@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "../styling/CompanyShiftCalendar.css"; // Custom CSS if needed
+import "./CompanyShiftCalendar.css"; // Custom CSS if needed
 import SideBar from "../../components/SideBar.tsx"; // Adjust import if needed
 
 // Initialize the localizer for react-big-calendar

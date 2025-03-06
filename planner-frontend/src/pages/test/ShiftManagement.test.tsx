@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./ShiftManagement.css"; // Ensure you have your custom styling here
+import "../admin/ShiftManagement.css"; // Ensure you have your custom styling here
 
 // Dummy data for shifts and employees (for demo purposes)
 interface Shift {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "../styling/ShiftApprovalCalendar.css";
+import "./ShiftApprovalCalendar.css";
 import { fetchShifts, approveShift } from "../../Services/api.ts";
 import AdminSidebar from "../../components/AdminSidebar.tsx";
 
