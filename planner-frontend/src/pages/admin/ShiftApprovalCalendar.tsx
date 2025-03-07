@@ -43,7 +43,9 @@ const ShiftApprovalCalendar = () => {
     try {
       const fetchedPendingShifts = await fetchProposalShifts();
       if (fetchedPendingShifts.length > 0) {
-        const formattedPendingShifts = fetchedPendingShifts.map((shift) => ({
+        const formattedPendingShifts = fetchedPendingShifts
+        .filter((shift) => shift.status !== "ACCEPTED") // Filter only proposed shifts
+        .map((shift) => ({
           id: shift.id,
           employee: shift.employeeId ? `Employee ${shift.employeeId}` : "Unknown Employee",
           title: shift.proposedTitle || "Unnamed Shift",
