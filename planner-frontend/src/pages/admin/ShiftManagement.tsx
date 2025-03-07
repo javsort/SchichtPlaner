@@ -1,9 +1,9 @@
-// /src/pages/ShiftManagement.jsx
+// src/pages/ShiftManagement.jsx
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./ShiftManagement.css"; // Updated CSS for styling
+import "./ShiftManagement.css";
 
 const localizer = momentLocalizer(moment);
 
@@ -20,7 +20,6 @@ const isOverlap = (startA, endA, startB, endB) => {
 };
 
 const ShiftManagement = ({ currentUser = { id: 1 } }) => {
-  // State for shifts: each shift has id, title, start, end, rolesRequired, assignedEmployees
   const [shifts, setShifts] = useState([
     {
       id: 101,
@@ -40,10 +39,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     },
   ]);
 
-  // Calendar view state (Week view for time-axis)
   const [view, setView] = useState(Views.WEEK);
-
-  // Shift filter state: "all", "my", or "unoccupied"
   const [calendarFilter, setCalendarFilter] = useState("all");
 
   // State for the shift creation/edit form
@@ -55,11 +51,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     assignedEmployees: "",
   });
 
-  // Editing mode state
   const [isEditing, setIsEditing] = useState(false);
   const [editingShiftId, setEditingShiftId] = useState(null);
 
-  // Filter shifts based on the selected calendar filter
   const filteredShifts = shifts.filter((shift) => {
     if (calendarFilter === "my") {
       return shift.assignedEmployees.includes(currentUser.id);
@@ -69,7 +63,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     return true;
   });
 
-  // Prepare events for the calendar view (update title with assigned employee names)
   const calendarEvents = filteredShifts.map((shift) => ({
     ...shift,
     title:
@@ -78,16 +71,16 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       (shift.assignedEmployees && shift.assignedEmployees.length > 0
         ? shift.assignedEmployees
             .map(
-              (id) => dummyEmployees.find((emp) => emp.id === id)?.name || id
+              (id) =>
+                dummyEmployees.find((emp) => emp.id === id)?.name || id
             )
             .join(", ")
         : "Unassigned") +
       ")",
   }));
 
-  // Custom event style getter (example: different color for Supervisor-required shifts)
   const eventStyleGetter = (event) => {
-    let backgroundColor = "#3174ad"; // Default blue
+    let backgroundColor = "#3174ad";
     if (event.rolesRequired.includes("Supervisor")) {
       backgroundColor = "#2980b9";
     } else if (event.rolesRequired.includes("Technician")) {
@@ -104,11 +97,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     };
   };
 
-  // Handle form submission: add new shift or update existing one
   const handleAddOrUpdateShift = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!newShift.title || !newShift.start || !newShift.end) {
       alert("Please fill out all required fields.");
       return;
@@ -129,7 +120,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       .map((s) => Number(s.trim()))
       .filter((id) => !isNaN(id));
 
-    // Conflict checking: for each assigned employee, check for overlapping shifts
     let conflictFound = false;
     assignedEmployees.forEach((empId) => {
       shifts.forEach((existingShift) => {
@@ -149,7 +139,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     if (conflictFound) return;
 
     if (isEditing) {
-      // Update the existing shift
       setShifts(
         shifts.map((shift) =>
           shift.id === editingShiftId
@@ -160,7 +149,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       setIsEditing(false);
       setEditingShiftId(null);
     } else {
-      // Add a new shift
       const newShiftEvent = {
         id: Date.now(),
         title: newShift.title,
@@ -171,11 +159,15 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       };
       setShifts([...shifts, newShiftEvent]);
     }
-    // Reset the form
-    setNewShift({ title: "", start: "", end: "", rolesRequired: "", assignedEmployees: "" });
+    setNewShift({
+      title: "",
+      start: "",
+      end: "",
+      rolesRequired: "",
+      assignedEmployees: "",
+    });
   };
 
-  // Handle editing a shift: pre-fill the form with shift details
   const handleEditShift = (shift) => {
     setNewShift({
       title: shift.title,
@@ -188,14 +180,19 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     setEditingShiftId(shift.id);
   };
 
-  // Handle deletion of a shift
   const handleDeleteShift = (shiftId) => {
     if (window.confirm("Are you sure you want to delete this shift?")) {
       setShifts(shifts.filter((shift) => shift.id !== shiftId));
       if (isEditing && editingShiftId === shiftId) {
         setIsEditing(false);
         setEditingShiftId(null);
-        setNewShift({ title: "", start: "", end: "", rolesRequired: "", assignedEmployees: "" });
+        setNewShift({
+          title: "",
+          start: "",
+          end: "",
+          rolesRequired: "",
+          assignedEmployees: "",
+        });
       }
     }
   };
@@ -204,95 +201,122 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     <div className="shift-management">
       <h2>Shift Management</h2>
 
-      {/* Shift Creation / Edit Form */}
-      <div className="shift-creation">
-        <h3>{isEditing ? "Edit Shift" : "Create New Shift"}</h3>
-        <form onSubmit={handleAddOrUpdateShift}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Shift Name:</label>
-              <input
-                type="text"
-                value={newShift.title}
-                onChange={(e) => setNewShift({ ...newShift, title: e.target.value })}
-                required
-              />
+      <div className="shift-management-top">
+        {/* SHIFT CREATION / EDIT FORM */}
+        <div className="shift-card shift-creation">
+          <h3>{isEditing ? "Edit Shift" : "Create New Shift"}</h3>
+          <form onSubmit={handleAddOrUpdateShift}>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Shift Name:</label>
+                <input
+                  type="text"
+                  value={newShift.title}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, title: e.target.value })
+                  }
+                  required
+                />
+              </div>
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Start Date & Time:</label>
-              <input
-                type="datetime-local"
-                value={newShift.start}
-                onChange={(e) => setNewShift({ ...newShift, start: e.target.value })}
-                required
-              />
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Start Date & Time:</label>
+                <input
+                  type="datetime-local"
+                  value={newShift.start}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, start: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>End Date & Time:</label>
+                <input
+                  type="datetime-local"
+                  value={newShift.end}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, end: e.target.value })
+                  }
+                  required
+                />
+              </div>
             </div>
-            <div className="form-group">
-              <label>End Date & Time:</label>
-              <input
-                type="datetime-local"
-                value={newShift.end}
-                onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
-                required
-              />
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Roles Required (comma separated):</label>
+                <input
+                  type="text"
+                  placeholder="Supervisor, Technician"
+                  value={newShift.rolesRequired}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, rolesRequired: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Assign Employees (comma separated IDs):</label>
+                <input
+                  type="text"
+                  placeholder="e.g., 1,2"
+                  value={newShift.assignedEmployees}
+                  onChange={(e) =>
+                    setNewShift({
+                      ...newShift,
+                      assignedEmployees: e.target.value,
+                    })
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Roles Required (comma separated):</label>
-              <input
-                type="text"
-                placeholder="Supervisor, Technician"
-                value={newShift.rolesRequired}
-                onChange={(e) => setNewShift({ ...newShift, rolesRequired: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Assign Employees (comma separated IDs):</label>
-              <input
-                type="text"
-                placeholder="e.g., 1,2"
-                value={newShift.assignedEmployees}
-                onChange={(e) => setNewShift({ ...newShift, assignedEmployees: e.target.value })}
-              />
-            </div>
-          </div>
-          <div className="form-actions">
-            <button type="submit">{isEditing ? "Update Shift" : "Add Shift"}</button>
-            {isEditing && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditingShiftId(null);
-                  setNewShift({ title: "", start: "", end: "", rolesRequired: "", assignedEmployees: "" });
-                }}
-              >
-                Cancel
+
+            <div className="form-actions">
+              <button type="submit">
+                {isEditing ? "Update Shift" : "Add Shift"}
               </button>
-            )}
-          </div>
-        </form>
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditingShiftId(null);
+                    setNewShift({
+                      title: "",
+                      start: "",
+                      end: "",
+                      rolesRequired: "",
+                      assignedEmployees: "",
+                    });
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* CALENDAR VIEW */}
+        <div className="shift-card calendar-card">
+          <h3>Calendar</h3>
+          <Calendar
+            localizer={localizer}
+            events={calendarEvents}
+            startAccessor="start"
+            endAccessor="end"
+            view={view}
+            onView={(newView) => setView(newView)}
+            eventPropGetter={eventStyleGetter}
+            style={{ height: 500 }}
+          />
+        </div>
       </div>
 
-      {/* Calendar View */}
-      <div className="calendar-container" style={{ height: "500px" }}>
-        <Calendar
-          localizer={localizer}
-          events={calendarEvents}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
-          view={view}
-          onView={(newView) => setView(newView)}
-          eventPropGetter={eventStyleGetter}
-        />
-      </div>
-
-      {/* Shift Overview Table */}
-      <div className="shift-overview">
+      {/* SHIFT OVERVIEW TABLE */}
+      <div className="shift-card shift-overview">
         <h3>Shift Overview</h3>
         <table>
           <thead>
@@ -312,7 +336,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                     ? shift.assignedEmployees
                         .map(
                           (id) =>
-                            dummyEmployees.find((emp) => emp.id === id)?.name || id
+                            dummyEmployees.find((emp) => emp.id === id)?.name ||
+                            id
                         )
                         .join(", ")
                     : "Unassigned"}
@@ -325,7 +350,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 <td>{shift.rolesRequired.join(", ")}</td>
                 <td>
                   <button onClick={() => handleEditShift(shift)}>Edit</button>
-                  <button onClick={() => handleDeleteShift(shift.id)}>Delete</button>
+                  <button onClick={() => handleDeleteShift(shift.id)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

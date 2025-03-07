@@ -1,15 +1,15 @@
+// src/pages/EmployeeManagement.tsx
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../AuthContext.tsx";
+import { useAuth } from "../../AuthContext.tsx";
 import "./EmployeeManagement.css";
 
-// Define a props interface with an optional allowDelete flag.
 interface EmployeeManagementProps {
   allowDelete?: boolean;
 }
 
 const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = false }) => {
-  const { user } = useAuth(); // Get the current user
+  const { user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -205,7 +205,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = f
               <td>{emp.absences}</td>
               <td>
                 <button onClick={() => editEmployee(emp)}>Edit</button>
-                {/* Only render the delete button if allowDelete is true and the logged-in user is an Administrator */}
                 {allowDelete && user?.role === "Administrator" && (
                   <button onClick={() => deleteEmployee(emp.id)}>Delete</button>
                 )}

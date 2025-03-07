@@ -1,20 +1,24 @@
-/* /src/pages/ShiftSwapRequests.css */
+/* src/pages/ShiftSwapRequests.css */
 
+/* Container for the entire Shift Swap page - full width, full height, white background */
 .shift-swap-container {
-  max-width: 900px;
-  margin: 20px auto;
+  width: 100%;
+  min-height: 100vh; /* fill full viewport height */
   padding: 20px;
+  box-sizing: border-box;
   font-family: var(--font-primary, Arial, sans-serif);
   color: var(--header-text, #333);
-  background-color: var(--main-bg, #ecf0f1);
+  background-color: #ffffff; /* white background */
 }
 
+/* Heading */
 .shift-swap-container h2 {
   text-align: center;
   margin-bottom: 20px;
   color: var(--header-text, #2c3e50);
 }
 
+/* Calendar container (if any) */
 .calendar-container {
   margin-bottom: 30px;
 }
@@ -24,7 +28,7 @@
   border: 1px solid var(--card-border, #ddd);
   padding: 20px;
   border-radius: 8px;
-  background-color: var(--card-bg, #f7f7f7);
+  background-color: #ffffff; /* white background for form */
   margin-bottom: 30px;
 }
 
@@ -50,7 +54,7 @@
   padding: 8px;
   border: 1px solid var(--card-border, #ccc);
   border-radius: 4px;
-  background-color: var(--card-bg, #fff);
+  background-color: #ffffff;
   color: var(--color-black, #333);
 }
 

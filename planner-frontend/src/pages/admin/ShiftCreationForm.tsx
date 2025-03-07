@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 const ShiftCreationForm = () => {
   const [shiftName, setShiftName] = useState('');
   const [dateTime, setDateTime] = useState('');

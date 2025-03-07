@@ -1,0 +1,70 @@
+/* src/pages/admin/AdminDashboard.css */
+
+/* Container: Sidebar on the left, main content on the right */
+.admin-dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-primary, Arial, sans-serif);
+  background-color: var(--main-bg, #ecf0f1);
+}
+
+/* Main content area */
+.admin-content {
+  flex: 1;
+  padding: 30px;
+  background-color: var(--main-bg, #ecf0f1);
+  position: relative;
+}
+
+/* Dashboard header */
+.admin-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Fixed logo at the top-right corner */
+.top-logo {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  height: 50px;
+  z-index: 1000;
+}
+
+/* Clean, single declaration for overview cards container */
+.admin-overview {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+/* Overview card styles */
+.overview-card {
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #ddd);
+  border-radius: 8px;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+.overview-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.overview-card h3 {
+  margin-top: 0;
+  color: var(--card-heading, #2c3e50);
+}
+
+.overview-card p {
+  color: var(--card-desc, #7f8c8d);
+  font-size: 0.9em;
+}

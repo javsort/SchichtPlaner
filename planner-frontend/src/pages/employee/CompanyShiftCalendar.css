@@ -1,0 +1,126 @@
+/* src/styling/CompanyShiftCalendar.css */
+
+/* Container for the entire calendar page */
+.company-shift-calendar-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary, sans-serif);
+}
+
+/* Header styles */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--card-border, #ccc);
+  background-color: var(--main-bg, #f5f5f5);
+  /* Ensure the header doesn't shrink or grow weirdly */
+  flex: 0 0 auto;
+}
+
+.calendar-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--header-text, #2c3e50);
+}
+
+/* Import/Export buttons container */
+.import-export-buttons button {
+  margin: 0 5px;
+  background: none;    /* no background */
+  color: #000;         /* black text */
+  border: none;        /* no border */
+  padding: 0;          /* remove padding so there's no box */
+  cursor: pointer;
+  border-radius: 0;    /* remove rounded corners */
+  font-size: 1rem;     /* adjust text size if desired */
+  transition: color 0.2s ease;
+}
+
+/* Optional hover effect (e.g., slightly gray text) */
+.import-export-buttons button:hover {
+  color: #666;         /* or any other color you'd like on hover */
+}
+
+
+
+/* Main layout: no sidebar in this design, so just fill space */
+.calendar-main-layout {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Ensures the main content can scroll if needed */
+  background-color: #ffffff;
+}
+
+/* Main content styles */
+.calendar-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 10px;
+  overflow: hidden; /* Let the calendar fill remaining space */
+}
+
+/* Filter buttons styles */
+.calendar-filters {
+  text-align: center;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+
+.calendar-filters .filter-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.calendar-filters button {
+  background-color: var(--calendar-filter-bg, #3174ad);
+  color: var(--calendar-filter-text, #ffffff);
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.calendar-filters button.active {
+  background-color: var(--calendar-filter-active-bg, #1e5b8c);
+}
+
+.calendar-filters button:hover {
+  background-color: var(--calendar-filter-hover-bg, #265f96);
+}
+
+/* Calendar container: fill remaining space */
+.calendar-container {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* stretch to fill vertical space */
+  overflow: hidden; /* The big calendar will scroll internally if needed */
+  margin-bottom: 0; /* Remove extra margin */
+}
+
+/* Force the Big Calendar to fill this container */
+.calendar-container .rbc-calendar {
+  width: 100%;
+  height: 100%;
+  max-width: none; /* Remove any max-width constraints */
+  background-color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* You can optionally add a box shadow around the calendar if you want:
+.calendar-container .rbc-calendar {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+*/

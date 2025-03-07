@@ -2,12 +2,30 @@
 import React from "react";
 import "./Header.css";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onToggleSidebar?: () => void; // optional callback to open/close a sidebar
+}
+
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   return (
-    <header className="global-header">
-      {/* Remove or comment out the site title line if you don't want it */}
-      {/* <h1 className="site-title">Your Site Title</h1> */}
-      <img src="/logo.png" alt="Company Logo" className="company-logo" />
+    <header className="header-container">
+      {/* Left side: hamburger button */}
+      <div className="header-left">
+        {onToggleSidebar && (
+          <button
+            className="hamburger-btn"
+            onClick={onToggleSidebar}
+            aria-label="Toggle Sidebar"
+          >
+            ☰
+          </button>
+        )}
+      </div>
+
+      {/* Right side: logo */}
+      <div className="header-right">
+        <img src="/logo.png" alt="Company Logo" className="header-logo" />
+      </div>
     </header>
   );
 };

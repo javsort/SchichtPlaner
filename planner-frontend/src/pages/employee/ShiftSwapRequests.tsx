@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useAuth } from "../AuthContext.tsx";
+import { useAuth } from "../../AuthContext.tsx";
 import "./ShiftSwapRequests.css"; // Updated CSS using theme variables
 
 // --------------------

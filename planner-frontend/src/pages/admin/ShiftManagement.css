@@ -1,0 +1,191 @@
+/* src/pages/ShiftManagement.css */
+
+/* Overall container */
+.shift-management {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  font-family: var(--font-primary, Arial, sans-serif);
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Title styling */
+.shift-management h2 {
+  margin: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #333;
+}
+
+/* Container for form and calendar side-by-side */
+.shift-management-top {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; /* allow wrapping on smaller screens */
+}
+
+/* Make the shift creation form container smaller */
+.shift-creation {
+  flex: 0 0 35%; /* 35% of the width, adjust as needed */
+  min-width: 250px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Keep the calendar card flexible */
+.calendar-card {
+  flex: 1;
+  min-width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* SHIFT CREATION FORM STYLING */
+.shift-creation h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.shift-creation form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.shift-creation .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.shift-creation .form-group {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.shift-creation label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.shift-creation input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.shift-creation .form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.shift-creation button {
+  padding: 10px 20px;
+  background-color: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.shift-creation button:hover {
+  background-color: #219150;
+}
+
+.shift-creation button[type="button"] {
+  background-color: #c0392b;
+}
+
+.shift-creation button[type="button"]:hover {
+  background-color: #a73225;
+}
+
+/* CALENDAR CARD */
+.calendar-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* SHIFT OVERVIEW at the bottom */
+.shift-overview {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shift-overview h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.shift-overview table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.shift-overview th,
+.shift-overview td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.shift-overview th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  color: #333;
+}
+
+.shift-overview tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.shift-overview button {
+  padding: 6px 12px;
+  margin: 0 4px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.shift-overview button:first-of-type {
+  background-color: #2980b9;
+  color: #fff;
+}
+
+.shift-overview button:first-of-type:hover {
+  background-color: #247ba0;
+}
+
+.shift-overview button:last-of-type {
+  background-color: #c0392b;
+  color: #fff;
+}
+
+.shift-overview button:last-of-type:hover {
+  background-color: #a73225;
+}

@@ -1,8 +1,7 @@
-// src/pages/ShiftSupervisorDashboard.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./ShiftSupervisorDashboard.css";
+import "./ShiftSupervisorDashboard.css"; // Use same styles as AdminDashboard.css
 
 const ShiftSupervisorDashboard: React.FC = () => {
   const navigate = useNavigate();

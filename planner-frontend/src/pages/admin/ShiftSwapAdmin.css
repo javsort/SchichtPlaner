@@ -28,7 +28,7 @@
   
   .table th {
     background-color: var(--card-heading, #f2f2f2);
-    color: var(--card-text, #fff);
+    color: var(--card-text, #333);
   }
   
   /* Approved row styling */
