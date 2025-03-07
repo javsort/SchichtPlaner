@@ -9,11 +9,16 @@ import AdminSidebar from "../../components/AdminSidebar.tsx";
 const localizer = momentLocalizer(moment);
 
 const ShiftApprovalCalendar = () => {
-  // State for all shifts
+  // State for pending shifts (only proposed shifts)
+  const [pendingRequests, setPendingRequests] = useState([]);
+  
+  // State for all shifts (approved + pending)
   const [shifts, setShifts] = useState([]);
+  
+  // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
 
-  // Function to fetch all shifts
+  // Function to fetch all shifts (approved + proposed)
   const getAllShifts = async () => {
     try {
       const fetchedShifts = await fetchShifts();
@@ -33,9 +38,30 @@ const ShiftApprovalCalendar = () => {
     }
   };
 
-  // Fetch shifts when the component mounts
+   // Function to fetch pending (proposed) shifts
+  const getPendingShifts = async () => {
+    try {
+      const fetchedPendingShifts = await fetchProposalShifts();
+      if (fetchedPendingShifts.length > 0) {
+        const formattedPendingShifts = fetchedPendingShifts.map((shift) => ({
+          id: shift.id,
+          employee: shift.employeeId ? `Employee ${shift.employeeId}` : "Unknown Employee",
+          title: shift.proposedTitle || "Unnamed Shift",
+          start: new Date(shift.proposedStartTime), // Ensure proper date conversion
+          end: new Date(shift.proposedEndTime), // Ensure proper date conversion
+          status: shift.status,
+        }));
+        setPendingRequests(formattedPendingShifts);
+      }
+    } catch (error) {
+      console.error("Error fetching pending shifts:", error);
+    }
+  };
+
+  // Fetch all shifts and pending shifts on component mount
   useEffect(() => {
     getAllShifts();
+    getPendingShifts();
   }, []);
 
   // Handler to approve a shift request
@@ -43,6 +69,7 @@ const ShiftApprovalCalendar = () => {
     try {
       await approveShift(id); // Call backend to approve the shift
       getAllShifts(); // Fetch updated shifts immediately after approval
+      getPendingShifts(); // Refresh pending requests as well
     } catch (error) {
       console.error(`Error approving shift ${id}:`, error);
       alert("Failed to approve shift. Please try again.");
@@ -122,23 +149,21 @@ const ShiftApprovalCalendar = () => {
             </tr>
           </thead>
           <tbody>
-            {shifts
-              .filter((shift) => shift.status === "PROPOSED")
-              .map((req) => (
-                <tr key={req.id}>
-                  <td>{req.title || "Unnamed Shift"}</td>
-                  <td>{req.employee}</td>
-                  <td>{moment(req.start).format("YYYY-MM-DD")}</td>
-                  <td>
-                    {moment(req.start).format("hh:mm A")} -{" "}
-                    {moment(req.end).format("hh:mm A")}
-                  </td>
-                  <td>
-                    <button onClick={() => handleApprove(req.id)}>Approve</button>
-                  </td>
-                </tr>
-              ))}
-            {shifts.filter((shift) => shift.status === "PROPOSED").length === 0 && (
+            {pendingRequests.map((req) => (
+              <tr key={req.id}>
+                <td>{req.title || "Unnamed Shift"}</td>
+                <td>{req.employee}</td>
+                <td>{moment(req.start).format("YYYY-MM-DD")}</td>
+                <td>
+                  {moment(req.start).format("hh:mm A")} -{" "}
+                  {moment(req.end).format("hh:mm A")}
+                </td>
+                <td>
+                  <button onClick={() => handleApprove(req.id)}>Approve</button>
+                </td>
+              </tr>
+            ))}
+            {pendingRequests.length === 0 && (
               <tr>
                 <td colSpan="5" style={{ textAlign: "center" }}>
                   No pending shift requests.

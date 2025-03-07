@@ -102,8 +102,9 @@ export const login = async (email: string, password: string) => {
     const data = await response;
 
     localStorage.setItem('token', data.data.token);
+    localStorage.setItem('userId', data.data.userId);
 
-    return { email: data.data.email, role: data.data.role, token: data.data.token };
+    return { email: data.data.email, role: data.data.role, token: data.data.token, userId: data.data.userId };
 
   } catch (error) {
     console.error('Error logging in', error);
@@ -143,7 +144,7 @@ export const fetchShifts = async () => {
     "status": "PROPOSED"
   }
 */
-export const proposeShift = async (employeeId: number, proposedTitle: string, proposedStartTime: string, proposedEndTime: string, status: string) => {
+export const proposeShift = async (employeeId: string, proposedTitle: string, proposedStartTime: string, proposedEndTime: string, status: string) => {
   try {
     const response = await axios.post(`${baseUrl}/api/scheduler/shift-proposals/create`, {
       employeeId: employeeId,
