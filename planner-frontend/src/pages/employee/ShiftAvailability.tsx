@@ -81,14 +81,22 @@ const ShiftAvailability: React.FC = () => {
 
   const handleSave = async () => {
 
-    const employeeId = localStorage.getItem("userId");
+    const employee = localStorage.getItem("user");
+
+    if (!employee) {
+      alert("Error saving availability: Employee not found.");
+      return;
+    }
+
+    const employeeId = JSON.parse(employee).userId;
+    const role = JSON.parse(employee).role;
 
     if (!employeeId) {
       alert("Error saving availability: Employee ID not found.");
       return;
     }
 
-    const proposedTitle = "Test Shift II";
+    const proposedTitle = "Shift for Employee " + employeeId + " (" + role + ")";
     const status = "PROPOSED";
 
     // Loop through each day and if both times are selected, call the backend.

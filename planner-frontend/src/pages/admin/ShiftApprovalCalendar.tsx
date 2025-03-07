@@ -14,12 +14,17 @@ const ShiftApprovalCalendar = () => {
   
   // State for all shifts (approved + pending)
   const [shifts, setShifts] = useState([]);
+
+  // Loading states
+  const [loadingShifts, setLoadingShifts] = useState(true);
+  const [loadingPending, setLoadingPending] = useState(true);
   
   // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
 
   // Function to fetch all shifts (approved + proposed)
   const getAllShifts = async () => {
+    setLoadingShifts(true);
     try {
       const fetchedShifts = await fetchShifts();
       if (fetchedShifts.length > 0) {
@@ -36,26 +41,31 @@ const ShiftApprovalCalendar = () => {
     } catch (error) {
       console.error("Error fetching shifts:", error);
     }
+    setLoadingShifts(false);
   };
 
-   // Function to fetch pending (proposed) shifts
+  // Function to fetch pending (proposed) shifts
   const getPendingShifts = async () => {
+    setLoadingPending(true);
     try {
       const fetchedPendingShifts = await fetchProposalShifts();
       if (fetchedPendingShifts.length > 0) {
-        const formattedPendingShifts = fetchedPendingShifts.map((shift) => ({
-          id: shift.id,
-          employee: shift.employeeId ? `Employee ${shift.employeeId}` : "Unknown Employee",
-          title: shift.proposedTitle || "Unnamed Shift",
-          start: new Date(shift.proposedStartTime), // Ensure proper date conversion
-          end: new Date(shift.proposedEndTime), // Ensure proper date conversion
-          status: shift.status,
-        }));
+        const formattedPendingShifts = fetchedPendingShifts
+          .filter((shift) => shift.status !== "ACCEPTED") // Filter only proposed shifts
+          .map((shift) => ({
+            id: shift.id,
+            employee: shift.employeeId ? `Employee ${shift.employeeId}` : "Unknown Employee",
+            title: shift.proposedTitle || "Unnamed Shift",
+            start: new Date(shift.proposedStartTime), // Ensure proper date conversion
+            end: new Date(shift.proposedEndTime), // Ensure proper date conversion
+            status: shift.status,
+          }));
         setPendingRequests(formattedPendingShifts);
       }
     } catch (error) {
       console.error("Error fetching pending shifts:", error);
     }
+    setLoadingPending(false);
   };
 
   // Fetch all shifts and pending shifts on component mount
@@ -123,55 +133,63 @@ const ShiftApprovalCalendar = () => {
 
         {/* Calendar */}
         <div className="calendar-container">
-          <Calendar
-            localizer={localizer}
-            events={calendarEvents}
-            startAccessor="start"
-            endAccessor="end"
-            view={view}
-            onView={(newView) => setView(newView)}
-            eventPropGetter={eventStyleGetter}
-            min={new Date(1970, 1, 1, 0, 0)}
-            max={new Date(1970, 1, 1, 23, 59)}
-          />
+          {loadingShifts ? (
+            <p>Loading calendar...</p>
+          ) : (
+            <Calendar
+              localizer={localizer}
+              events={calendarEvents}
+              startAccessor="start"
+              endAccessor="end"
+              view={view}
+              onView={(newView) => setView(newView)}
+              eventPropGetter={eventStyleGetter}
+              min={new Date(1970, 1, 1, 0, 0)}
+              max={new Date(1970, 1, 1, 23, 59)}
+            />
+          )}
         </div>
 
         {/* Pending Shift Requests */}
         <h3>Pending Shift Requests</h3>
-        <table className="pending-table">
-          <thead>
-            <tr>
-              <th>Shift</th>
-              <th>Employee</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pendingRequests.map((req) => (
-              <tr key={req.id}>
-                <td>{req.title || "Unnamed Shift"}</td>
-                <td>{req.employee}</td>
-                <td>{moment(req.start).format("YYYY-MM-DD")}</td>
-                <td>
-                  {moment(req.start).format("hh:mm A")} -{" "}
-                  {moment(req.end).format("hh:mm A")}
-                </td>
-                <td>
-                  <button onClick={() => handleApprove(req.id)}>Approve</button>
-                </td>
-              </tr>
-            ))}
-            {pendingRequests.length === 0 && (
+        {loadingPending ? (
+          <p>Loading pending requests...</p>
+        ) : (
+          <table className="pending-table">
+            <thead>
               <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  No pending shift requests.
-                </td>
+                <th>Shift</th>
+                <th>Employee</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Action</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {pendingRequests.map((req) => (
+                <tr key={req.id}>
+                  <td>{req.title || "Unnamed Shift"}</td>
+                  <td>{req.employee}</td>
+                  <td>{moment(req.start).format("YYYY-MM-DD")}</td>
+                  <td>
+                    {moment(req.start).format("hh:mm A")} -{" "}
+                    {moment(req.end).format("hh:mm A")}
+                  </td>
+                  <td>
+                    <button onClick={() => handleApprove(req.id)}>Approve</button>
+                  </td>
+                </tr>
+              ))}
+              {pendingRequests.length === 0 && (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    No pending shift requests.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
