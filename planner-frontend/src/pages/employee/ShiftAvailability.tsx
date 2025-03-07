@@ -80,7 +80,14 @@ const ShiftAvailability: React.FC = () => {
   };
 
   const handleSave = async () => {
-    const employeeId = 3; // Replace with the actual employee ID as needed.
+
+    const employeeId = localStorage.getItem("userId");
+
+    if (!employeeId) {
+      alert("Error saving availability: Employee ID not found.");
+      return;
+    }
+
     const proposedTitle = "Test Shift II";
     const status = "PROPOSED";
 

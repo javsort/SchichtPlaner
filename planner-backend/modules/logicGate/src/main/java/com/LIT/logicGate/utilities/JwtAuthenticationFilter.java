@@ -80,8 +80,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String userEmail = jwtTokenUtil.extractEmail(token);
             String role = "ROLE_" + jwtTokenUtil.extractRole(token);
+            Long userId = jwtTokenUtil.extractUserId(token);
 
-            log.info(logHeader + "User: " + userEmail + " has role: " + role);
+            log.info(logHeader + "User: " + userEmail + " has role: " + role + " and id: " + userId);
             log.info(logHeader + "Token is valid, proceeding with request");
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -91,6 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             requestWrap.setAttribute("userEmail", userEmail);
             requestWrap.setAttribute("role", role);
+            requestWrap.setAttribute("userId", userId);
 
             log.info(logHeader + "User: " + userEmail + " is authenticated");
 

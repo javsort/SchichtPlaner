@@ -11,6 +11,7 @@ const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 // Define a type for the authenticated user
 interface AuthUser {
+  userId: number;
   email: string;
   role: string;
 }
@@ -45,12 +46,14 @@ const Login: React.FC = () => {
         const retRole = loginInfo.role;
         const retEmail = loginInfo.email;
         const token = loginInfo.token;
+        const userId = loginInfo.userId;
         
         console.log('Email:', retEmail);
         console.log('Role:', retRole);
+        console.log('Id:', userId);
         console.log("Token: '" +  token + "'");
 
-        setUser({ email: retEmail, role: retRole});
+        setUser({ email: retEmail, role: retRole, userId: userId });
 
         if (retRole === 'ShiftSupervisor') {
           navigate('/admin-dashboard');
