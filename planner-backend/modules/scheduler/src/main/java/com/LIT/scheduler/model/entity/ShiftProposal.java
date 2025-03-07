@@ -21,6 +21,10 @@ public class ShiftProposal {
     @Column(name = "employee_id", nullable = false)
     private Long employeeId;
 
+    // Employee name who submitted the proposal
+    @Column(name = "employee_name", nullable = false)
+    private String employeeName;
+
     // Proposed shift details by employee
     @Column(nullable = false)
     private String proposedTitle;
