@@ -1,8 +1,9 @@
 // src/pages/ShiftSwapAdmin.tsx
+
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import "./ShiftSwapAdmin.css"; // Ensure this file exists (even if empty for now)
+import "./ShiftSwapAdmin.css"; // Make sure this file exists with the updated CSS below
 
 // --------------------
 // Data Types
@@ -60,12 +61,6 @@ const dummyShifts: Shift[] = [
   },
 ];
 
-const dummyEmployees = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Bob Johnson" },
-];
-
 const initialSwapRequests: SwapRequest[] = [
   {
     id: 201,
@@ -90,22 +85,15 @@ const initialSwapRequests: SwapRequest[] = [
 ];
 
 // --------------------
-// Props Interface
-// --------------------
-interface ShiftSwapAdminProps {
-  initialRequests?: SwapRequest[];
-}
-
-// --------------------
 // Component
 // --------------------
 const localizer = momentLocalizer(moment);
 
-const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initialSwapRequests }) => {
-  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialRequests);
+const ShiftSwapAdmin: React.FC = () => {
+  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialSwapRequests);
   const [view, setView] = useState(Views.WEEK);
 
-  // Create calendar events from swapRequests (using the own shift's time)
+  // Create calendar events from swapRequests
   const calendarEvents = swapRequests.map((req) => ({
     id: req.id,
     title: `Req #${req.id} - ${req.status}`,
@@ -141,7 +129,7 @@ const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initi
       <h2 className="mb-4">Manage Shift Swap Requests</h2>
 
       {/* Calendar View */}
-      <div className="mb-4">
+      <div className="calendar-container mb-4">
         <Calendar
           localizer={localizer}
           events={calendarEvents}
@@ -149,7 +137,6 @@ const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initi
           endAccessor="end"
           view={view}
           onView={(newView) => setView(newView)}
-          style={{ height: 400, width: "100%" }}
         />
       </div>
 
@@ -192,7 +179,7 @@ const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initi
                 {req.status === "Pending" ? (
                   <>
                     <button
-                      className="btn btn-success btn-sm me-2"
+                      className="btn btn-success btn-sm me-1"
                       onClick={() => handleApprove(req.id)}
                     >
                       Approve

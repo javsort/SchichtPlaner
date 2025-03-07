@@ -1,39 +1,60 @@
-/* /src/pages/ShiftSwapAdmin.css */
+/* src/pages/ShiftSwapAdmin.css */
 
 /* Container styles */
 .shift-swap-admin-container {
-    padding: 20px;
-    font-family: var(--font-primary, Arial, sans-serif);
-    background-color: var(--main-bg, #ecf0f1);
-  }
-  
-  /* Heading styles */
-  .shift-swap-admin-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: var(--header-text, #2c3e50);
-  }
-  
-  /* (Optional) Override Bootstrap table styles if desired */
-  .table-striped tbody tr:nth-of-type(odd) {
-    background-color: var(--card-bg, #ffffff);
-  }
-  
-  .table th,
-  .table td {
-    border: 1px solid var(--card-border, #ddd);
-    padding: 8px;
-    text-align: center;
-  }
-  
-  .table th {
-    background-color: var(--card-heading, #f2f2f2);
-    color: var(--card-text, #333);
-  }
-  
-  /* Approved row styling */
-  .approved-row {
-    background-color: var(--button-bg, #27ae60) !important;
-    color: var(--button-text, #ffffff);
-  }
-  
+  padding: 20px;
+  font-family: var(--font-primary, Arial, sans-serif);
+  background-color: #fff; /* White background, no gray */
+}
+
+/* Heading styles */
+.shift-swap-admin-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--header-text, #2c3e50);
+}
+
+/* (Optional) Override Bootstrap table styles if desired */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--card-bg, #ffffff);
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--card-border, #ddd);
+  padding: 8px;
+  text-align: center;
+}
+
+.table th {
+  background-color: var(--card-heading, #f2f2f2);
+  color: var(--card-text, #333);
+}
+
+/* Approved row styling */
+.approved-row {
+  background-color: var(--button-bg, #27ae60) !important;
+  color: var(--button-text, #ffffff);
+}
+
+/* 
+  -------------------------------------
+  CALENDAR-SPECIFIC STYLES
+  -------------------------------------
+*/
+
+/* Make the calendar a bit bigger but not full width */
+.calendar-container {
+  margin: 0 auto;     /* Centers the calendar horizontally */
+  width: 85%;         /* Adjust as needed (could be 80%, 90%, etc.) */
+  max-width: 1400px;  /* Optional: prevents the calendar from becoming too wide */
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Force react-big-calendar to remain white */
+.calendar-container .rbc-calendar {
+  background-color: #fff;
+  height: 600px; /* Adjust the height as needed */
+}
