@@ -36,11 +36,8 @@ public class Shift {
     private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private String userName;
+    private String username;
 
-    @Column(name = "employee_id")
-    private Long assignedEmployeeId;
-    
-    @Column(name = "employee_name")
-    private String assignedEmployeeName;
+    @Column(name = "user_id")
+    private Long userId;
 }

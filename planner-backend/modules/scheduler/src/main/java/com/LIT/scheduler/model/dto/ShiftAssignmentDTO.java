@@ -13,5 +13,6 @@ public class ShiftAssignmentDTO {
     private Long userId;
     private Long shiftId;
     private AssignmentStatus status;
+    private String username;
 }
 

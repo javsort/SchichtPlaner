@@ -14,4 +14,6 @@ public class ShiftDTO {
     private String title;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Long userId;
+    private String username;
 }
