@@ -95,9 +95,11 @@
   margin-top: 0;
 }
 
+/* Update shift-creation buttons: Primary = #4da8d6, Secondary = #69be28 */
 .shift-creation button {
   padding: 10px 20px;
-  background-color: #27ae60;
+  font-size: 16px;
+  background-color: #4da8d6; /* Primary button color */
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -105,15 +107,15 @@
 }
 
 .shift-creation button:hover {
-  background-color: #219150;
+  background-color: #4da8d6;
 }
 
 .shift-creation button[type="button"] {
-  background-color: #c0392b;
+  background-color: #69be28; /* Secondary button color */
 }
 
 .shift-creation button[type="button"]:hover {
-  background-color: #a73225;
+  background-color: #69be28;
 }
 
 /* CALENDAR CARD */
@@ -141,7 +143,7 @@
   width: 100%;
   border-collapse: collapse;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: hidden; /* so rounded corners apply to table edges */
 }
 
 .shift-overview th,
@@ -162,6 +164,7 @@
   background-color: #f9f9f9;
 }
 
+/* Update shift-overview table buttons: First = #4da8d6, Last = #69be28 */
 .shift-overview button {
   padding: 6px 12px;
   margin: 0 4px;
@@ -173,19 +176,19 @@
 }
 
 .shift-overview button:first-of-type {
-  background-color: #2980b9;
+  background-color: #4da8d6; /* Primary table button */
   color: #fff;
 }
 
 .shift-overview button:first-of-type:hover {
-  background-color: #247ba0;
+  background-color: #4da8d6;
 }
 
 .shift-overview button:last-of-type {
-  background-color: #c0392b;
+  background-color: #69be28; /* Secondary table button */
   color: #fff;
 }
 
 .shift-overview button:last-of-type:hover {
-  background-color: #a73225;
+  background-color: #69be28;
 }

@@ -61,7 +61,7 @@
 /* Approve button styling */
 .approve-btn {
   padding: 8px 12px;
-  background-color: var(--button-bg, #27ae60);
+  background-color: var(--button-bg, #69be28);
   color: var(--button-text, #ffffff);
   border: none;
   border-radius: 4px;
@@ -70,7 +70,7 @@
 }
 
 .approve-btn:hover {
-  background-color: var(--button-hover-bg, #219150);
+  background-color: var(--button-hover-bg, #69be28);
 }
 
 /* Header for the content area */

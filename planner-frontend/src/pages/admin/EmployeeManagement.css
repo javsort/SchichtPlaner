@@ -57,11 +57,12 @@
   margin-top: 10px;
 }
 
+/* Employee Form Buttons */
 .employee-form button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: var(--button-bg, #27ae60);
-  color: var(--button-text, #fff);
+  background-color: #4da8d6; /* Primary button color */
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -70,15 +71,15 @@
 }
 
 .employee-form button:hover {
-  background-color: #219150;
+  background-color: #4da8d6;
 }
 
 .employee-form button[type="button"] {
-  background-color: #c0392b;
+  background-color: #69be28; /* Secondary button color */
 }
 
 .employee-form button[type="button"]:hover {
-  background-color: #a73225;
+  background-color: #69be28;
 }
 
 /* Error Messages */
@@ -134,19 +135,19 @@
 }
 
 .employee-table button:first-of-type {
-  background-color: #2980b9; /* Edit button color */
+  background-color: #4da8d6; /* Primary table button color */
   color: #fff;
 }
 
 .employee-table button:first-of-type:hover {
-  background-color: #247ba0;
+  background-color: #4da8d6;
 }
 
 .employee-table button:last-of-type {
-  background-color: #c0392b; /* Delete button color */
+  background-color: #69be28; /* Secondary table button color */
   color: #fff;
 }
 
 .employee-table button:last-of-type:hover {
-  background-color: #a73225;
+  background-color: #69be28;
 }

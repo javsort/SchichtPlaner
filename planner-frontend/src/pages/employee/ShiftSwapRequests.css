@@ -63,9 +63,10 @@
   height: 80px;
 }
 
+/* Updated Request Form Button Styling */
 .request-form button {
-  background-color: var(--button-bg, #007bff);
-  color: var(--button-text, #fff);
+  background-color: #4da8d6; /* Primary color for buttons */
+  color: #fff;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -74,7 +75,7 @@
 }
 
 .request-form button:hover {
-  background-color: var(--button-hover-bg, #0056b3);
+  background-color: #4da8d6;
 }
 
 /* Request List Table */
@@ -95,6 +96,8 @@
   background-color: var(--card-heading, #f0f0f0);
 }
 
+/* Request List Buttons */
+/* First button uses primary color, last button uses secondary color */
 .request-list button {
   margin-right: 5px;
   padding: 5px 10px;
@@ -109,11 +112,11 @@
 }
 
 .request-list button:first-child {
-  background-color: var(--button-bg, #28a745);
-  color: var(--button-text, #fff);
+  background-color: #4da8d6; /* Primary */
+  color: #fff;
 }
 
 .request-list button:last-child {
-  background-color: var(--button-hover-bg, #dc3545);
-  color: var(--button-text, #fff);
+  background-color: #69be28; /* Secondary */
+  color: #fff;
 }

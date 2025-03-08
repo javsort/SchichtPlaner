@@ -19,7 +19,6 @@
   padding: 5px 10px;
   border-bottom: 1px solid var(--card-border, #ccc);
   background-color: var(--main-bg, #f5f5f5);
-  /* Ensure the header doesn't shrink or grow weirdly */
   flex: 0 0 auto;
 }
 
@@ -29,32 +28,29 @@
   color: var(--header-text, #2c3e50);
 }
 
-/* Import/Export buttons container */
+/* Import/Export buttons container - no fill, just black text */
 .import-export-buttons button {
   margin: 0 5px;
-  background: none;    /* no background */
-  color: #000;         /* black text */
-  border: none;        /* no border */
-  padding: 0;          /* remove padding so there's no box */
+  background: none;   /* No background fill */
+  color: #000;        /* Black text */
+  border: none;       /* No border */
+  padding: 0;         /* Remove padding for a text-like appearance */
   cursor: pointer;
-  border-radius: 0;    /* remove rounded corners */
-  font-size: 1rem;     /* adjust text size if desired */
+  border-radius: 0;
+  font-size: 1rem;
   transition: color 0.2s ease;
 }
 
-/* Optional hover effect (e.g., slightly gray text) */
 .import-export-buttons button:hover {
-  color: #666;         /* or any other color you'd like on hover */
+  color: #666;        /* Slight darkening on hover */
 }
 
-
-
-/* Main layout: no sidebar in this design, so just fill space */
+/* Main layout: no sidebar, fill space */
 .calendar-main-layout {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Ensures the main content can scroll if needed */
+  overflow: hidden;
   background-color: #ffffff;
 }
 
@@ -65,7 +61,7 @@
   flex-direction: column;
   box-sizing: border-box;
   padding: 10px;
-  overflow: hidden; /* Let the calendar fill remaining space */
+  overflow: hidden;
 }
 
 /* Filter buttons styles */
@@ -81,8 +77,8 @@
 }
 
 .calendar-filters button {
-  background-color: var(--calendar-filter-bg, #3174ad);
-  color: var(--calendar-filter-text, #ffffff);
+  background-color: #4da8d6; /* Primary color */
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   margin: 5px;
@@ -92,11 +88,11 @@
 }
 
 .calendar-filters button.active {
-  background-color: var(--calendar-filter-active-bg, #1e5b8c);
+  background-color: #69be28; /* Active state: secondary color */
 }
 
 .calendar-filters button:hover {
-  background-color: var(--calendar-filter-hover-bg, #265f96);
+  background-color: #4da8d6;
 }
 
 /* Calendar container: fill remaining space */
@@ -104,23 +100,33 @@
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
-  align-items: stretch; /* stretch to fill vertical space */
-  overflow: hidden; /* The big calendar will scroll internally if needed */
-  margin-bottom: 0; /* Remove extra margin */
+  align-items: stretch;
+  overflow: hidden;
+  margin-bottom: 0;
 }
 
 /* Force the Big Calendar to fill this container */
 .calendar-container .rbc-calendar {
   width: 100%;
   height: 100%;
-  max-width: none; /* Remove any max-width constraints */
+  max-width: none;
   background-color: #fff;
   border-radius: 4px;
   box-sizing: border-box;
 }
-
-/* You can optionally add a box shadow around the calendar if you want:
-.calendar-container .rbc-calendar {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+/* Import/Export buttons container - no fill, just black text */
+.import-export-buttons button {
+  margin: 0 5px;
+  background: none;   /* No background fill */
+  color: var(--text-color, #000);        /* Black text */
+  border: none;       /* No border */
+  padding: 0;         /* Remove padding for a text-like appearance */
+  cursor: pointer;
+  border-radius: 0;
+  font-size: 1rem;
+  transition: color 0.2s ease;
 }
-*/
+
+.import-export-buttons button:hover {
+  color: var(--text-color-hover, #666);        /* Slight darkening on hover */
+}
