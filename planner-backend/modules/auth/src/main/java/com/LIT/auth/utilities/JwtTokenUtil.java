@@ -17,18 +17,18 @@ public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String secret;
 
+    private String logHeader = "[JwtTokenUtil] - ";
+
     private static final long EXPIRATION_TIME = 3600000; // 1 hour
 
-    private static String logHeader = "[JwtTokenUtil] - ";
-
-    public String generateToken(String email, String role) {
-        log.info(logHeader + "generateToken: Generating token for user: " + email);
-        
+    public String generateToken(String email, String role, Long userId) {
+        log.info(logHeader + "generateToken: Generating token for user: " + email);        
         return JWT.create()
                 .withIssuer("LIT - auth0")
                 .withSubject(email)
                 .withClaim("userEmail", email)
                 .withClaim("role", role)
+                .withClaim("userId", userId)
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC256(secret));
@@ -42,6 +42,11 @@ public class JwtTokenUtil {
     public String extractRole(String token) {
         log.info(logHeader + "extractRole: Extracting role from token");
         return JWT.decode(token).getClaim("role").asString();
+    }
+
+    public Long extractUserId(String token) {
+        log.info(logHeader + "extractUserId: Extracting userId from token");
+        return JWT.decode(token).getClaim("userId").asLong();
     }
 
     public boolean validateToken(String token) {

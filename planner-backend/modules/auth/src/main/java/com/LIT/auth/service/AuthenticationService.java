@@ -154,12 +154,13 @@ public class AuthenticationService {
         log.info(logHeader + "login: User found. Generating token...");
 
         // Generate token
-        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role);
+        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role, user.getId());
 
-         Map<String, String> toReturn = new HashMap<>();
-            toReturn.put("token", token);
-            toReturn.put("email", user.getEmail());
-            toReturn.put("role", role);
+        Map<String, String> toReturn = new HashMap<>();
+        toReturn.put("token", token);
+        toReturn.put("email", user.getEmail());
+        toReturn.put("role", role);
+        toReturn.put("userId", user.getId().toString());
 
         log.info(logHeader + "User " + user.getEmail() + " logged in successfully. Returnig token.");
 
