@@ -36,18 +36,8 @@ const Login: React.FC = () => {
         console.log("Logged in:", { retEmail, role, token });
         setUser({ email: retEmail, role });
 
-        // Navigate based on role
-        if (role === "ShiftSupervisor" || role === "Admin") {
-          navigate("/admin-dashboard");
-        } else if (role === "Tester") {
-          navigate("/tester-dashboard");
-        } else if (role === "Incident-manager") {
-          navigate("/incident-manager-dashboard");
-        } else if (role === "Technician") {
-          navigate("/shift-view");
-        } else {
-          setErrorMessage("There was an error logging you in! Please try again.");
-        }
+        // Instead of navigating based on role, always redirect to the Company Shift Calendar page.
+        navigate("/shift-view");
       } catch (error: any) {
         console.error("API Error:", error.response ? error.response.data : error);
         setErrorMessage(
@@ -67,10 +57,8 @@ const Login: React.FC = () => {
         {/* The narrower content wrapper */}
         <div className="login-content">
           <img src="/MainLogo.png" alt="Main Logo" className="login-logo" />
-
           <h2>Shift Planner Login</h2>
           {errorMessage && <div className="error-message">{errorMessage}</div>}
-
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <label>Email</label>

@@ -177,20 +177,20 @@ const ShiftSwapAdmin: React.FC = () => {
               <td>{req.status}</td>
               <td>
                 {req.status === "Pending" ? (
-                  <>
+                  <div className="action-buttons">
                     <button
-                      className="btn btn-success btn-sm me-1"
+                      className="btn btn-sm btn-approve"
                       onClick={() => handleApprove(req.id)}
                     >
                       Approve
                     </button>
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-sm btn-danger"
                       onClick={() => handleReject(req.id)}
                     >
                       Reject
                     </button>
-                  </>
+                  </div>
                 ) : (
                   <span>{req.status}</span>
                 )}

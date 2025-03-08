@@ -58,3 +58,22 @@
   background-color: #fff;
   height: 600px; /* Adjust the height as needed */
 }
+
+/* Action buttons container to place buttons side by side */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Custom styles for Approve button */
+.btn-approve {
+  background-color: #69be28 !important;
+  color: #fff !important;
+  border: none;
+}
+
+.btn-approve:hover {
+  background-color: #69be28 !important;
+}
