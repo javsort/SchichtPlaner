@@ -1,7 +1,7 @@
 // AdminDashboard.test.tsx
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import AdminDashboard from './AdminDashboard';
+import AdminDashboard from '../admin/AdminDashboard';
 import { MemoryRouter } from 'react-router-dom';
 
 // Create a mock for the useNavigate hook

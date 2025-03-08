@@ -23,8 +23,10 @@ public class SwapProposalService {
 
     private final SwapProposalRepository proposalRepository;
     private final ShiftAssignmentRepository assignmentRepository; // For conflict detection.
+
     private final NotificationService notificationService;
-    private final String logHeader = "[ShiftProposalService] - ";
+
+    private final String logHeader = "[SwapProposalService] - ";
 
     @Autowired
     public SwapProposalService(SwapProposalRepository proposalRepository,

@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom'; // Provides custom matchers like toBeInTheDocument
-import CompanyShiftCalendar from './CompanyShiftCalendar';
+import CompanyShiftCalendar from '../employee/CompanyShiftCalendar';
 
 describe('CompanyShiftCalendar', () => {
   const currentUser = { id: 1, name: "John Doe" };
