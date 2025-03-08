@@ -17,19 +17,22 @@ import NotAuthorized from "./pages/general/NotAuthorized.tsx";
 import MyShifts from "./pages/MyShifts.tsx";
 
 // Protected UI Pages (Admin, ShiftSupervisor, etc.)
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
 import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
+import ShiftSupervisorDashboard from "./pages/admin/ShiftSupervisorDashboard.tsx";
 import CreateShift from "./pages/admin/ShiftCreationForm.tsx";
 import ShiftManagement from "./pages/admin/ShiftManagement.tsx";
 
 // Employee Pages
 import Shifts from "./pages/employee/Shifts.tsx";
 import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
-
 import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
-
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard.tsx";
+import TesterDashboard from "./pages/employee/TesterDashboard.tsx";
+import TechnicianDashboard from "./pages/employee/TechnicianDashboard.tsx";
 
 // Context & Private Route
 import { AuthProvider } from "./AuthContext.tsx";
@@ -63,15 +66,20 @@ const App: React.FC = () => {
               "Extra Role",
             ]} />}>
             <Route element={<MainLayout />}>
+              <Route path="admin-dashboard" element={<AdminDashboard />} />
               <Route path="employee-management" element={<EmployeeManagement />} />
               <Route path="shift-approval" element={<ShiftApprovalCalendar />} />
               <Route path="shift-swap-admin" element={<ShiftSwapAdmin />} />
+              <Route path="shift-supervisor-dashboard" element={<ShiftSupervisorDashboard />} />
               <Route path="create-shift" element={<CreateShift />} />
               <Route path="shift-management" element={<ShiftManagement />} />
               <Route path="shifts" element={<Shifts />} />
               <Route path="shift-availability" element={<ShiftAvailability />} />
               <Route path="shift-view" element={<CompanyShiftCalendar />} />
-        
+              <Route path="shift-swap" element={<ShiftSwapRequests />} />
+              <Route path="tester-dashboard" element={<TesterDashboard />} />
+              <Route path="technician-dashboard" element={<TechnicianDashboard />} />
+              <Route path="employee-dashboard" element={<EmployeeDashboard />} />
             </Route>
           </Route>
 
