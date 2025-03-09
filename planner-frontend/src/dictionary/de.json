@@ -112,6 +112,18 @@
     "conflictFound": "Konflikt: Mitarbeiter {{empName}} hat bereits eine sich überschneidende Schicht \"{{existingTitle}}\".",
     "confirmDeleteShift": "Möchten Sie diese Schicht wirklich löschen?",
     "edit": "Bearbeiten",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "calendarToday": "Heute",
+    "calendarBack": "Zurück",
+    "calendarNext": "Weiter",
+  
+    "shiftPlanner": "Schichtplaner",
+    "closeSidebar": "Seitenleiste schließen",
+    "testLogicGate": "Logik-Gatter testen",
+    "testAuthConnection": "Authentifizierung testen",
+    "testScheduler": "Planer testen",
+    "shiftSwapAdmin": "Schichttausch Admin",
+    "companyShiftCalendar": "Firmen-Schichtkalender",
+    "shiftSwap": "Schichttausch"
   }
   

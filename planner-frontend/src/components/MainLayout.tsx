@@ -8,7 +8,7 @@ import "./MainLayout.css";
 const MainLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
   const closeSidebar = () => setSidebarOpen(false);
 
   return (

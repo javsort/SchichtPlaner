@@ -2,6 +2,7 @@
 import React, { useState, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
+import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CompanyShiftCalendar.css";
 import { useTranslation } from "react-i18next";
@@ -27,9 +28,9 @@ interface CompanyShiftCalendarProps {
 const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   currentUser = { id: 1, name: "John Doe" },
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  moment.locale(i18n.language);
 
-  // Example employees
   const [employees] = useState<Employee[]>([
     { id: 1, name: "David Marco" },
     { id: 2, name: "Justus Magdy" },
@@ -74,11 +75,13 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // ...
+    // File import logic here
   };
+
   const handleExport = () => {
-    // ...
+    // Export logic here
   };
 
   const filteredShifts = shifts.filter((shift) => {
@@ -110,6 +113,16 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     },
   });
 
+  const messages = {
+    today: t("calendarToday"),
+    previous: t("calendarBack"),
+    next: t("calendarNext"),
+    month: t("month"),
+    week: t("week"),
+    day: t("day"),
+    agenda: t("agenda"),
+  };
+
   return (
     <div className="company-shift-calendar-container">
       <header className="calendar-header">
@@ -127,7 +140,6 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
           />
         </div>
       </header>
-
       <div className="calendar-main-layout">
         <main className="calendar-main-content">
           <div className="calendar-filters">
@@ -138,10 +150,12 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
               {t("unoccupiedShifts") || "Unoccupied Shifts"}
             </button>
           </div>
-
           <div className="calendar-container">
             <Calendar
+              key={i18n.language}
               localizer={localizer}
+              culture={i18n.language}
+              messages={messages}
               events={calendarEvents}
               startAccessor="start"
               endAccessor="end"

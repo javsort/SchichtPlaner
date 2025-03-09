@@ -1,14 +1,12 @@
 // src/pages/ShiftSwapAdmin.tsx
-
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
+import "moment/locale/de";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./ShiftSwapAdmin.css";
-import { useTranslation } from "react-i18next"; // <-- Import translation hook
+import { useTranslation } from "react-i18next";
 
-// --------------------
-// Data Types
-// --------------------
 export interface Shift {
   id: number;
   title: string;
@@ -28,9 +26,6 @@ export interface SwapRequest {
   status: "Pending" | "Approved" | "Rejected";
 }
 
-// --------------------
-// Dummy Data
-// --------------------
 const dummyShifts: Shift[] = [
   {
     id: 101,
@@ -85,17 +80,13 @@ const initialSwapRequests: SwapRequest[] = [
   },
 ];
 
-// --------------------
-// Component
-// --------------------
 const localizer = momentLocalizer(moment);
 
 const ShiftSwapAdmin: React.FC = () => {
-  const { t } = useTranslation(); // Use the translation hook
+  const { t, i18n } = useTranslation();
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialSwapRequests);
   const [view, setView] = useState(Views.WEEK);
 
-  // Create calendar events from swapRequests
   const calendarEvents = swapRequests.map((req) => ({
     id: req.id,
     title: `Req #${req.id} - ${req.status}`,
@@ -122,14 +113,27 @@ const ShiftSwapAdmin: React.FC = () => {
     }
   };
 
+  // Define messages for the Calendar toolbar
+  const messages = {
+    today: t("calendarToday"),
+    previous: t("calendarBack"),
+    next: t("calendarNext"),
+    month: t("month"),
+    week: t("week"),
+    day: t("day"),
+    agenda: t("agenda")
+  };
+
   return (
     <div className="shift-swap-admin-container container mt-4">
       <h2 className="mb-4">{t("manageShiftSwapRequests") || "Manage Shift Swap Requests"}</h2>
 
-      {/* Calendar View */}
       <div className="calendar-container mb-4">
         <Calendar
+          key={i18n.language}
           localizer={localizer}
+          culture={i18n.language}
+          messages={messages}
           events={calendarEvents}
           startAccessor="start"
           endAccessor="end"
@@ -138,7 +142,6 @@ const ShiftSwapAdmin: React.FC = () => {
         />
       </div>
 
-      {/* Swap Requests Table */}
       <table className="table table-striped">
         <thead>
           <tr>

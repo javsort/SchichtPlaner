@@ -1,9 +1,10 @@
 // src/components/GlobalSidebar.tsx
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { testLogicGate, testAuth, testScheduler } from '../Services/api.ts';
-import { useAuth } from '../AuthContext.tsx';
-import './GlobalSidebar.css';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { testLogicGate, testAuth, testScheduler } from "../Services/api.ts";
+import { useAuth } from "../AuthContext.tsx";
+import { useTranslation } from "react-i18next";
+import "./GlobalSidebar.css";
 
 interface GlobalSidebarProps {
   open: boolean;
@@ -11,25 +12,25 @@ interface GlobalSidebarProps {
 }
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   path: string;
   roles: string[];
 }
 
-// Define navigation items with roles that can view them.
 const navItems: NavItem[] = [
-  { label: 'Employee Management', path: '/employee-management', roles: ['Admin', 'Supervisor'] },
-  { label: 'Shift Approval', path: '/shift-approval', roles: ['Admin', 'Supervisor'] },
-  { label: 'Shift Swap Admin', path: '/shift-swap-admin', roles: ['Admin', 'Supervisor'] },
-  { label: 'Shift Management', path: '/shift-management', roles: ['Admin', 'Supervisor'] },
-  { label: 'Shift Availability', path: '/shift-availability', roles: ['Admin', 'Supervisor', 'Employee', 'Tester', 'Technician'] },
-  { label: 'Company Shift Calendar', path: '/shift-view', roles: ['Admin', 'Supervisor', 'Employee', 'Tester', 'Technician'] },
-  { label: 'Shift Swap', path: '/shift-swap', roles: ['Admin', 'Supervisor', 'Employee', 'Tester', 'Technician'] },
+  { labelKey: "employeeManagement", path: "/employee-management", roles: ["Admin", "Supervisor"] },
+  { labelKey: "shiftApproval", path: "/shift-approval", roles: ["Admin", "Supervisor"] },
+  { labelKey: "shiftSwapAdmin", path: "/shift-swap-admin", roles: ["Admin", "Supervisor"] },
+  { labelKey: "shiftManagement", path: "/shift-management", roles: ["Admin", "Supervisor"] },
+  { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "Supervisor", "Employee", "Tester", "Technician"] },
+  { labelKey: "companyShiftCalendar", path: "/shift-view", roles: ["Admin", "Supervisor", "Employee", "Tester", "Technician"] },
+  { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "Supervisor", "Employee", "Tester", "Technician"] }
 ];
 
 const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // Ensure AuthProvider is wrapping your app.
+  const { user } = useAuth();
+  const { t } = useTranslation();
 
   const handleLinkClick = (path: string) => {
     navigate(path);
@@ -41,36 +42,38 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Filter navigation items based on the current user's role.
-  const filteredNavItems = navItems.filter(item => user && item.roles.includes(user.role));
+  // Filter items based on user role
+  const filteredNavItems = navItems.filter(
+    (item) => user && item.roles.includes(user.role)
+  );
 
   return (
-    <div className={`global-sidebar ${open ? 'open' : ''}`}>
-      <button className="close-btn" onClick={onClose} aria-label="Close Sidebar">
+    <div className={`global-sidebar ${open ? "open" : ""}`}>
+      <button className="close-btn" onClick={onClose} aria-label={t("closeSidebar") || "Close Sidebar"}>
         ×
       </button>
-      <h3>Shift Planner</h3>
+      <h3>{t("shiftPlanner") || "Shift Planner"}</h3>
       <ul>
         {filteredNavItems.map((item, index) => (
           <li key={index}>
             <Link to={item.path} onClick={() => handleLinkClick(item.path)}>
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           </li>
         ))}
         <li>
           <button onClick={() => handleApiTest(testLogicGate)}>
-            Test Logic Gate
+            {t("testLogicGate") || "Test Logic Gate"}
           </button>
         </li>
         <li>
           <button onClick={() => handleApiTest(testAuth)}>
-            Test Auth Connection
+            {t("testAuthConnection") || "Test Auth Connection"}
           </button>
         </li>
         <li>
           <button onClick={() => handleApiTest(testScheduler)}>
-            Test Scheduler
+            {t("testScheduler") || "Test Scheduler"}
           </button>
         </li>
       </ul>

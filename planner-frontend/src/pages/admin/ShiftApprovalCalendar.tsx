@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
+import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./ShiftApprovalCalendar.css";
 import { fetchShifts, proposeShift, approveShift } from "../../Services/api.ts";
@@ -9,29 +10,22 @@ import { useTranslation } from "react-i18next";
 
 const localizer = momentLocalizer(moment);
 
-const ShiftApprovalCalendar: React.FC = () => {
-  const { t } = useTranslation();
+const ShiftApprovalCalendar = () => {
+  const { t, i18n } = useTranslation();
+  moment.locale(i18n.language);
 
-  // State for pending shifts (only proposed shifts)
-  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
-  
-  // State for all shifts (approved + pending)
-  const [shifts, setShifts] = useState<any[]>([]);
-
-  // Loading states
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [shifts, setShifts] = useState([]);
   const [loadingShifts, setLoadingShifts] = useState(true);
   const [loadingPending, setLoadingPending] = useState(true);
-  
-  // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
 
-  // Fetch all shifts (approved + proposed)
   const getAllShifts = async () => {
     setLoadingShifts(true);
     try {
       const fetchedShifts = await fetchShifts();
       if (fetchedShifts.length > 0) {
-        const formattedShifts = fetchedShifts.map((shift: any) => ({
+        const formattedShifts = fetchedShifts.map((shift) => ({
           id: shift.id,
           employee: shift.employeeId
             ? `${t("employee")} ${shift.employeeId}`
@@ -39,7 +33,7 @@ const ShiftApprovalCalendar: React.FC = () => {
           title: shift.title || t("unnamedShift") || "Unnamed Shift",
           start: new Date(shift.startTime),
           end: new Date(shift.endTime),
-          status: shift.status // e.g., "APPROVED", "PROPOSED"
+          status: shift.status
         }));
         setShifts(formattedShifts);
       }
@@ -49,15 +43,14 @@ const ShiftApprovalCalendar: React.FC = () => {
     setLoadingShifts(false);
   };
 
-  // Fetch pending (proposed) shifts
   const getPendingShifts = async () => {
     setLoadingPending(true);
     try {
       const fetchedPendingShifts = await proposeShift();
       if (fetchedPendingShifts.length > 0) {
         const formattedPendingShifts = fetchedPendingShifts
-          .filter((shift: any) => shift.status !== "ACCEPTED") // only proposed
-          .map((shift: any) => ({
+          .filter((shift) => shift.status !== "ACCEPTED")
+          .map((shift) => ({
             id: shift.id,
             employee: shift.employeeId
               ? `${t("employee")} ${shift.employeeId}`
@@ -75,38 +68,31 @@ const ShiftApprovalCalendar: React.FC = () => {
     setLoadingPending(false);
   };
 
-  // Approve a shift
-  const handleApprove = async (id: number) => {
+  const handleApprove = async (id) => {
     try {
       await approveShift(id);
       getAllShifts();
       getPendingShifts();
     } catch (error) {
-      console.error(
-        `${t("errorApprovingShift") || "Error approving shift"} ${id}:`,
-        error
-      );
+      console.error(`${t("errorApprovingShift") || "Error approving shift"} ${id}:`, error);
       alert(t("failedApprove") || "Failed to approve shift. Please try again.");
     }
   };
 
-  // Convert shifts into calendar events
   const calendarEvents = shifts.map((shift) => ({
     ...shift,
     title: `${shift.title} - ${shift.employee}`
   }));
 
-  // Style shifts based on status
-  const eventStyleGetter = (event: any) => {
+  const eventStyleGetter = (event) => {
     let backgroundColor;
     if (event.status === "APPROVED") {
-      backgroundColor = "#27ae60"; // Green
+      backgroundColor = "#27ae60";
     } else if (event.status === "PROPOSED") {
-      backgroundColor = "#f39c12"; // Yellow
+      backgroundColor = "#f39c12";
     } else {
-      backgroundColor = "#3498db"; // Blue
+      backgroundColor = "#3498db";
     }
-
     return {
       style: {
         backgroundColor,
@@ -118,23 +104,28 @@ const ShiftApprovalCalendar: React.FC = () => {
     };
   };
 
-  // Fetch data on component mount
   useEffect(() => {
     getAllShifts();
     getPendingShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const messages = {
+    today: t("calendarToday"),
+    previous: t("calendarBack"),
+    next: t("calendarNext"),
+    month: t("month"),
+    week: t("week"),
+    day: t("day"),
+    agenda: t("agenda")
+  };
+
   return (
     <div className="shift-approval-layout">
       <div className="shift-approval-content">
         <h2>{t("shiftApproval") || "Shift Approval"}</h2>
-
-        {/* Calendar View Selector */}
         <div className="view-selector">
-          <label htmlFor="calendar-view">
-            {t("calendarView") || "Calendar View:"}
-          </label>
+          <label htmlFor="calendar-view">{t("calendarView") || "Calendar View:"}</label>
           <select
             id="calendar-view"
             value={view}
@@ -146,14 +137,15 @@ const ShiftApprovalCalendar: React.FC = () => {
             <option value={Views.AGENDA}>{t("agenda") || "Agenda"}</option>
           </select>
         </div>
-
-        {/* Calendar */}
         <div className="calendar-container">
           {loadingShifts ? (
             <p>{t("loadingCalendar") || "Loading calendar..."}</p>
           ) : (
             <Calendar
+              key={i18n.language}
               localizer={localizer}
+              culture={i18n.language}
+              messages={messages}
               events={calendarEvents}
               startAccessor="start"
               endAccessor="end"
@@ -165,8 +157,6 @@ const ShiftApprovalCalendar: React.FC = () => {
             />
           )}
         </div>
-
-        {/* Pending Shift Requests */}
         <h3>{t("pendingShiftRequests") || "Pending Shift Requests"}</h3>
         {loadingPending ? (
           <p>{t("loadingPending") || "Loading pending requests..."}</p>
