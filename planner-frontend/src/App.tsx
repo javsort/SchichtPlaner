@@ -7,7 +7,7 @@ import "./index.css";
 import "./pages/general/theme.css";
 import "./pages/general/global.css";
 
-import Header from "./components/Header.tsx"; // (Now used in MainLayout)
+
 
 
 // Public Pages
@@ -71,7 +71,8 @@ const App: React.FC = () => {
               <Route path="shifts" element={<Shifts />} />
               <Route path="shift-availability" element={<ShiftAvailability />} />
               <Route path="shift-view" element={<CompanyShiftCalendar />} />
-        
+              <Route path="shift-swap" element={<ShiftSwapRequests />} />
+              
             </Route>
           </Route>
 

@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import "./ShiftSwapAdmin.css"; // Make sure this file exists with the updated CSS below
+import "./ShiftSwapAdmin.css";
+import { useTranslation } from "react-i18next"; // <-- Import translation hook
 
 // --------------------
 // Data Types
@@ -90,6 +91,7 @@ const initialSwapRequests: SwapRequest[] = [
 const localizer = momentLocalizer(moment);
 
 const ShiftSwapAdmin: React.FC = () => {
+  const { t } = useTranslation(); // Use the translation hook
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialSwapRequests);
   const [view, setView] = useState(Views.WEEK);
 
@@ -103,30 +105,26 @@ const ShiftSwapAdmin: React.FC = () => {
   }));
 
   const handleApprove = (requestId: number) => {
-    if (window.confirm("Are you sure you want to approve this swap?")) {
+    if (window.confirm(t("approveSwapConfirm") || "Are you sure you want to approve this swap?")) {
       setSwapRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId ? { ...req, status: "Approved" } : req
-        )
+        prev.map((req) => (req.id === requestId ? { ...req, status: "Approved" } : req))
       );
-      alert("Swap request approved.");
+      alert(t("swapApproved") || "Swap request approved.");
     }
   };
 
   const handleReject = (requestId: number) => {
-    if (window.confirm("Are you sure you want to reject this swap?")) {
+    if (window.confirm(t("rejectSwapConfirm") || "Are you sure you want to reject this swap?")) {
       setSwapRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId ? { ...req, status: "Rejected" } : req
-        )
+        prev.map((req) => (req.id === requestId ? { ...req, status: "Rejected" } : req))
       );
-      alert("Swap request rejected.");
+      alert(t("swapRejected") || "Swap request rejected.");
     }
   };
 
   return (
     <div className="shift-swap-admin-container container mt-4">
-      <h2 className="mb-4">Manage Shift Swap Requests</h2>
+      <h2 className="mb-4">{t("manageShiftSwapRequests") || "Manage Shift Swap Requests"}</h2>
 
       {/* Calendar View */}
       <div className="calendar-container mb-4">
@@ -144,14 +142,14 @@ const ShiftSwapAdmin: React.FC = () => {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Request ID</th>
-            <th>Employee</th>
-            <th>Your Shift</th>
-            <th>Target Employee</th>
-            <th>Target Shift</th>
-            <th>Message</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{t("requestID") || "Request ID"}</th>
+            <th>{t("employee") || "Employee"}</th>
+            <th>{t("yourShift") || "Your Shift"}</th>
+            <th>{t("targetEmployee") || "Target Employee"}</th>
+            <th>{t("targetShift") || "Target Shift"}</th>
+            <th>{t("message") || "Message"}</th>
+            <th>{t("status") || "Status"}</th>
+            <th>{t("actions") || "Actions"}</th>
           </tr>
         </thead>
         <tbody>
@@ -182,13 +180,13 @@ const ShiftSwapAdmin: React.FC = () => {
                       className="btn btn-sm btn-approve"
                       onClick={() => handleApprove(req.id)}
                     >
-                      Approve
+                      {t("approve") || "Approve"}
                     </button>
                     <button
                       className="btn btn-sm btn-danger"
                       onClick={() => handleReject(req.id)}
                     >
-                      Reject
+                      {t("reject") || "Reject"}
                     </button>
                   </div>
                 ) : (

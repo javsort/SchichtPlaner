@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./ShiftAvailability.css";
 import { proposeShift } from "../../Services/api.ts";
+import { useTranslation } from "react-i18next";
 
-/** Returns an array of Date objects for each day in the given month/year. */
 function getDaysInMonth(year: number, month: number): Date[] {
   const dates: Date[] = [];
   let current = new Date(year, month, 1);
@@ -13,7 +13,6 @@ function getDaysInMonth(year: number, month: number): Date[] {
   return dates;
 }
 
-/** Generates time options in 30-minute increments (e.g., "00:00" to "23:30"). */
 function generateTimeOptions(): string[] {
   const options: string[] = [];
   for (let hour = 0; hour < 24; hour++) {
@@ -37,14 +36,13 @@ interface Availability {
 }
 
 const ShiftAvailability: React.FC = () => {
-  // Default to current month and year.
+  const { t } = useTranslation();
   const today = new Date();
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth());
   const [days, setDays] = useState<Date[]>(getDaysInMonth(selectedYear, selectedMonth));
   const timeOptions = generateTimeOptions();
 
-  // Store availability for each day in the month by date string "YYYY-MM-DD".
   const [availability, setAvailability] = useState<{ [dateStr: string]: Availability }>(() => {
     const init: { [dateStr: string]: Availability } = {};
     days.forEach((date) => {
@@ -54,7 +52,6 @@ const ShiftAvailability: React.FC = () => {
     return init;
   });
 
-  // Update days and reset availability when month/year changes.
   useEffect(() => {
     const newDays = getDaysInMonth(selectedYear, selectedMonth);
     setDays(newDays);
@@ -73,63 +70,51 @@ const ShiftAvailability: React.FC = () => {
     }));
   };
 
-  // Combine the date (YYYY-MM-DD) and time (HH:mm) into an ISO string.
-  const formatDateTime = (dateStr: string, time: string) => {
-    return new Date(`${dateStr}T${time}:00`).toISOString();
-  };
-
   const handleSave = async () => {
+    // Example employee
     const employee = localStorage.getItem("user");
-
     if (!employee) {
-      alert("Error saving availability: Employee not found.");
+      alert(t("employeeNotFound") || "Error saving availability: Employee not found.");
       return;
     }
 
-    const employeeId = JSON.parse(employee).userId;
-    const role = JSON.parse(employee).role;
-
+    const employeeData = JSON.parse(employee);
+    const employeeId = employeeData.userId;
+    const role = employeeData.role;
     if (!employeeId) {
-      alert("Error saving availability: Employee ID not found.");
+      alert(t("employeeIdNotFound") || "Error saving availability: Employee ID not found.");
       return;
     }
 
     const proposedTitle = `Shift for Employee ${employeeId} (${role})`;
     const status = "PROPOSED";
 
-    // Loop through each day and if both times are selected, call the backend.
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
       if (from && to) {
-        const proposedStartTime = formatDateTime(dateStr, from);
-        const proposedEndTime = formatDateTime(dateStr, to);
-
+        const start = new Date(`${dateStr}T${from}:00`).toISOString();
+        const end = new Date(`${dateStr}T${to}:00`).toISOString();
         try {
-          await proposeShift(employeeId, proposedTitle, proposedStartTime, proposedEndTime, status);
+          await proposeShift(employeeId, proposedTitle, start, end, status);
           console.log(`Shift proposed for ${dateStr}`);
         } catch (error) {
           console.error(`Error proposing shift for ${dateStr}:`, error);
         }
       }
     }
-    alert("Availability saved! Check console for details.");
+    alert(t("availabilitySaved") || "Availability saved!");
   };
 
-  // Create a list of years (e.g., current year ±5 years).
   const yearOptions = Array.from({ length: 11 }, (_, i) => today.getFullYear() - 5 + i);
 
   return (
     <div className="shift-availability-layout">
-      {/* Removed any reference to SideBar */}
       <div className="shift-availability-container">
-        <h2>Shift Availability</h2>
+        <h2>{t("shiftAvailability") || "Shift Availability"}</h2>
         <div className="month-year-selector">
           <label>
-            Month:{" "}
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(Number(e.target.value))}
-            >
+            {t("monthLabel") || "Month:"}{" "}
+            <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
               {MONTH_NAMES.map((name, index) => (
                 <option key={index} value={index}>
                   {name}
@@ -138,11 +123,8 @@ const ShiftAvailability: React.FC = () => {
             </select>
           </label>
           <label>
-            Year:{" "}
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-            >
+            {t("yearLabel") || "Year:"}{" "}
+            <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
               {yearOptions.map((yr) => (
                 <option key={yr} value={yr}>
                   {yr}
@@ -151,13 +133,14 @@ const ShiftAvailability: React.FC = () => {
             </select>
           </label>
         </div>
+
         <div className="table-container">
           <table className="shift-table">
             <thead>
               <tr>
-                <th>Day</th>
-                <th>From</th>
-                <th>To</th>
+                <th>{t("day") || "Day"}</th>
+                <th>{t("from") || "From"}</th>
+                <th>{t("to") || "To"}</th>
               </tr>
             </thead>
             <tbody>
@@ -171,7 +154,7 @@ const ShiftAvailability: React.FC = () => {
                         value={availability[dateStr].from}
                         onChange={(e) => handleChange(dateStr, "from", e.target.value)}
                       >
-                        <option value="">Select</option>
+                        <option value="">{t("selectOption") || "Select"}</option>
                         {timeOptions.map((opt) => (
                           <option key={opt} value={opt}>
                             {opt}
@@ -184,7 +167,7 @@ const ShiftAvailability: React.FC = () => {
                         value={availability[dateStr].to}
                         onChange={(e) => handleChange(dateStr, "to", e.target.value)}
                       >
-                        <option value="">Select</option>
+                        <option value="">{t("selectOption") || "Select"}</option>
                         {timeOptions.map((opt) => (
                           <option key={opt} value={opt}>
                             {opt}
@@ -198,8 +181,9 @@ const ShiftAvailability: React.FC = () => {
             </tbody>
           </table>
         </div>
+
         <button className="save-btn" onClick={handleSave}>
-          Save
+          {t("save") || "Save"}
         </button>
       </div>
     </div>
