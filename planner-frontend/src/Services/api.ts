@@ -61,13 +61,40 @@ export const login = async (email: string, password: string) => {
       email: email,
       password: password
     });
-    localStorage.setItem('token', response.data.token);
-    return { email: response.data.email, role: response.data.role, token: response.data.token };
-  } catch (error: any) {
-    console.error('Error logging in', error.response ? error.response.data : error);
-    throw error;
+
+    const data = await response;
+
+    localStorage.setItem('token', data.data.token);
+    localStorage.setItem('userId', data.data.userId);
+
+    return { email: data.data.email, role: data.data.role, token: data.data.token, userId: data.data.userId };
+
+  } catch (error) {
+    console.error('Error logging in', error);
+
   }
 };
+
+// Shifts
+export const fetchShifts = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/scheduler/shifts`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    console.log('Shifts fetched successfully', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
 
 // Shift proposal
 export const proposeShift = async (
@@ -106,7 +133,7 @@ export const proposeShift = async (
   }
 };
 
-export const fetchShifts = async () => {
+export const fetchProposalShifts = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals`, {
       headers: {

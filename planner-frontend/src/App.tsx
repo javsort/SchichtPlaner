@@ -7,9 +7,6 @@ import "./index.css";
 import "./pages/general/theme.css";
 import "./pages/general/global.css";
 
-
-
-
 // Public Pages
 import Login from "./pages/general/Login.tsx";
 import Register from "./pages/general/Register.tsx";

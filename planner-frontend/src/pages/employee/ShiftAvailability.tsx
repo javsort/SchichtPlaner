@@ -92,11 +92,22 @@ const ShiftAvailability: React.FC = () => {
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
       if (from && to) {
-        const start = new Date(`${dateStr}T${from}:00`).toISOString();
-        const end = new Date(`${dateStr}T${to}:00`).toISOString();
+        //const start = new Date(`${dateStr}T${from}:00`).toISOString();
+        //const end = new Date(`${dateStr}T${to}:00`).toISOString();
+
+        const startDate = new Date(`${dateStr}T${from}:00`);
+        const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
+
+        const endDate = new Date(`${dateStr}T${to}:00`);
+        const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
+
+        console.log(`Before offset: Start: ${startDate}, End: ${endDate}`);
+        console.log(`After offset: Start: ${start}, End: ${end}`);
+
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
           console.log(`Shift proposed for ${dateStr}`);
+
         } catch (error) {
           console.error(`Error proposing shift for ${dateStr}:`, error);
         }
