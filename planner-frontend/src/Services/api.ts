@@ -54,7 +54,9 @@ export const testAuth = async (): Promise<void> => {
   }
 };
 
-// Login endpoint
+/*
+ * User management stuff
+*/
 export const login = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${baseUrl}/api/auth/login`, {
@@ -75,7 +77,86 @@ export const login = async (email: string, password: string) => {
   }
 };
 
-// Shifts
+export const getAllUsers = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/auth/users`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    console.log('Users fetched successfully!', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error getting all users', error)
+  }
+}
+
+export const getAllRoles = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/auth/roles`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Provide a default empty string if no token is found
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    console.log('Roles fetched successfully!: ', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error retrieving roles: ', error)
+  }
+}
+
+export const createUser = async (user) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/auth/users`, 
+      user,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    )
+
+  } catch (error) {
+    console.error('Error creating user: ', error)
+  }
+}
+
+export const updateUser = async (user) => {
+  
+}
+
+export const deleteUser = async (userId) => {
+  try {
+    const response = await axios.delete(
+      `${baseUrl}/api/auth/users/${userId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    )
+
+  } catch (error) {
+    console.error('Error creating user: ', error)
+  }
+}
+
+/*
+ * Shift stuff
+*/
 export const fetchShifts = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shifts`, {
@@ -96,7 +177,9 @@ export const fetchShifts = async () => {
   }
 }
 
-// Shift proposal
+/*
+ * Shift proposal stuff
+*/
 export const proposeShift = async (
   employeeId: number,
   proposedTitle: string,
