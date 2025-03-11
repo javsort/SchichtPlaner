@@ -1,9 +1,12 @@
 // src/pages/admin/EmployeeManagement.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../AuthContext.tsx"; // Adjust the path as needed
 import { useTranslation } from "react-i18next";
 import "./EmployeeManagement.css";
+
+// API calls:
+import { getAllUsers, getAllRoles, createUser, updateUser, deleteUser } from "../../Services/api.ts";
 
 // Define an interface for employee data
 interface Employee {
@@ -29,9 +32,17 @@ const roleTranslationMap: { [key: string]: string } = {
   // Add any other roles as needed
 };
 
-const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = false }) => {
+const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (user && user.role === "Admin") {
+      setAllowDelete(true);
+    } else {
+      setAllowDelete(false);
+    }
+  }, [user]);
 
   // Set up React Hook Form
   const {
@@ -43,53 +54,78 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = f
   } = useForm();
 
   // Pre-populated list of employees
-  const [employees, setEmployees] = useState<Employee[]>([
-    {
-      id: 1,
-      name: "Justus Magdy",
-      address: "123 Main St, Anytown",
-      phone: "555-123-4567",
-      email: "justmag@example.com",
-      role: "shift_supervisor", // Raw role string
-      absences: 2,
-    },
-    {
-      id: 2,
-      name: "Hany Ali",
-      address: "456 Oak Ave, Othertown",
-      phone: "555-987-6543",
-      email: "hanyali@example.com",
-      role: "technician",
+  const [allowDelete, setAllowDelete] = useState(false);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
+
+  
+  const fetchEmployees = async () => {
+    const employees = await getAllUsers();
+    
+    const formattedEmployees = employees.map((emp: any) => ({
+      id: emp.id,
+      name: emp.username,
+      address: "N/A",
+      phone: "N/A",
+      email: emp.email,
+      role: emp.roles.length > 0 ? emp.roles[0].name.replace("-", " ") : "unknown",
       absences: 0,
-    },
-  ]);
+    }));
+
+    setEmployees(formattedEmployees);
+  };
+
+  // Fetch employees on component mount
+  useEffect(() => {
+
+    fetchEmployees();
+  }, []);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const roles = await getAllRoles();
+
+      setRoles(roles);
+    }
+
+    fetchRoles();
+  }, []);
 
   // Track which employee is being edited; null means we're adding a new employee
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
 
   // Handle form submission for adding/updating an employee
-  const onSubmit = (data: any) => {
-    // Convert string to number for absences
-    const employeeData: Employee = {
-      ...data,
-      absences: Number(data.absences),
-      // If editing, reuse the existing ID; otherwise create a new one
-      id: editingEmployeeId ? editingEmployeeId : Date.now(),
-    };
+  const onSubmit = async (data: any) => {
 
-    if (editingEmployeeId) {
-      // Update existing employee
-      setEmployees((prev) =>
-        prev.map((emp) =>
-          emp.id === editingEmployeeId ? employeeData : emp
-        )
-      );
-      setEditingEmployeeId(null);
+    if(editingEmployeeId == null){
+      try {
+        const selectedRole = roles.find((role) => role.name === data.role);
+        
+        if (!selectedRole) {
+          console.error("Invalid role selected.");
+          return;
+        }
+    
+        const newUser = {
+          email: data.email,
+          username: data.name,
+          password: "password_test", // Default password (consider making this configurable)
+          googleId: "",
+          roles: [{ id: selectedRole.id, name: selectedRole.name }]
+        };
+    
+        await createUser(newUser);
+        
+        reset(); // Clear the form after submission
+        fetchEmployees(); // Refresh employee list after adding a new user
+    
+      } catch (error) {
+        console.error("Error creating user:", error);
+      }
+
     } else {
-      // Add new employee
-      setEmployees((prev) => [...prev, employeeData]);
+      window.alert("User update coming soon!")
     }
-    reset();
   };
 
   // Pre-fill the form with an employee's data for editing
@@ -104,9 +140,12 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = f
   };
 
   // Delete an employee (only if allowed and user is Admin)
-  const deleteEmployee = (id: number) => {
+  const deleteEmployee = async (id: number) => {
     if (window.confirm(t("confirmDelete") || "Are you sure you want to delete this employee?")) {
-      setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+      
+      await deleteUser(id)
+
+      fetchEmployees();
     }
   };
 
@@ -180,16 +219,15 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = f
 
         <div className="form-row">
           <label>{t("role") || "Role"}:</label>
-          <input
-            {...register("role", {
-              required: t("roleRequired") || "Role is required",
-            })}
-            placeholder={
-              t("rolePlaceholder") ||
-              "Role (e.g., shift supervisor, technician, tester, incident-manager)"
-            }
-          />
-          {errors.role && <p className="error">{errors.role.message}</p>}
+          <select {...register("role", { required: t("roleRequired") || "Role is required" })}>
+            <option value="">{t("Select Role") || "Select a Role"}</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.name}>
+                  {t(roleTranslationMap[role.name.replace("-", " ")] || role.name.replace("-", " "))}
+                </option>
+              ))}
+        </select>
+        {errors.role && <p className="error">{errors.role.message}</p>}
         </div>
 
         <div className="form-row">
@@ -246,12 +284,12 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({ allowDelete = f
               {/* Map the raw role to a translated label */}
               <td>{getRoleLabel(emp.role)}</td>
               <td>{emp.absences}</td>
-              <td>
+              <td align="center">
                 <button onClick={() => editEmployee(emp)}>
                   {t("edit") || "Edit"}
                 </button>
                 {/* Only show delete if allowed and user is an Administrator */}
-                {allowDelete && user?.role === "Administrator" && (
+                {allowDelete && (
                   <button onClick={() => deleteEmployee(emp.id)}>
                     {t("delete") || "Delete"}
                   </button>

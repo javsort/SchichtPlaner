@@ -4,7 +4,8 @@
 .container {
   width: 100%;
   min-height: 100vh; /* fill the full browser height */
-  margin: 0;
+  margin: 0 auto;
+  max-width: 80%; /* Center content on larger screens */
   padding: 20px;
   font-family: var(--font-primary, 'Source Sans Pro', Arial, sans-serif);
   background-color: #ffffff; /* White background */
@@ -132,6 +133,8 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s ease;
+  text-align: center;
+
 }
 
 .employee-table button:first-of-type {

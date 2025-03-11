@@ -92,17 +92,31 @@ const ShiftAvailability: React.FC = () => {
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
       if (from && to) {
-        const start = new Date(`${dateStr}T${from}:00`).toISOString();
-        const end = new Date(`${dateStr}T${to}:00`).toISOString();
+
+        // Add an extra day. Idk why this happens but yea
+        const startDate = new Date(`${dateStr}T${from}:00`);
+        startDate.setDate(startDate.getDate() + 1);
+        const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
+
+        const endDate = new Date(`${dateStr}T${to}:00`);
+        endDate.setDate(endDate.getDate() + 1);
+        const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
+
+        console.log(`Before offset: Start: ${startDate}, End: ${endDate}`);
+        console.log(`After offset: Start: ${start}, End: ${end}`);
+
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
-          console.log(`Shift proposed for ${dateStr}`);
+          console.log(`Shift proposed for: ${start} - ${end}`);
+          alert(t("availabilitySaved") || "Availability saved!");
+
         } catch (error) {
-          console.error(`Error proposing shift for ${dateStr}:`, error);
+          console.log(`Shift proposed for: ${start} - ${end}`);
+          alert(t("errorSavingAvailability") || "Error saving availability:");
+          console.error("Error: ", error);
         }
       }
     }
-    alert(t("availabilitySaved") || "Availability saved!");
   };
 
   const yearOptions = Array.from({ length: 11 }, (_, i) => today.getFullYear() - 5 + i);

@@ -27,8 +27,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
       {/* Right side: logo and language switcher */}
       <div className="header-right">
-        <img src="/logo.png" alt="Company Logo" className="header-logo" />
-        <LanguageSwitcher />
+        <div className="header-right-inner" margin-right="50px">
+          <LanguageSwitcher />
+        </div>
+        <img src="/logo.png" alt="Company Logo" className="header-logo" margin-left="50px"/>
       </div>
     </header>
   );
