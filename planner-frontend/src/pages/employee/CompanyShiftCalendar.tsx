@@ -101,7 +101,10 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
       </header>
       <div style={{ flex: 1, display: "flex" }}>
         <aside style={{ width: "300px", minWidth: "300px", backgroundColor: "#fafafa", borderRight: "1px solid #ccc", padding: "10px", boxSizing: "border-box" }}>
-          <GlobalSidebar />
+          <GlobalSidebar 
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
         </aside>
         <main style={{ flex: 1, padding: "10px", boxSizing: "border-box" }}>
           <div className="calendar-filters">
