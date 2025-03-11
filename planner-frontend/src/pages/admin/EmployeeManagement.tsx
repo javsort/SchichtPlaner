@@ -96,29 +96,35 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   // Handle form submission for adding/updating an employee
   const onSubmit = async (data: any) => {
-    try {
-      const selectedRole = roles.find((role) => role.name === data.role);
-      
-      if (!selectedRole) {
-        console.error("Invalid role selected.");
-        return;
+
+    if(editingEmployeeId == null){
+      try {
+        const selectedRole = roles.find((role) => role.name === data.role);
+        
+        if (!selectedRole) {
+          console.error("Invalid role selected.");
+          return;
+        }
+    
+        const newUser = {
+          email: data.email,
+          username: data.name,
+          password: "password_test", // Default password (consider making this configurable)
+          googleId: "",
+          roles: [{ id: selectedRole.id, name: selectedRole.name }]
+        };
+    
+        await createUser(newUser);
+        
+        reset(); // Clear the form after submission
+        fetchEmployees(); // Refresh employee list after adding a new user
+    
+      } catch (error) {
+        console.error("Error creating user:", error);
       }
-  
-      const newUser = {
-        email: data.email,
-        username: data.name,
-        password: "password_test", // Default password (consider making this configurable)
-        googleId: "",
-        roles: [{ id: selectedRole.id, name: selectedRole.name }]
-      };
-  
-      await createUser(newUser);
-      
-      reset(); // Clear the form after submission
-      fetchEmployees(); // Refresh employee list after adding a new user
-  
-    } catch (error) {
-      console.error("Error creating user:", error);
+
+    } else {
+      window.alert("User update coming soon!")
     }
   };
 
