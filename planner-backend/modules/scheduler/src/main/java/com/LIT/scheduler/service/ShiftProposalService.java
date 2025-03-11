@@ -1,6 +1,7 @@
 package com.LIT.scheduler.service;
 
 import com.LIT.scheduler.exception.ShiftConflictException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.entity.ShiftAssignment;
 import com.LIT.scheduler.model.entity.ShiftProposal;
@@ -157,4 +158,31 @@ public class ShiftProposalService {
         List<ShiftProposal> proposals = proposalRepository.findAll();
         return proposals;
     }
+
+    // Report generation for shift proposal
+    // CSV
+    // I need objectmapper to work for json, but it's not working for some reason.
+    public String getProposalsReportCsv() {
+        List<ShiftProposal> proposals = proposalRepository.findAll();
+        StringBuilder sb = new StringBuilder();
+        // CSV header
+        sb.append("id,employeeId,employeeName,proposedTitle,proposedStartTime,proposedEndTime,status,managerAlternativeTitle,managerAlternativeStartTime,managerAlternativeEndTime,managerComment\n");
+        for (ShiftProposal proposal : proposals) {
+            sb.append(proposal.getId()).append(",");
+            sb.append(proposal.getEmployeeId()).append(",");
+            sb.append("\"").append(proposal.getEmployeeName()).append("\",");
+            sb.append("\"").append(proposal.getProposedTitle()).append("\",");
+            sb.append(proposal.getProposedStartTime()).append(",");
+            sb.append(proposal.getProposedEndTime()).append(",");
+            sb.append(proposal.getStatus()).append(",");
+            sb.append("\"").append(proposal.getManagerAlternativeTitle() == null ? "" : proposal.getManagerAlternativeTitle()).append("\",");
+            sb.append(proposal.getManagerAlternativeStartTime() == null ? "" : proposal.getManagerAlternativeStartTime()).append(",");
+            sb.append(proposal.getManagerAlternativeEndTime() == null ? "" : proposal.getManagerAlternativeEndTime()).append(",");
+            sb.append("\"").append(proposal.getManagerComment() == null ? "" : proposal.getManagerComment()).append("\"\n");
+        }
+        log.info(logHeader + "Generated CSV report for shift proposals");
+        return sb.toString();
+    }
+
+
 }

@@ -85,4 +85,12 @@ public class ShiftProposalController {
         ShiftProposal updatedProposal = proposalService.proposeAlternative(proposalId, alternativeDetails);
         return ResponseEntity.ok(updatedProposal);
     }
+
+    // Manager retrieves shift proposal reports in CSV
+    @GetMapping("/reports/csv")
+    public ResponseEntity<String> getProposalsReportCsv() {
+        log.info(logHeader + "getProposalsReportCsv: Generating CSV report for shift proposals");
+        String csvReport = proposalService.getProposalsReportCsv();
+        return ResponseEntity.ok(csvReport);
+    }
 }
