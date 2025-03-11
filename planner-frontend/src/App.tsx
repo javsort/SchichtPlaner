@@ -1,5 +1,4 @@
-// src/App.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -32,10 +31,24 @@ import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
 import { AuthProvider } from "./AuthContext.tsx";
 import PrivateRoute from "./pages/PrivateRoute.tsx";
 
+// Ensure language load to avoid flicker
+import { useTranslation } from "react-i18next";
+
 // Global Layout for authenticated pages (includes GlobalSidebar and Header)
 import MainLayout from "./components/MainLayout.tsx";
 
 const App: React.FC = () => {
+  const { i18n } = useTranslation();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedLang = localStorage.getItem("lang") || "de";
+    i18n.changeLanguage(storedLang).then(() => setLoading(false));
+  }, []);
+
+  // Only render the app once the language has been loaded
+  if (loading) return null;
+
   return (
     <AuthProvider>
       <Router>

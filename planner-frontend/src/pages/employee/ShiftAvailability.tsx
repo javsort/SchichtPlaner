@@ -108,13 +108,15 @@ const ShiftAvailability: React.FC = () => {
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
           console.log(`Shift proposed for: ${start} - ${end}`);
+          alert(t("availabilitySaved") || "Availability saved!");
 
         } catch (error) {
           console.log(`Shift proposed for: ${start} - ${end}`);
+          alert(t("errorSavingAvailability") || "Error saving availability:");
+          console.error("Error: ", error);
         }
       }
     }
-    alert(t("availabilitySaved") || "Availability saved!");
   };
 
   const yearOptions = Array.from({ length: 11 }, (_, i) => today.getFullYear() - 5 + i);
