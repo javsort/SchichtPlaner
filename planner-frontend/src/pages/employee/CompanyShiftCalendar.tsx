@@ -32,6 +32,8 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [view, setView] = useState(Views.WEEK);
   const [calendarFilter, setCalendarFilter] = useState("all");
@@ -99,13 +101,11 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
           />
         </div>
       </header>
-      <div style={{ flex: 1, display: "flex" }}>
-        <aside style={{ width: "300px", minWidth: "300px", backgroundColor: "#fafafa", borderRight: "1px solid #ccc", padding: "10px", boxSizing: "border-box" }}>
-          <GlobalSidebar 
+      <div style={{ flex: 1, display: "flex", height: "100vh", flexDirection: "column" }}>
+        <GlobalSidebar 
             open={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
-          />
-        </aside>
+        />
         <main style={{ flex: 1, padding: "10px", boxSizing: "border-box" }}>
           <div className="calendar-filters">
             <span className="filter-label">{t("viewLabel") || "View:"}</span>
