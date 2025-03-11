@@ -107,10 +107,6 @@ const ShiftApprovalCalendar = () => {
 
   };
 
-  const handleAlternative = (id) => {
-    alert("Propose alternative shift time.\nUpdate enabling this action comming soon.");
-  };
-
   const calendarEvents = shifts.map((shift) => ({
     ...shift,
     title: `${shift.title} - ${shift.employee}`
@@ -219,9 +215,6 @@ const ShiftApprovalCalendar = () => {
                     </button>
                     <button onClick={() => handleReject(req.id)} className="approve-btn">
                       {t("reject") || "Reject"}
-                    </button>
-                    <button onClick={() => handleAlternative(req.id)} className="approve-btn">
-                      {t("proposeAlternative") || "Propose Alternative"}
                     </button>
                   </td>
                 </tr>
