@@ -149,7 +149,7 @@ export const fetchProposalShifts = async () => {
   }
 };
 
-export const approveShift = async (shiftId: string) => {
+export const approveShiftProposal = async (shiftId: string) => {
   console.log('Approving shift with ID:', shiftId);
   const token = localStorage.getItem('token') || '';
   console.log('Approving shift with token:', token);
@@ -168,6 +168,29 @@ export const approveShift = async (shiftId: string) => {
     return response.data;
   } catch (error: any) {
     console.error("Error approving shift:", error.response ? error.response.data : error);
+    throw error;
+  }
+};
+
+export const rejectShiftProposal = async (shiftId: string) => {
+  console.log('Rejecting shift with ID:', shiftId);
+  const token = localStorage.getItem('token') || '';
+  console.log('Rejecting shift with token:', token);
+  try {
+    const response = await axios.put(
+      `${baseUrl}/api/scheduler/shift-proposals/${shiftId}/reject`,
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        }
+      }
+    );
+    console.log('Shift rejected successfully', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error rejecting shift:", error.response ? error.response.data : error);
     throw error;
   }
 };

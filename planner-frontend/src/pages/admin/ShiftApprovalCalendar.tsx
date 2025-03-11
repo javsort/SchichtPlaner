@@ -5,7 +5,7 @@ import moment from "moment";
 import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./ShiftApprovalCalendar.css";
-import { fetchShifts, fetchProposalShifts, approveShift } from "../../Services/api.ts";
+import { fetchShifts, fetchProposalShifts, approveShiftProposal, rejectShiftProposal } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
 
 const localizer = momentLocalizer(moment);
@@ -57,7 +57,7 @@ const ShiftApprovalCalendar = () => {
       const fetchedPendingShifts = await fetchProposalShifts();
       if (fetchedPendingShifts.length > 0) {
         const formattedPendingShifts = fetchedPendingShifts
-          .filter((shift) => shift.status !== "ACCEPTED")
+          .filter((shift) => shift.status !== "ACCEPTED" && shift.status !== "REJECTED")
           .map((shift) => ({
             id: shift.id,
             employee: shift.employeeId
@@ -84,13 +84,31 @@ const ShiftApprovalCalendar = () => {
 
   const handleApprove = async (id) => {
     try {
-      await approveShift(id);
+      await approveShiftProposal(id);
       getAllShifts();
       getPendingShifts();
     } catch (error) {
       console.error(`${t("errorApprovingShift") || "Error approving shift"} ${id}:`, error);
       alert(t("failedApprove") || "Failed to approve shift. Please try again.");
     }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await rejectShiftProposal(id);
+      getAllShifts();
+      getPendingShifts();
+      alert(t("shiftProposalRejected") || "Shift rejected successfully.");
+
+    } catch (error) {
+      console.error(`${t("errorRejectingShift") || "Error rejecting shift"} ${id}:`, error);
+      alert(t("failedReject") || "Failed to reject shift. Please try again.");
+    }
+
+  };
+
+  const handleAlternative = (id) => {
+    alert("Propose alternative shift time.\nUpdate enabling this action comming soon.");
   };
 
   const calendarEvents = shifts.map((shift) => ({
@@ -196,8 +214,14 @@ const ShiftApprovalCalendar = () => {
                     {moment(req.end).format("hh:mm A")}
                   </td>
                   <td>
-                    <button onClick={() => handleApprove(req.id)}>
+                    <button onClick={() => handleApprove(req.id)} className="approve-btn">
                       {t("approve") || "Approve"}
+                    </button>
+                    <button onClick={() => handleReject(req.id)} className="approve-btn">
+                      {t("reject") || "Reject"}
+                    </button>
+                    <button onClick={() => handleAlternative(req.id)} className="approve-btn">
+                      {t("proposeAlternative") || "Propose Alternative"}
                     </button>
                   </td>
                 </tr>

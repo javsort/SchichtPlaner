@@ -67,6 +67,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin-right: 8px;
 }
 
 .approve-btn:hover {
