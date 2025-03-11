@@ -1,0 +1,50 @@
+/* src/components/Header.css */
+
+.header-container {
+  position: fixed;    /* Pin the header at the top */
+  top: 0;
+  left: 0;
+  width: 100%;       /* Full width */
+  height: 60px;      /* Fixed height for the header */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Hamburger on left, logo on right */
+  background-color: #ffffff;
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 3000;     /* On top of other elements */
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.hamburger-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2c3e50;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.hamburger-btn:focus,
+.hamburger-btn:active {
+  outline: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: #2c3e50 !important;
+}
+
+.header-logo {
+  height: 40px; /* Adjust as needed */
+  width: auto;
+}

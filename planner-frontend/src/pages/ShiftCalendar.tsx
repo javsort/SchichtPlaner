@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import "./ShiftCalendar.css"; // Custom CSS using theme variables
 
 const ShiftCalendar = () => {
   const [view, setView] = useState('all'); // Default to 'All Shifts'
@@ -15,26 +16,35 @@ const ShiftCalendar = () => {
     { title: "Evening Shift", start: "2025-01-30T16:00:00", end: "2025-01-30T23:59:59" },
   ];
 
-  return (
-    <div>
-      <button onClick={() => setView('myShifts')}>My Shifts</button>
-      <button onClick={() => setView('all')}>All Shifts</button>
-      <button onClick={() => setView('unoccupied')}>Unoccupied Shifts</button>
+  // Filter shifts based on selected view using simple mock logic.
+  const filteredShifts = shifts.filter(shift => {
+    if (view === 'myShifts') {
+      // Example: only show shifts that include "Morning"
+      return shift.title.includes("Morning");
+    } else if (view === 'unoccupied') {
+      // Add your condition for unoccupied shifts here.
+      return false;
+    }
+    return true; // For 'all' view, show every shift
+  });
 
+  return (
+    <div className="shift-calendar-container">
+      <div className="calendar-filters">
+        <button onClick={() => setView('myShifts')} className={view === 'myShifts' ? 'active' : ''}>
+          My Shifts
+        </button>
+        <button onClick={() => setView('all')} className={view === 'all' ? 'active' : ''}>
+          All Shifts
+        </button>
+        <button onClick={() => setView('unoccupied')} className={view === 'unoccupied' ? 'active' : ''}>
+          Unoccupied Shifts
+        </button>
+      </div>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={shifts.filter(shift => {
-          // Filter shifts based on selected view
-          if (view === 'myShifts') {
-            // Filter for only logged-in user's shifts (mock data)
-            return shift.title.includes("Morning");
-          } else if (view === 'unoccupied') {
-            // Filter for unoccupied shifts (add condition here)
-            return false;
-          }
-          return true; // Show all shifts
-        })}
+        events={filteredShifts}
         eventClick={handleEventClick}
       />
     </div>

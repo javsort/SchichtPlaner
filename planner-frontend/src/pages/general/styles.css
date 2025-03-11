@@ -1,3 +1,5 @@
+/* src/styles.css */
+
 /* Admin Dashboard Container */
 .admin-dashboard-container {
   display: flex;
@@ -8,8 +10,8 @@
 /* Sidebar Styles - Admin Panel */
 .admin-sidebar {
   width: 250px;
-  background-color: #003366; /* Dark blue for the sidebar */
-  color: white;
+  background-color: var(--color-hellblau); /* replaced #003366 with brand color if desired */
+  color: var(--color-weiss);
   padding: 20px;
   position: fixed;
   top: 0;
@@ -29,7 +31,7 @@
 
 .sidebar-btn {
   background: none;
-  color: white;
+  color: var(--color-weiss);
   border: none;
   text-align: left;
   padding: 10px 15px;
@@ -39,7 +41,7 @@
 }
 
 .sidebar-btn:hover {
-  background-color: #495057;
+  background-color: #495057; /* Or var(--color-hellgruen) if you prefer brand color */
 }
 
 /* Main Content */
@@ -47,7 +49,7 @@
   flex-grow: 1;
   padding: 20px;
   margin-left: 270px; /* Adjust content to the right so it doesn't overlap with sidebar */
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* Could use var(--color-weiss) if you want pure white */
 }
 
 /* Header */
@@ -57,7 +59,7 @@
 
 .admin-header h1 {
   font-size: 32px;
-  color: #343a40;
+  color: #343a40; /* or var(--color-schwarz) */
 }
 
 /* Action Buttons */
@@ -68,8 +70,8 @@
 }
 
 .admin-action-btn {
-  background-color: #007bff;
-  color: white;
+  background-color: #007bff; /* or var(--color-hellblau) or brand color */
+  color: var(--color-weiss);
   border: none;
   padding: 10px 20px;
   font-size: 16px;
@@ -77,7 +79,7 @@
 }
 
 .admin-action-btn:hover {
-  background-color: #0056b3;
+  background-color: #0056b3; /* or darken(var(--color-hellblau)) */
 }
 
 /* Overview Cards */
@@ -88,7 +90,7 @@
 }
 
 .overview-card {
-  background-color: white;
+  background-color: var(--color-weiss);
   border: 1px solid #ddd;
   padding: 20px;
   width: 30%;
@@ -96,13 +98,13 @@
 }
 
 .overview-card h3 {
-  color: #343a40;
+  color: #343a40; /* or var(--color-schwarz) */
   font-size: 22px;
 }
 
 .overview-btn {
-  background-color: #28a745;
-  color: white;
+  background-color: #28a745; /* or var(--color-hellgruen) */
+  color: var(--color-weiss);
   border: none;
   padding: 8px 20px;
   margin-top: 10px;
@@ -111,17 +113,18 @@
 }
 
 .overview-btn:hover {
-  background-color: #218838;
+  background-color: #218838; /* or a darker var(--color-hellgruen) */
 }
 
 /* 2025 Shift Planner - Footer at the Bottom */
 .admin-footer {
-  background-color: #003366; /* Dark blue for footer */
-  color: white;
+  background-color: var(--color-hellblau); /* replaced #003366 */
+  color: var(--color-weiss);
   text-align: center;
   padding: 10px 0;
   margin-top: auto;
 }
+
 /* Error message style */
 .error-message {
   color: red;
@@ -134,7 +137,7 @@
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* or var(--color-weiss) */
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -164,27 +167,27 @@ h2 {
 .login-btn {
   width: 100%;
   padding: 10px;
-  background-color: #007bff;
-  color: white;
+  background-color: #007bff; /* or var(--color-hellblau) */
+  color: var(--color-weiss);
   border: none;
   cursor: pointer;
   border-radius: 4px;
 }
 
 .login-btn:hover {
-  background-color: #0056b3;
+  background-color: #0056b3; /* or darken(var(--color-hellblau)) */
 }
 
-/* src/styles.css */
+/* Additional styling for login/register containers */
 .login-container, .register-container {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* or var(--color-weiss) */
 }
 
 .login-card, .register-card {
   max-width: 400px;
   width: 100%;
-  background-color: white;
+  background-color: var(--color-weiss);
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
@@ -216,7 +219,7 @@ a:hover {
 /* ShiftManagementPage.css */
 .shift-management-page {
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-primary, Arial, sans-serif);
 }
 
 .header {
@@ -237,12 +240,12 @@ a:hover {
 button {
   padding: 10px;
   margin-top: 10px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #4CAF50; /* or var(--color-hellgruen) */
+  color: var(--color-weiss);
   border: none;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #45a049; /* or a darker var(--color-hellgruen) */
 }
