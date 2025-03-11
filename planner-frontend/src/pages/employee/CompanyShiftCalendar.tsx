@@ -2,90 +2,121 @@ import React, { useState, useEffect, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./CompanyShiftCalendar.css"; // Custom CSS if needed
-import SideBar from "../../components/SideBar.tsx";
-import { fetchShifts } from "../../Services/api.ts"; // Import the fetchShifts function
+import "./CompanyShiftCalendar.css";
+import GlobalSidebar from "../../components/GlobalSidebar.tsx";
+import { fetchShifts } from "../../Services/api.ts";
+import { useTranslation } from "react-i18next";
 
 const localizer = momentLocalizer(moment);
 
-const CompanyShiftCalendar = () => {
-  const [shifts, setShifts] = useState([]);
+interface Shift {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  assignedEmployees?: number[];
+}
+
+interface Employee {
+  id: number;
+  name: string;
+}
+
+interface CompanyShiftCalendarProps {
+  currentUser?: { id: number; name: string };
+}
+
+const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
+  currentUser = { id: 1, name: "John Doe" },
+}) => {
+  const { t, i18n } = useTranslation();
+  moment.locale(i18n.language);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [shifts, setShifts] = useState<Shift[]>([]);
   const [view, setView] = useState(Views.WEEK);
   const [calendarFilter, setCalendarFilter] = useState("all");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadShifts = async () => {
       const fetchedShifts = await fetchShifts();
-      // Transform data into the format expected by react-big-calendar
-      const formattedShifts = fetchedShifts.map((shift) => ({
+      const formattedShifts = fetchedShifts.map((shift: any) => ({
         id: shift.id,
         title: shift.title,
         start: new Date(shift.startTime),
         end: new Date(shift.endTime),
+        assignedEmployees: shift.assignedEmployees || [],
       }));
       setShifts(formattedShifts);
     };
-
     loadShifts();
   }, []);
 
-  // Styling function for calendar events
-  const eventStyleGetter = (event) => {
-    return {
-      style: {
-        backgroundColor: "#3174ad",
-        borderRadius: "5px",
-        color: "white",
-        border: "none",
-      },
-    };
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
   };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // File import logic here
+  };
+
+  const handleExport = () => {
+    // Export logic here
+  };
+
+  const filteredShifts = shifts.filter((shift) => {
+    if (calendarFilter === "my") {
+      return shift.assignedEmployees?.includes(currentUser.id);
+    } else if (calendarFilter === "unoccupied") {
+      return !shift.assignedEmployees || shift.assignedEmployees.length === 0;
+    }
+    return true;
+  });
+
+  const eventStyleGetter = (event: any) => ({
+    style: {
+      backgroundColor: "#3174ad",
+      borderRadius: "5px",
+      color: "white",
+      border: "none",
+    },
+  });
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "5px 10px",
-          borderBottom: "1px solid #ccc",
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Company Shift Calendar</h1>
+      <header className="calendar-header">
+        <div></div>
+        <div className="import-export-buttons">
+          <button onClick={handleImportClick}>{t("importData") || "Import Data"}</button>
+          <button onClick={handleExport}>{t("exportData") || "Export Data"}</button>
+          <input
+            type="file"
+            accept=".csv, .xlsx, .xls"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            data-testid="file-input"
+          />
+        </div>
       </header>
-
-      <div style={{ flex: 1, display: "flex" }}>
-        <aside
-          style={{
-            width: "300px",
-            minWidth: "300px",
-            backgroundColor: "#fafafa",
-            borderRight: "1px solid #ccc",
-            padding: "10px",
-            boxSizing: "border-box",
-          }}
-        >
-          <SideBar />
-        </aside>
-
+      <div style={{ flex: 1, display: "flex", height: "100vh", flexDirection: "column" }}>
+        <GlobalSidebar 
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+        />
         <main style={{ flex: 1, padding: "10px", boxSizing: "border-box" }}>
-          <div style={{ marginBottom: "10px", textAlign: "center" }}>
-            <span style={{ fontWeight: "bold", marginRight: "10px" }}>View:</span>
-            <button onClick={() => setCalendarFilter("my")} style={{ marginRight: "5px" }}>
-              My Shifts
-            </button>
-            <button onClick={() => setCalendarFilter("all")} style={{ marginRight: "5px" }}>
-              All Shifts
-            </button>
-            <button onClick={() => setCalendarFilter("unoccupied")}>Unoccupied Shifts</button>
+          <div className="calendar-filters">
+            <span className="filter-label">{t("viewLabel") || "View:"}</span>
+            <button onClick={() => setCalendarFilter("my")}>{t("myShifts") || "My Shifts"}</button>
+            <button onClick={() => setCalendarFilter("all")}>{t("allShifts") || "All Shifts"}</button>
+            <button onClick={() => setCalendarFilter("unoccupied")}>{t("unoccupiedShifts") || "Unoccupied Shifts"}</button>
           </div>
-
           <div className="calendar-container">
             <Calendar
               localizer={localizer}
-              events={shifts}
+              events={filteredShifts}
               startAccessor="start"
               endAccessor="end"
               view={view}

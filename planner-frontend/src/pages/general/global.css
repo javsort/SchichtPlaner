@@ -1,0 +1,14 @@
+/* src/pages/general/global.css */
+
+/* If you have any extra resets or overrides, put them here.
+   Example: border-box, margin/padding reset, etc.
+   If you prefer everything in theme.css, you can merge them. */
+
+/* Example override: */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body or other global styles can be placed here as well */

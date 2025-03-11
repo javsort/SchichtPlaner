@@ -1,0 +1,76 @@
+/* src/components/GlobalSidebar.css */
+
+.global-sidebar {
+    position: fixed;
+    top: 0;
+    left: -220px; /* Hidden by default */
+    width: 220px;
+    height: 100vh;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: left 0.3s ease;
+    z-index: 4000;
+  }
+  
+  .global-sidebar.open {
+    left: 0;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #ecf0f1;
+    cursor: pointer;
+    float: right;
+    margin: -10px -10px 10px 0;
+  }
+  
+  .close-btn:focus,
+  .close-btn:active {
+    outline: none;
+  }
+  
+  .global-sidebar h3 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .global-sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .global-sidebar ul li {
+    margin-bottom: 15px;
+  }
+  
+  .global-sidebar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+  
+  .global-sidebar ul li a:hover {
+    background-color: #34495e;
+  }
+  
+  .global-sidebar ul li button {
+    background-color: #34495e;
+    border: none;
+    color: #ecf0f1;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+  }
+  
+  .global-sidebar ul li button:hover {
+    background-color: #3d566e;
+  }
+  
