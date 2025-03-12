@@ -126,7 +126,9 @@
     "testAuthConnection": "Test Auth Connection",
     "testScheduler": "Test Scheduler",
     "shiftSwapAdmin": "Shift Swap Admin",
-    "companyShiftCalendar": "Company Shift Calendar",
-    "shiftSwap": "Shift Swap"
+    "shiftSwap": "Shift Swap",
+    "Requests": "Requests",
+    "calendar": "Calendar"
+
   }
   

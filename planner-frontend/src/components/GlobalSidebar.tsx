@@ -20,10 +20,10 @@ interface NavItem {
 const navItems: NavItem[] = [
   { labelKey: "employeeManagement", path: "/employee-management", roles: ["Admin", "ShiftSupervisor"] },
   { labelKey: "shiftApproval", path: "/shift-approval", roles: ["Admin", "ShiftSupervisor"] },
-  { labelKey: "shiftSwapAdmin", path: "/shift-swap-admin", roles: ["Admin", "ShiftSupervisor"] },
+  { labelKey: "Requests", path: "/shift-swap-admin", roles: ["Admin", "ShiftSupervisor"] }, 
   { labelKey: "shiftManagement", path: "/shift-management", roles: ["Admin", "ShiftSupervisor"] },
   { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "companyShiftCalendar", path: "/shift-view", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] },
+  { labelKey: "Calendar", path: "/shift-view", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] }, 
   { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] }
 ];
 
