@@ -69,14 +69,14 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       const rawEmployees = await getAllUsers();
       if (!rawEmployees || !Array.isArray(rawEmployees)) {
         console.error("Error: Received invalid employee data", rawEmployees);
-        setEmployees([]); // Set an empty array to prevent errors
+        setEmployees([]);
         return;
       }
 
       // Format the employee data for display
       const formattedEmployees = rawEmployees.map((emp: any) => ({
         id: emp.id,
-        employeeId: emp.employeeId || "", // <-- Use the backend field if available
+        employeeId: emp.employeeId || "", // Use the backend field if available
         name: emp.username,
         address: emp.address,
         phone: emp.phoneNum,
@@ -87,7 +87,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       setEmployees(formattedEmployees);
     } catch (error) {
       console.error("Error fetching employees:", error);
-      setEmployees([]); // Set an empty array to prevent errors
+      setEmployees([]);
     }
   };
 
@@ -153,7 +153,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   // Pre-fill the form with an employee's data for editing
   const editEmployee = (emp: Employee) => {
     setEditingEmployeeId(emp.id);
-    setValue("employeeId", emp.employeeId || ""); // Set employeeId if present
+    setValue("employeeId", emp.employeeId || "");
     setValue("name", emp.name);
     setValue("address", emp.address || "");
     setValue("phone", emp.phone || "");
@@ -189,15 +189,13 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       {/* Employee Entry Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="employee-form">
         {/* Employee Id */}
-        {/* Employee Id */}
-<div className="form-row">
-  <label>Employee Id:</label>
-  <input
-    {...register("employeeId")}
-    placeholder="Employee Id"
-  />
-</div>
-
+        <div className="form-row">
+          <label>Employee Id:</label>
+          <input
+            {...register("employeeId")}
+            placeholder="Employee Id"
+          />
+        </div>
 
         {/* Name */}
         <div className="form-row">
@@ -263,10 +261,16 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
               required: t("roleRequired") || "Role is required",
             })}
           >
-            <option value="">{t("selectRole") || "Select a Role"}</option>
+            {/* Default 'Select Role' option */}
+            <option value="">{t("select role") || "Select role"}</option>
+
+            {/* Map over roles from the backend */}
             {roles.map((role) => (
               <option key={role.id} value={role.name}>
-                {t(roleTranslationMap[role.name.replace("-", " ")] || role.name.replace("-", " "))}
+                {t(
+                  roleTranslationMap[role.name.replace("-", " ")] ||
+                    role.name.replace("-", " ")
+                )}
               </option>
             ))}
           </select>
