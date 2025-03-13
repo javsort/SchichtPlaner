@@ -302,7 +302,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       <table className="employee-table">
         <thead>
           <tr>
-            <th>{t("employeeId") || "Employee Id"}</th>
+            <th>{t("Employee Id") || "Employee Id"}</th>
             <th>{t("name") || "Name"}</th>
             <th>{t("address") || "Address"}</th>
             <th>{t("phoneNumber") || "Phone Number"}</th>
