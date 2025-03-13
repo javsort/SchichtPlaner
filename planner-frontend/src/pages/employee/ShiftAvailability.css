@@ -104,7 +104,7 @@
 }
 
 .shift-table th {
-  background-color: var(--card-heading, #888);
+  background-color: var(--card-heading, #4da8d6);
   color: var(--card-text, #fff);
 }
 
