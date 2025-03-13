@@ -35,6 +35,12 @@ interface Availability {
   to: string;
 }
 
+interface MyProposal {
+  date: string; // e.g. "2025-03-20"
+  from: string; // "HH:mm"
+  to: string;   // "HH:mm"
+}
+
 const ShiftAvailability: React.FC = () => {
   const { t } = useTranslation();
   const today = new Date();
@@ -45,23 +51,25 @@ const ShiftAvailability: React.FC = () => {
 
   const [availability, setAvailability] = useState<{ [dateStr: string]: Availability }>(() => {
     const init: { [dateStr: string]: Availability } = {};
-    days.forEach((date) => {
+    getDaysInMonth(today.getFullYear(), today.getMonth()).forEach((date) => {
       const dateStr = date.toISOString().split("T")[0];
       init[dateStr] = { from: "", to: "" };
     });
     return init;
   });
 
-  // --- NEW: Notification State ---
+  // Notification Toast
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
 
+  // Store user’s selected shift proposals for the sidebar
+  const [myProposals, setMyProposals] = useState<MyProposal[]>([]);
+
   // Helper to show a notification
   const showNotification = (message: string, type: "success" | "error") => {
     setNotification({ message, type });
-    // Hide automatically after 3 seconds
     setTimeout(() => {
       setNotification(null);
     }, 3000);
@@ -70,6 +78,7 @@ const ShiftAvailability: React.FC = () => {
   useEffect(() => {
     const newDays = getDaysInMonth(selectedYear, selectedMonth);
     setDays(newDays);
+
     const init: { [dateStr: string]: Availability } = {};
     newDays.forEach((date) => {
       const dateStr = date.toISOString().split("T")[0];
@@ -86,7 +95,6 @@ const ShiftAvailability: React.FC = () => {
   };
 
   const handleSave = async () => {
-    // Example employee
     const employee = localStorage.getItem("user");
     if (!employee) {
       showNotification(
@@ -111,12 +119,13 @@ const ShiftAvailability: React.FC = () => {
     const status = "PROPOSED";
 
     let hasAtLeastOneShift = false;
+    const newProposals: MyProposal[] = [];
 
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
       if (from && to) {
         hasAtLeastOneShift = true;
-        // Add an extra day. Idk why this is needed, but it was in your original code
+        // Original logic: add +1 day to each date
         const startDate = new Date(`${dateStr}T${from}:00`);
         startDate.setDate(startDate.getDate() + 1);
         const start = new Date(
@@ -132,6 +141,7 @@ const ShiftAvailability: React.FC = () => {
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
           console.log(`Shift proposed for: ${start} - ${end}`);
+          newProposals.push({ date: dateStr, from, to });
         } catch (error) {
           console.error("Error saving availability:", error);
           showNotification(
@@ -145,6 +155,7 @@ const ShiftAvailability: React.FC = () => {
 
     if (hasAtLeastOneShift) {
       showNotification(t("availabilitySaved") || "Availability saved!", "success");
+      setMyProposals(newProposals);
     } else {
       showNotification(t("noShiftsSelected") || "No shifts selected.", "error");
     }
@@ -154,6 +165,7 @@ const ShiftAvailability: React.FC = () => {
 
   return (
     <div className="shift-availability-layout">
+      {/* Left: Shift Availability Form */}
       <div className="shift-availability-container">
         {/* Notification Toast */}
         {notification && (
@@ -196,7 +208,7 @@ const ShiftAvailability: React.FC = () => {
           <table className="shift-table">
             <thead>
               <tr>
-                <th>{t("day") || "Day"}</th>
+                <th>{t("date") || "Date"}</th>
                 <th>{t("from") || "From"}</th>
                 <th>{t("to") || "To"}</th>
               </tr>
@@ -204,12 +216,19 @@ const ShiftAvailability: React.FC = () => {
             <tbody>
               {days.map((date) => {
                 const dateStr = date.toISOString().split("T")[0];
+                // Format as MM/DD/YY or whichever you prefer
+                const formatted = date.toLocaleDateString(undefined, {
+                  month: "2-digit",
+                  day: "2-digit",
+                  year: "2-digit",
+                });
+
                 return (
                   <tr key={dateStr}>
-                    <td>{date.getDate()}</td>
+                    <td>{formatted}</td>
                     <td>
                       <select
-                        value={availability[dateStr].from}
+                        value={availability[dateStr]?.from || ""}
                         onChange={(e) => handleChange(dateStr, "from", e.target.value)}
                       >
                         <option value="">{t("selectOption") || "Select"}</option>
@@ -222,7 +241,7 @@ const ShiftAvailability: React.FC = () => {
                     </td>
                     <td>
                       <select
-                        value={availability[dateStr].to}
+                        value={availability[dateStr]?.to || ""}
                         onChange={(e) => handleChange(dateStr, "to", e.target.value)}
                       >
                         <option value="">{t("selectOption") || "Select"}</option>
@@ -243,6 +262,44 @@ const ShiftAvailability: React.FC = () => {
         <button className="save-btn" onClick={handleSave}>
           {t("save") || "Save"}
         </button>
+      </div>
+
+      {/* Right: My Shift Proposals Sidebar */}
+      <div className="shift-proposals-sidebar">
+        <h2>My Shift Proposals</h2>
+        {myProposals.length > 0 ? (
+          <div className="proposals-table-container">
+            <table className="shift-proposals-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>From</th>
+                  <th>To</th>
+                </tr>
+              </thead>
+              <tbody>
+                {myProposals.map((proposal, idx) => {
+                  const dateObj = new Date(proposal.date);
+                  const dateFormatted = dateObj.toLocaleDateString(undefined, {
+                    month: "2-digit",
+                    day: "2-digit",
+                    year: "2-digit",
+                  });
+
+                  return (
+                    <tr key={idx}>
+                      <td>{dateFormatted}</td>
+                      <td>{proposal.from}</td>
+                      <td>{proposal.to}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p style={{ fontStyle: "italic" }}>No shift proposals yet.</p>
+        )}
       </div>
     </div>
   );
