@@ -16,9 +16,8 @@ public class ShiftAssignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Store the employee/user ID as a simple column
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private Long employeeId;
 
     @ManyToOne
     @JoinColumn(name = "shift_id", nullable = false)
