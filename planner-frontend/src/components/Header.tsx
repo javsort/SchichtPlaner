@@ -27,14 +27,14 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
       {/* Right side: logo and language switcher */}
       <div className="header-right">
-        <div className="header-right-inner" style={{ marginRight: "50px" }}>
+        <div className="header-right-inner" style={{ marginRight: "25px" }}>
           <LanguageSwitcher />
         </div>
         <img
           src="/logo.png"
           alt="Company Logo"
           className="header-logo"
-          style={{ marginLeft: "50px", cursor: "pointer" }}
+          style={{ marginLeft: "25px", cursor: "pointer" }}
           onClick={() => window.location.href = "/shift-view"}
         />
       </div>
