@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,8 +63,23 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        log.info(logHeader + "saveUser: Saving user: " + user);
-        return userRepository.save(user);
+
+        log.info(logHeader + "saveUser: Saving user: " + user + "\n" + user.toString());
+
+        userRepository.save(user);
+
+        Optional<User> exists = userRepository.findByEmail(user.getEmail());
+        User toRet = exists.get();
+
+        if(toRet != null) {
+            log.info(logHeader + "User info: " + toRet.toString());
+            return toRet;
+
+        } else {
+            log.error(logHeader + "User was not saved successfully. Returning NULL");
+            return null;
+
+        }
     }
 
     public UserDTO updateUser(UserDTO toUpdate){

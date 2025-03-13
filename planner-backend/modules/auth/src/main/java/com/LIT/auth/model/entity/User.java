@@ -45,7 +45,7 @@ public class User {
     @Column
     private String phoneNum;
 
-    @Column(unique = true)
+    @Column
     private String googleId;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -55,4 +55,20 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    @Override
+    public String toString(){
+        
+        String userInfo = 
+            "User: '" + username + "' info: " + 
+            "\nId: " + getId() + "'" +
+            "\nEmail: '" + getEmail() + "'" +
+            "\nPassword: '" + getPassword() +  "'" +
+            "\nAddress: '" +  getAddress() +  "'" +
+            "\nPhone Num: '" + getPhoneNum() + "'" +
+            "\nGoogle Id: '" + getPassword() + "'" + 
+            "\nRoles: " + getRoles() + "'";
+
+        return userInfo;
+    }
 }
