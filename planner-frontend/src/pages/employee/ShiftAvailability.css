@@ -1,6 +1,7 @@
-/* Make the layout fill the entire viewport */
+/* Layout container that holds both the main shift-availability-container and the shift-proposals-sidebar */
 .shift-availability-layout {
   display: flex;
+  align-items: flex-start; /* Ensures both columns align at the top */
   width: 100vw;
   height: 100vh;
   margin: 0;           /* Remove default margins */
@@ -15,19 +16,15 @@
   font-family: var(--font-primary, Arial, sans-serif);
   box-sizing: border-box;
   overflow: auto;
-  position: relative; /* So we can position notification inside it if desired */
+  position: relative;
 }
 
-/* 
-  ---------------------------
-  NOTIFICATION (TOAST) STYLES
-  ---------------------------
-*/
+/* Notification (Toast) Styles */
 .notification-toast {
-  position: fixed; /* or absolute if you want it relative to container */
+  position: fixed;
   top: 20px;
-  right: -350px;    /* start off-screen to the right */
-  width: 300px;     /* fixed width for the toast */
+  right: -350px;
+  width: 300px;
   padding: 15px 20px;
   border-radius: 4px;
   color: #fff;
@@ -35,25 +32,23 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   transition: transform 0.4s ease, right 0.4s ease;
   z-index: 9999;
-  /* By default, hidden or off-screen */
 }
 
-/* Slide in effect when the toast is shown */
+/* Slide in effect for toast */
 .notification-toast.show {
-  right: 20px; /* move into the visible area */
+  right: 20px;
 }
 
-/* Success type: green background */
+/* Success and error notifications */
 .notification-toast.success {
-  background-color: #69be28; 
+  background-color: #69be28;
 }
 
-/* Error type: red background */
 .notification-toast.error {
-  background-color: #e74c3c; 
+  background-color: #e74c3c;
 }
 
-/* Title styling: Align left and use #2c3e50 */
+/* Title styling for left container */
 .shift-availability-container h2 {
   text-align: left;
   margin-bottom: 20px;
@@ -77,16 +72,17 @@
   margin-left: 5px;
   padding: 5px;
   font-size: 1rem;
-  border: 1px solid var(--card-border, #ccc);
+  border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: var(--card-bg, #fff);
-  color: var(--color-black, #333);
+  background-color: #fff;
+  color: #333;
 }
 
-/* Table container for horizontal scrolling if needed */
+/* Table container for horizontal scrolling */
 .table-container {
   overflow-x: auto;
   margin-top: 20px;
+  white-space: nowrap;
 }
 
 /* Shift table styling */
@@ -97,25 +93,26 @@
 
 .shift-table th,
 .shift-table td {
-  border: 1px solid var(--card-border, #ccc);
+  border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
   min-width: 80px;
+  white-space: nowrap;
 }
 
 .shift-table th {
-  background-color: var(--card-heading, #4da8d6);
-  color: var(--card-text, #fff);
+  background-color: #4da8d6;
+  color: #fff;
 }
 
-/* Dropdowns for time selection */
+/* Dropdowns for time selection in main table */
 .shift-table td select {
   padding: 5px;
   font-size: 1rem;
-  border: 1px solid var(--card-border, #ccc);
+  border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: var(--card-bg, #fff);
-  color: var(--color-black, #333);
+  background-color: #fff;
+  color: #333;
   width: 100%;
 }
 
@@ -125,8 +122,8 @@
   display: block;
   width: 150px;
   padding: 10px;
-  background-color: var(--button-bg, #69be28);
-  color: var(--button-text, #fff);
+  background-color: #69be28;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -134,29 +131,35 @@
   margin-right: auto;
   transition: background 0.3s ease;
 }
-/* Make the right sidebar stand out and look like a card */
+
+.save-btn:hover {
+  background-color: #555;
+}
+
+/* Shift proposals sidebar styling */
 .shift-proposals-sidebar {
-  width: 350px;
+  width: 400px;
   padding: 20px;
   background-color: #f9f9f9;
   border-left: 1px solid #ddd;
   box-sizing: border-box;
   overflow-y: auto;
+  margin-top: 75px;
+}
+
+/* Sidebar header that remains fixed */
+.shift-proposals-header {
+  position: sticky;
+  top: 10;
+  background-color: #f9f9f9;
+  z-index: 20;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .shift-proposals-sidebar h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
+  margin: 0;
   color: #2c3e50;
-}
-
-/* Container for proposals table in the sidebar */
-.proposals-table-container {
-  border: 1px solid #ccc;
-  background-color: #fff;
-  border-radius: 4px;
-  overflow-x: auto;
-  padding: 10px;
 }
 
 /* Table for proposals in the sidebar */
@@ -170,14 +173,23 @@
   border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .shift-proposals-table th {
-  background-color: #4da8d6; /* same heading color as the main table */
+  background-color: #4da8d6;
   color: #fff;
 }
 
+/* Buttons inside proposals table cells */
+.shift-proposals-table button {
+  margin: 0 6px;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
 
-.save-btn:hover {
-  background-color: var(--button-hover-bg, #555);
+.shift-proposals-table button:hover {
+  background-color: #ddd;
 }

@@ -69,6 +69,17 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     return true;
   });
 
+  const calendarEvents = filteredShifts.map((shift) => {
+    const assignedNames = (shift.assignedEmployees || []).map((id) => {
+      const emp = employees.find((e) => e.id === id);
+      return emp ? emp.name : `Unknown #${id}`;
+    });
+    return {
+      ...shift,
+      title: `${shift.title} (${assignedNames.length ? assignedNames.join(", ") : t("unassigned") || "Unassigned"})`,
+    };
+  });
+
   const eventStyleGetter = (event: any) => ({
     style: {
       backgroundColor: "#3174ad",
@@ -78,17 +89,23 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     },
   });
 
+  const messages = {
+    today: t("calendarToday"),
+    previous: t("calendarBack"),
+    next: t("calendarNext"),
+    month: t("month"),
+    week: t("week"),
+    day: t("day"),
+    agenda: t("agenda"),
+  };
+
   return (
     <div className="company-shift-calendar-container">
       <header className="calendar-header">
         <div></div>
         <div className="import-export-buttons">
-          <button onClick={handleImportClick}>
-            {t("importData") || "Import Data"}
-          </button>
-          <button onClick={handleExport}>
-            {t("exportData") || "Export Data"}
-          </button>
+          <button onClick={handleImportClick}>{t("importData") || "Import Data"}</button>
+          <button onClick={handleExport}>{t("exportData") || "Export Data"}</button>
           <input
             type="file"
             accept=".csv, .xlsx, .xls"
@@ -100,23 +117,22 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
         </div>
       </header>
       <div className="calendar-main-layout">
-        <GlobalSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main className="calendar-main-content">
           <div className="calendar-filters">
-            <button onClick={() => setCalendarFilter("my")}>
-              {t("myShifts") || "My Shifts"}
-            </button>
-            <button onClick={() => setCalendarFilter("all")}>
-              {t("allShifts") || "All Shifts"}
-            </button>
+            <span className="filter-label">{t("viewLabel") || "View:"}</span>
+            <button onClick={() => setCalendarFilter("my")}>{t("myShifts") || "My Shifts"}</button>
+            <button onClick={() => setCalendarFilter("all")}>{t("allShifts") || "All Shifts"}</button>
             <button onClick={() => setCalendarFilter("unoccupied")}>
               {t("unoccupiedShifts") || "Unoccupied Shifts"}
             </button>
           </div>
           <div className="calendar-container">
             <Calendar
+              key={i18n.language}
               localizer={localizer}
-              events={filteredShifts}
+              culture={i18n.language}
+              messages={messages}
+              events={calendarEvents}
               startAccessor="start"
               endAccessor="end"
               view={view}

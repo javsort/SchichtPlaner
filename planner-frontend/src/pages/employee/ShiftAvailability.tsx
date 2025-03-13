@@ -67,6 +67,11 @@ const ShiftAvailability: React.FC = () => {
   // Store user’s selected shift proposals for the sidebar
   const [myProposals, setMyProposals] = useState<MyProposal[]>([]);
 
+  // For editing a specific row in "My Shift Proposals"
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editFrom, setEditFrom] = useState<string>("");
+  const [editTo, setEditTo] = useState<string>("");
+
   // Helper to show a notification
   const showNotification = (message: string, type: "success" | "error") => {
     setNotification({ message, type });
@@ -120,19 +125,14 @@ const ShiftAvailability: React.FC = () => {
       const { from, to } = availability[dateStr];
       if (from && to) {
         hasAtLeastOneShift = true;
-
-        // Original logic: add +1 day to each date
+        // Adjust dates as needed (this example adds 1 day)
         const startDate = new Date(`${dateStr}T${from}:00`);
         startDate.setDate(startDate.getDate() + 1);
-        const start = new Date(
-          startDate.getTime() - startDate.getTimezoneOffset() * 60000
-        ).toISOString();
+        const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
 
         const endDate = new Date(`${dateStr}T${to}:00`);
         endDate.setDate(endDate.getDate() + 1);
-        const end = new Date(
-          endDate.getTime() - endDate.getTimezoneOffset() * 60000
-        ).toISOString();
+        const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
 
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
@@ -140,10 +140,7 @@ const ShiftAvailability: React.FC = () => {
           newProposals.push({ date: dateStr, from, to });
         } catch (error) {
           console.error("Error saving availability:", error);
-          showNotification(
-            t("errorSavingAvailability") || "Error saving availability.",
-            "error"
-          );
+          showNotification(t("errorSavingAvailability") || "Error saving availability.", "error");
           return;
         }
       }
@@ -157,13 +154,33 @@ const ShiftAvailability: React.FC = () => {
     }
   };
 
+  // Editing a row in "My Shift Proposals"
+  const handleEditClick = (index: number) => {
+    setEditIndex(index);
+    setEditFrom(myProposals[index].from);
+    setEditTo(myProposals[index].to);
+  };
+
+  const handleSaveEdit = () => {
+    if (editIndex === null) return;
+    setMyProposals((prevProposals) => {
+      const updated = [...prevProposals];
+      updated[editIndex] = { ...updated[editIndex], from: editFrom, to: editTo };
+      return updated;
+    });
+    setEditIndex(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditIndex(null);
+  };
+
   const yearOptions = Array.from({ length: 11 }, (_, i) => today.getFullYear() - 5 + i);
 
   return (
     <div className="shift-availability-layout">
       {/* Left: Shift Availability Form */}
       <div className="shift-availability-container">
-        {/* Notification Toast */}
         {notification && (
           <div className={`notification-toast ${notification.type} show`}>
             {notification.message}
@@ -212,13 +229,11 @@ const ShiftAvailability: React.FC = () => {
             <tbody>
               {days.map((date) => {
                 const dateStr = date.toISOString().split("T")[0];
-                // Format as MM/DD/YY or whichever you prefer
                 const formatted = date.toLocaleDateString(undefined, {
                   month: "2-digit",
                   day: "2-digit",
                   year: "2-digit",
                 });
-
                 return (
                   <tr key={dateStr}>
                     <td>{formatted}</td>
@@ -254,7 +269,6 @@ const ShiftAvailability: React.FC = () => {
             </tbody>
           </table>
         </div>
-
         <button className="save-btn" onClick={handleSave}>
           {t("save") || "Save"}
         </button>
@@ -262,7 +276,9 @@ const ShiftAvailability: React.FC = () => {
 
       {/* Right: My Shift Proposals Sidebar */}
       <div className="shift-proposals-sidebar">
-        <h2>{t("myShiftProposals") || "My Shift Proposals"}</h2>
+        <div className="shift-proposals-header">
+          <h2>{t("myShiftProposals") || "My Shift Proposals"}</h2>
+        </div>
         {myProposals.length > 0 ? (
           <div className="proposals-table-container">
             <table className="shift-proposals-table">
@@ -271,6 +287,7 @@ const ShiftAvailability: React.FC = () => {
                   <th>{t("date") || "Date"}</th>
                   <th>{t("from") || "From"}</th>
                   <th>{t("to") || "To"}</th>
+                  <th>{/* Edit column */}</th>
                 </tr>
               </thead>
               <tbody>
@@ -281,14 +298,52 @@ const ShiftAvailability: React.FC = () => {
                     day: "2-digit",
                     year: "2-digit",
                   });
-
-                  return (
-                    <tr key={idx}>
-                      <td>{dateFormatted}</td>
-                      <td>{proposal.from}</td>
-                      <td>{proposal.to}</td>
-                    </tr>
-                  );
+                  if (editIndex === idx) {
+                    return (
+                      <tr key={idx}>
+                        <td>{dateFormatted}</td>
+                        <td>
+                          <select value={editFrom} onChange={(e) => setEditFrom(e.target.value)}>
+                            {timeOptions.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <select value={editTo} onChange={(e) => setEditTo(e.target.value)}>
+                            {timeOptions.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <button onClick={handleSaveEdit}>
+                            {t("save") || "Save"}
+                          </button>
+                          <button onClick={handleCancelEdit} style={{ marginLeft: "5px" }}>
+                            {t("cancel") || "Cancel"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  } else {
+                    return (
+                      <tr key={idx}>
+                        <td>{dateFormatted}</td>
+                        <td>{proposal.from}</td>
+                        <td>{proposal.to}</td>
+                        <td>
+                          <button onClick={() => handleEditClick(idx)}>
+                            {t("edit") || "Edit"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
                 })}
               </tbody>
             </table>

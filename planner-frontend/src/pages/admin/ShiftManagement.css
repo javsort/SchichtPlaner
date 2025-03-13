@@ -45,8 +45,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Section headers for shift creation and calendar - updated to use #2c3e50 */
-.section-header {
+/* Section headers for shift creation, calendar and shift overview 
+   All headings now use the same font color, weight, and spacing */
+.shift-creation h3,
+.calendar-card h3,
+.shift-overview h3 {
   margin-top: 0;
   margin-bottom: 15px;
   color: #2c3e50;
@@ -121,7 +124,7 @@
 .calendar-card h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  /* Use .section-header styles if applied */
+  /* Uses the same styles as section headers */
 }
 
 /* Shift overview table */
@@ -132,7 +135,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Update Shift Overview header to use #2c3e50 */
 .shift-overview h3 {
   margin-top: 0;
   margin-bottom: 15px;
