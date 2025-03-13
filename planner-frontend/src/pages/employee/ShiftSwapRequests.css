@@ -1,5 +1,3 @@
-/* src/pages/ShiftSwapRequests.css */
-
 /* Container for the entire Shift Swap page - full width, full height, white background */
 .shift-swap-container {
   width: 100%;
@@ -13,9 +11,9 @@
 
 /* Heading */
 .shift-swap-container h2 {
-  text-align: center;
+  text-align: left;  /* Align header to left instead of center */
   margin-bottom: 20px;
-  color: var(--header-text, #2c3e50);
+  color: #2c3e50;    /* Explicitly using #2c3e50 */
 }
 
 /* Calendar container (if any) */
@@ -33,8 +31,9 @@
 }
 
 .request-form h3 {
+  text-align: left;  /* Align form header to left */
   margin-bottom: 15px;
-  color: var(--header-text, #2c3e50);
+  color: #2c3e50;    /* Explicitly using #2c3e50 */
 }
 
 .form-group {

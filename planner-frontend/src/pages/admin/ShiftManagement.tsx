@@ -1,18 +1,78 @@
-// src/pages/ShiftManagement.jsx
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useTranslation } from "react-i18next";
 import "./ShiftManagement.css";
 
-const ShiftManagement = ({ currentUser = { id: 1 } }) => {
+// NotificationBar component that slides in from the side
+interface NotificationBarProps {
+  message: string;
+  type: "success" | "error" | "";
+  visible: boolean;
+  onClose: () => void;
+}
+
+const NotificationBar: React.FC<NotificationBarProps> = ({ message, type, visible, onClose }) => {
+  React.useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, onClose]);
+
+  return (
+    <div className={`notification-bar ${type} ${visible ? "show" : ""}`}>
+      {message}
+    </div>
+  );
+};
+
+interface Shift {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  rolesRequired: string[];
+  assignedEmployees: number[];
+}
+
+interface NewShift {
+  title: string;
+  start: string;
+  end: string;
+  rolesRequired: string;
+  assignedEmployees: string;
+}
+
+interface ShiftManagementProps {
+  currentUser?: { id: number };
+}
+
+const ShiftManagement: React.FC<ShiftManagementProps> = ({ currentUser = { id: 1 } }) => {
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
   const localizer = momentLocalizer(moment);
 
-  const [shifts, setShifts] = useState([
+  // Notification state
+  const [notification, setNotification] = useState({
+    message: "",
+    type: "" as "success" | "error" | "",
+    visible: false,
+  });
+
+  const showNotification = (type: "success" | "error", message: string) => {
+    setNotification({ type, message, visible: true });
+  };
+
+  const hideNotification = () => {
+    setNotification((prev) => ({ ...prev, visible: false }));
+  };
+
+  // Sample shifts state
+  const [shifts, setShifts] = useState<Shift[]>([
     {
       id: 101,
       title: t("morningShift") || "Morning Shift",
@@ -33,7 +93,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
   const [view, setView] = useState(Views.WEEK);
   const calendarFilter = "all";
-  const [newShift, setNewShift] = useState({
+  const [newShift, setNewShift] = useState<NewShift>({
     title: "",
     start: "",
     end: "",
@@ -41,7 +101,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     assignedEmployees: "",
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [editingShiftId, setEditingShiftId] = useState(null);
+  const [editingShiftId, setEditingShiftId] = useState<number | null>(null);
 
   const filteredShifts = shifts.filter((shift) => {
     if (calendarFilter === "my") {
@@ -63,7 +123,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       ")",
   }));
 
-  const eventStyleGetter = (event) => {
+  const eventStyleGetter = (event: Shift) => {
     let backgroundColor = "#3174ad";
     if (
       event.rolesRequired.includes("Supervisor") ||
@@ -87,16 +147,17 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     };
   };
 
-  const handleAddOrUpdateShift = (e) => {
+  // Handle adding or updating a shift
+  const handleAddOrUpdateShift = (e: FormEvent) => {
     e.preventDefault();
     if (!newShift.title || !newShift.start || !newShift.end) {
-      alert(t("fillRequiredFields") || "Please fill out all required fields.");
+      showNotification("error", t("fillRequiredFields") || "Please fill out all required fields.");
       return;
     }
     const start = new Date(newShift.start);
     const end = new Date(newShift.end);
     if (start >= end) {
-      alert(t("endTimeAfterStart") || "End time must be after start time.");
+      showNotification("error", t("endTimeAfterStart") || "End time must be after start time.");
       return;
     }
     const rolesRequired = newShift.rolesRequired
@@ -115,7 +176,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         if (existingShift.assignedEmployees.includes(empId)) {
           if (start < existingShift.end && existingShift.start < end) {
             conflictFound = true;
-            alert(
+            showNotification(
+              "error",
               t("conflictFound", {
                 empName: empId,
                 existingTitle: existingShift.title,
@@ -145,8 +207,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       );
       setIsEditing(false);
       setEditingShiftId(null);
+      showNotification("success", t("shiftUpdated") || "Shift updated successfully!");
     } else {
-      const newShiftEvent = {
+      const newShiftEvent: Shift = {
         id: Date.now(),
         title: newShift.title,
         start,
@@ -155,6 +218,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         assignedEmployees,
       };
       setShifts([...shifts, newShiftEvent]);
+      showNotification("success", t("shiftAdded") || "Shift added successfully!");
     }
 
     setNewShift({
@@ -166,7 +230,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     });
   };
 
-  const handleEditShift = (shift) => {
+  const handleEditShift = (shift: Shift) => {
     setNewShift({
       title: shift.title,
       start: moment(shift.start).format("YYYY-MM-DDTHH:mm"),
@@ -178,7 +242,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     setEditingShiftId(shift.id);
   };
 
-  const handleDeleteShift = (shiftId) => {
+  const handleDeleteShift = (shiftId: number) => {
     if (window.confirm(t("confirmDeleteShift") || "Are you sure you want to delete this shift?")) {
       setShifts(shifts.filter((shift) => shift.id !== shiftId));
       if (isEditing && editingShiftId === shiftId) {
@@ -192,28 +256,24 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           assignedEmployees: "",
         });
       }
+      showNotification("success", t("shiftDeleted") || "Shift deleted successfully!");
     }
-  };
-
-  const messages = {
-    today: t("calendarToday"),
-    previous: t("calendarBack"),
-    next: t("calendarNext"),
-    month: t("month"),
-    week: t("week"),
-    day: t("day"),
-    agenda: t("agenda")
   };
 
   return (
     <div className="shift-management">
-      <h2>{t("shiftManagement") || "Shift Management"}</h2>
+      <NotificationBar
+        message={notification.message}
+        type={notification.type}
+        visible={notification.visible}
+        onClose={hideNotification}
+      />
+
+      <h2 className="page-header">{t("shiftManagement") || "Shift Management"}</h2>
       <div className="shift-management-top">
         <div className="shift-card shift-creation">
-          <h3>
-            {isEditing
-              ? t("editShift") || "Edit Shift"
-              : t("createNewShift") || "Create New Shift"}
+          <h3 className="section-header">
+            {isEditing ? t("editShift") || "Edit Shift" : t("createNewShift") || "Create New Shift"}
           </h3>
           <form onSubmit={handleAddOrUpdateShift}>
             <div className="form-row">
@@ -298,13 +358,11 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             </div>
           </form>
         </div>
+
         <div className="shift-card calendar-card">
-          <h3>{t("calendar") || "Calendar"}</h3>
+          <h3 className="section-header">{t("calendar") || "Calendar"}</h3>
           <Calendar
-            key={i18n.language}
             localizer={localizer}
-            culture={i18n.language}
-            messages={messages}
             events={calendarEvents}
             startAccessor="start"
             endAccessor="end"
@@ -316,7 +374,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         </div>
       </div>
       <div className="shift-card shift-overview">
-        <h3>{t("shiftOverview") || "Shift Overview"}</h3>
+        <h3 className="section-header">
+          {t("shiftOverview") || "Shift Overview"}
+        </h3>
         <table>
           <thead>
             <tr>

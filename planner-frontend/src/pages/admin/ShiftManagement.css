@@ -1,5 +1,3 @@
-/* src/pages/ShiftManagement.css */
-
 /* Overall container */
 .shift-management {
   display: flex;
@@ -12,24 +10,24 @@
   box-sizing: border-box;
 }
 
-/* Title styling */
-.shift-management h2 {
+/* Main header styling - aligned left */
+.page-header {
   margin: 0;
   margin-bottom: 10px;
-  text-align: center;
-  color: #333;
+  text-align: left;
+  color: #2c3e50;
 }
 
 /* Container for form and calendar side-by-side */
 .shift-management-top {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap; /* allow wrapping on smaller screens */
+  flex-wrap: wrap;
 }
 
-/* Make the shift creation form container smaller */
+/* Shift creation form container */
 .shift-creation {
-  flex: 0 0 35%; /* 35% of the width, adjust as needed */
+  flex: 0 0 35%;
   min-width: 250px;
   background-color: #fff;
   border-radius: 8px;
@@ -37,7 +35,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Keep the calendar card flexible */
+/* Calendar card styling */
 .calendar-card {
   flex: 1;
   min-width: 300px;
@@ -47,13 +45,14 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* SHIFT CREATION FORM STYLING */
-.shift-creation h3 {
+/* Section headers for shift creation and calendar - updated to use #2c3e50 */
+.section-header {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #333;
+  color: #2c3e50;
 }
 
+/* Shift creation form styles */
 .shift-creation form {
   display: flex;
   flex-direction: column;
@@ -76,7 +75,7 @@
 .shift-creation label {
   margin-bottom: 5px;
   font-weight: 600;
-  color: #333;
+  color: #2c3e50;
 }
 
 .shift-creation input {
@@ -86,7 +85,7 @@
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
-  color: #333;
+  color: #2c3e50;
 }
 
 .shift-creation .form-actions {
@@ -95,11 +94,11 @@
   margin-top: 0;
 }
 
-/* Update shift-creation buttons: Primary = #4da8d6, Secondary = #69be28 */
+/* Buttons for shift creation form */
 .shift-creation button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4da8d6; /* Primary button color */
+  background-color: #4da8d6;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -111,21 +110,21 @@
 }
 
 .shift-creation button[type="button"] {
-  background-color: #69be28; /* Secondary button color */
+  background-color: #69be28;
 }
 
 .shift-creation button[type="button"]:hover {
   background-color: #69be28;
 }
 
-/* CALENDAR CARD */
+/* Calendar card header */
 .calendar-card h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #333;
+  /* Use .section-header styles if applied */
 }
 
-/* SHIFT OVERVIEW at the bottom */
+/* Shift overview table */
 .shift-overview {
   background-color: #fff;
   border-radius: 8px;
@@ -133,17 +132,18 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Update Shift Overview header to use #2c3e50 */
 .shift-overview h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #333;
+  color: #2c3e50;
 }
 
 .shift-overview table {
   width: 100%;
   border-collapse: collapse;
   border-radius: 8px;
-  overflow: hidden; /* so rounded corners apply to table edges */
+  overflow: hidden;
 }
 
 .shift-overview th,
@@ -164,7 +164,7 @@
   background-color: #f9f9f9;
 }
 
-/* Update shift-overview table buttons: First = #4da8d6, Last = #69be28 */
+/* Buttons for shift overview table */
 .shift-overview button {
   padding: 6px 12px;
   margin: 0 4px;
@@ -176,7 +176,7 @@
 }
 
 .shift-overview button:first-of-type {
-  background-color: #4da8d6; /* Primary table button */
+  background-color: #4da8d6;
   color: #fff;
 }
 
@@ -185,10 +185,36 @@
 }
 
 .shift-overview button:last-of-type {
-  background-color: #69be28; /* Secondary table button */
+  background-color: #69be28;
   color: #fff;
 }
 
 .shift-overview button:last-of-type:hover {
   background-color: #69be28;
+}
+
+/* Notification bar styling */
+.notification-bar {
+  position: fixed;
+  top: 20px;
+  right: -300px; /* Start off-screen */
+  width: 250px;
+  padding: 10px;
+  border-radius: 4px;
+  color: #fff;
+  transition: right 0.5s ease;
+  z-index: 9999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.notification-bar.show {
+  right: 20px;
+}
+
+.notification-bar.success {
+  background-color: #28a745;
+}
+
+.notification-bar.error {
+  background-color: #dc3545;
 }

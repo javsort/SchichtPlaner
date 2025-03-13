@@ -1,5 +1,3 @@
-/* src/styling/CompanyShiftCalendar.css */
-
 /* Container for the entire calendar page */
 .company-shift-calendar-container {
   width: 100vw;
@@ -28,13 +26,13 @@
   color: var(--header-text, #2c3e50);
 }
 
-/* Import/Export buttons container - no fill, just black text */
+/* Import/Export buttons container */
 .import-export-buttons button {
   margin: 0 5px;
-  background: none;   /* No background fill */
-  color: #000;        /* Black text */
-  border: none;       /* No border */
-  padding: 0;         /* Remove padding for a text-like appearance */
+  background: none;
+  color: var(--text-color, #000);
+  border: none;
+  padding: 0;
   cursor: pointer;
   border-radius: 0;
   font-size: 1rem;
@@ -42,10 +40,10 @@
 }
 
 .import-export-buttons button:hover {
-  color: #666;        /* Slight darkening on hover */
+  color: var(--text-color-hover, #666);
 }
 
-/* Main layout: no sidebar, fill space */
+/* Main layout */
 .calendar-main-layout {
   flex: 1 1 auto;
   display: flex;
@@ -71,13 +69,8 @@
   flex: 0 0 auto;
 }
 
-.calendar-filters .filter-label {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
 .calendar-filters button {
-  background-color: #4da8d6; /* Primary color */
+  background-color: #4da8d6;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -88,14 +81,14 @@
 }
 
 .calendar-filters button.active {
-  background-color: #69be28; /* Active state: secondary color */
+  background-color: #69be28;
 }
 
 .calendar-filters button:hover {
   background-color: #4da8d6;
 }
 
-/* Calendar container: fill remaining space */
+/* Calendar container */
 .calendar-container {
   flex: 1 1 auto;
   display: flex;
@@ -113,20 +106,4 @@
   background-color: #fff;
   border-radius: 4px;
   box-sizing: border-box;
-}
-/* Import/Export buttons container - no fill, just black text */
-.import-export-buttons button {
-  margin: 0 5px;
-  background: none;   /* No background fill */
-  color: var(--text-color, #000);        /* Black text */
-  border: none;       /* No border */
-  padding: 0;         /* Remove padding for a text-like appearance */
-  cursor: pointer;
-  border-radius: 0;
-  font-size: 1rem;
-  transition: color 0.2s ease;
-}
-
-.import-export-buttons button:hover {
-  color: var(--text-color-hover, #666);        /* Slight darkening on hover */
 }

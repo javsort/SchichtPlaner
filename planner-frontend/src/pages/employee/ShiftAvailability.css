@@ -1,5 +1,3 @@
-/* src/styling/ShiftAvailability.css */
-
 /* Make the layout fill the entire viewport */
 .shift-availability-layout {
   display: flex;
@@ -17,11 +15,11 @@
   overflow: auto;
 }
 
-/* Title styling */
+/* Title styling: Align left and use #2c3e50 */
 .shift-availability-container h2 {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
-  color: var(--header-text, #333);
+  color: #2c3e50;
 }
 
 /* Month/Year dropdowns */
@@ -34,7 +32,7 @@
 
 .month-year-selector label {
   font-weight: bold;
-  color: var(--header-text, #333);
+  color: #2c3e50;
 }
 
 .month-year-selector select {

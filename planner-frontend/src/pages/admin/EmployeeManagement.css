@@ -1,5 +1,3 @@
-/* src/pages/EmployeeManagement.css */
-
 /* Container for the employee management page: full width, full height */
 .container {
   width: 100%;
@@ -15,8 +13,8 @@
 /* Page Title */
 .container h2 {
   margin-top: 0;
-  text-align: center;
-  color: #333; /* Dark text for good contrast */
+  text-align: left; /* Align header to the left */
+  color: #2c3e50; /* Always use #2c3e50 */
 }
 
 /* Employee Form Styles */
@@ -134,7 +132,6 @@
   cursor: pointer;
   transition: background 0.3s ease;
   text-align: center;
-
 }
 
 .employee-table button:first-of-type {

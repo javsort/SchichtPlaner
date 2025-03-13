@@ -9,9 +9,9 @@
 
 /* Heading styles */
 .shift-swap-admin-container h2 {
-  text-align: center;
+  text-align: left;      /* Align header to the left */
   margin-bottom: 20px;
-  color: var(--header-text, #2c3e50);
+  color: #2c3e50;        /* Explicitly using #2c3e50 */
 }
 
 /* (Optional) Override Bootstrap table styles if desired */
