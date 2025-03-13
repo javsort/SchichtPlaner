@@ -51,7 +51,7 @@ public class ShiftAssignmentController {
 
     @PostMapping
     public ShiftAssignment assignShift(@RequestBody ShiftAssignment assignment) {
-        log.info(logHeader + "assignShift: Assigning shift with id: " + assignment.getShift().getId() + " to user with id: " + assignment.getUserId());
+        log.info(logHeader + "assignShift: Assigning shift with id: " + assignment.getShift().getId() + " to user with id: " + assignment.getEmployeeId());
         return shiftAssignmentService.assignShift(assignment);
     }
 
