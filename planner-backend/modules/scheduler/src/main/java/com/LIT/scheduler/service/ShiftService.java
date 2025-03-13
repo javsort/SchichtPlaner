@@ -27,7 +27,7 @@ public class ShiftService {
         this.shiftRepository = shiftRepository;
     }
 
-    @PostConstruct
+    /*@PostConstruct
     public void initializeDummyShifts() {
         log.info(logHeader + "initializeDummyShifts: Initializing dummy shifts. Starting with shifts...");
 
@@ -59,7 +59,7 @@ public class ShiftService {
                     .build()
             ));
         }
-    }
+    }*/
 
     public List<Shift> getAllShifts() {
         log.info(logHeader + "getAllShifts: Getting all shifts");
