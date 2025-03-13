@@ -6,7 +6,7 @@ import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useTranslation } from "react-i18next";
 import "./ShiftManagement.css";
-import { fetchShifts, getAllUsers } from "../../Services/api.ts";
+import { fetchShifts, getAllUsers, supervisorCreateShift, supervisorDeleteShift, supervisorUpdateShift } from "../../Services/api.ts";
 
 const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const { t, i18n } = useTranslation();
@@ -16,71 +16,90 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const [shifts, setShifts] = useState([]);
   const [employees, setEmployees] = useState([]);
 
+  interface Shift {
+    id: number;
+    title: string;
+    employeeId: number | null;
+    shiftOwner: string;
+    role: string;
+    start: Date;
+    end: Date;
+  };
+
+  const mapShifts = (shifts): Shift[] => {
+    return shifts.map((shift) => ({
+      id: shift.id,
+      title: shift.title || t("unnamedShift"),
+      employeeId: shift.employeeId || null,
+      shiftOwner: shift.shiftOwnerName || t("unassigned"),
+      role: shift.shiftOwnerRole || t("unassigned"),
+      start: new Date(shift.startTime),
+      end: new Date(shift.endTime),
+    }));
+  };
+  
+  const loadShifts = async () => {
+    try {
+      const fetchedShifts = await fetchShifts();
+      if (!Array.isArray(fetchedShifts)) {
+        console.error("Invalid API response:", fetchedShifts);
+        return;
+      }
+
+      const formattedShifts = mapShifts(fetchedShifts);
+
+      setShifts(formattedShifts);
+
+    } catch (error) {
+      console.error("Error fetching shifts:", error);
+    }
+  };
+
+  const loadEmployees = async () => {
+    try {
+      const users = await getAllUsers();
+      if (!Array.isArray(users)) {
+        console.error("Invalid API response:", users);
+        return;
+      }
+
+      // Extract usernames for employees
+      const employeeList = users.map(user => ({
+        id: user.id,
+        name: user.username,
+        role: user.roles[0]?.name || t("unassigned") || "Unassigned"
+      }));
+
+      setEmployees(employeeList);
+
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  }
+
   // Load shifts from the backend
   useEffect(() => {
-    const loadShifts = async () => {
-      try {
-        const fetchedShifts = await fetchShifts();
-        if (!Array.isArray(fetchedShifts)) {
-          console.error("Invalid API response:", fetchedShifts);
-          return;
-        }
-
-        const formattedShifts = fetchedShifts.map((shift) => ({
-          id: shift.id,
-          shiftOwner: shift.shiftOwnerName || t("unassigned"),
-          title: shift.title || t("unnamedShift"),
-          start: new Date(shift.startTime),
-          end: new Date(shift.endTime),
-          role: shift.shiftOwnerRole || t("unassigned"),
-        }));
-
-        setShifts(formattedShifts);
-      } catch (error) {
-        console.error("Error fetching shifts:", error);
-      }
-    };
-
-    const loadEmployees = async () => {
-      try {
-        const users = await getAllUsers();
-        if (!Array.isArray(users)) {
-          console.error("Invalid API response:", users);
-          return;
-        }
-
-        // Extract usernames for employees
-        const employeeList = users.map(user => ({
-          id: user.id,
-          name: user.username,
-          role: user.roles[0]?.name || t("unassigned") || "Unassigned"
-        }));
-
-        setEmployees(employeeList);
-
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    }
-
     loadShifts();
     loadEmployees();
   }, []);
 
   const [view, setView] = useState(Views.WEEK);
-  const [newShift, setNewShift] = useState({
+  const [newShift, setNewShift] = useState<Shift>({
+    id: 0,
     title: "",
-    start: "",
-    end: "",
+    employeeId: null,
+    shiftOwner: "",
     role: "",
-    employeeId: ""
+    start: new Date(),
+    end: new Date(),
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editingShiftId, setEditingShiftId] = useState(null);
 
-  const calendarEvents = shifts.map((shift) => ({
+  const calendarEvents = shifts.map((shift: Shift) => ({
     id: shift.id,
     title: `${shift.title} (${shift.shiftOwner})`,
+    shiftOwner: shift.shiftOwner,
     start: shift.start,
     end: shift.end,
     role: shift.role,
@@ -95,7 +114,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     return { style: { backgroundColor, borderRadius: "5px", color: "white" } };
   };
 
-  const handleAddOrUpdateShift = (e) => {
+  const handleAddOrUpdateShift = async (e) => {
     e.preventDefault();
     if (!newShift.title || !newShift.start || !newShift.end || !newShift.role) {
       alert(t("fillRequiredFields") || "Please fill out all required fields.");
@@ -104,55 +123,70 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
     const start = new Date(newShift.start);
     const end = new Date(newShift.end);
+
     if (start >= end) {
       alert(t("endTimeAfterStart") || "End time must be after start time.");
       return;
     }
 
-    if (isEditing) {
-      setShifts(
-        shifts.map((shift) =>
-          shift.id === editingShiftId ? { ...shift, ...newShift, start, end , employeeId } : shift
-        )
-      );
-      setIsEditing(false);
-      setEditingShiftId(null);
-    } else {
-      const newShiftEvent = {
-        id: Date.now(),
-        title: newShift.title,
-        start,
-        end,
-        role: newShift.role,
-        employeeId: newShift.employeeId,
-      };
-      setShifts([...shifts, newShiftEvent]);
-    }
+    try {
+      if (isEditing) {
+        await supervisorUpdateShift(editingShiftId, {
+          title: newShift.title,
+          start: start.toISOString(),
+          end: end.toISOString(),
+          role: newShift.role,
+          employeeId: newShift.employeeId || null,
+          shiftOwner: newShift.shiftOwner,
+        });
 
-    setNewShift({ title: "", start: "", end: "", role: "" , employeeId: ""});
+        setIsEditing(false);
+        setEditingShiftId(null);
+        
+      } else {
+        await supervisorCreateShift({
+          title: newShift.title,
+          start: start.toISOString(),
+          end: end.toISOString(),
+          role: newShift.role,
+          employeeId: newShift.employeeId || null,
+          shiftOwner: newShift.shiftOwner,
+        });
+      }
+
+      setNewShift({ id: 0, shiftOwner: "", title: "", start: new Date(), end: new Date(), role: "" , employeeId: null});
+      await loadShifts();
+    } catch (error) {
+      console.error("Error adding/updating shift:", error);
+    }
   };
   
   const handleEditShift = (shift) => {
+    
     setNewShift({
       title: shift.title,
       start: moment(shift.start).format("YYYY-MM-DDTHH:mm"),
       end: moment(shift.end).format("YYYY-MM-DDTHH:mm"),
       role: shift.role,
-      employeeId: shift.employeeId
+      employeeId: shift.employeeId ,
+      shiftOwner: shift.shiftOwner,
     });
+
     setIsEditing(true);
     setEditingShiftId(shift.id);
   };
 
-  const handleDeleteShift = (shiftId) => {
+  const handleDeleteShift = async (shiftId) => {
     if (window.confirm(t("confirmDeleteShift") || "Are you sure you want to delete this shift?")) {
-      setShifts(shifts.filter((shift) => shift.id !== shiftId));
-      if (isEditing && editingShiftId === shiftId) {
-        setIsEditing(false);
-        setEditingShiftId(null);
-        setNewShift({ title: "", start: "", end: "", role: "" , employeeId: ""});
+      try {
+        await supervisorDeleteShift(shiftId); 
+        await loadShifts();
+      } catch (error) {
+        console.error("Error deleting shift:", error);
       }
     }
+
+    loadShifts();
   };
 
   const messages = {
@@ -166,12 +200,23 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   };
 
   const handleEmployeeChange = (e) => {
-    const selectedEmployee = employees.find(emp => emp.id === parseInt(e.target.value));
-    setNewShift({
-      ...newShift,
-      employeeId: selectedEmployee ? selectedEmployee.id : "",
-      role: selectedEmployee ? selectedEmployee.role : "Unassigned"
-    });
+    const selectedEmployee = employees.find(emp => emp.id === parseInt(e.target.value, 10));
+  
+    if (selectedEmployee) {
+      setNewShift({
+        ...newShift,
+        employeeId: selectedEmployee.id,
+        shiftOwner: selectedEmployee.name,
+        role: selectedEmployee.role,
+      });
+    } else {
+      setNewShift({
+        ...newShift,
+        employeeId: null,
+        shiftOwner: "", // Reset if no employee selected
+        role: "Unassigned",
+      });
+    }
   };
 
   return (
@@ -189,17 +234,23 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               <>
               <label>{t("selectEmployee") || "Select Employee"}:</label>
               <select
-                value={newShift.employeeId}
+                value={newShift.employeeId || ""} // Ensure it selects the correct employee ID
                 onChange={handleEmployeeChange}
                 required
-                >
+              >
                 <option value="">{t("employee") || "Select Employee"}</option>
                 {employees.map((employee) => (
                   <option key={employee.id} value={employee.id}>
                     {employee.name}
                   </option>
-              ))}
+                ))}
               </select>
+              </>
+            )}
+            {isEditing && (
+              <>
+              <label>{t("employeeAssigned") || "Employee Assigned"}:</label>
+              <div className="employee-display">{newShift.shiftOwner}</div>
               </>
             )}
             <div className="form-row">
@@ -253,10 +304,11 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                     setEditingShiftId(null);
                     setNewShift({
                       title: "",
-                      start: "",
-                      end: "",
+                      start: new Date(),
+                      end: new Date(),
+                      shiftOwner: "",
                       role : "",
-                      employeeId: ""
+                      employeeId: null,
                     });
                   }}
                 >
@@ -306,7 +358,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                   {moment(shift.start).format("hh:mm A")} -{" "}
                   {moment(shift.end).format("hh:mm A")}
                 </td>
-                <td>{shift.role || t("unassigned") || "Unassigned"}</td>
+                <td>{shift.role.replace("-", " ") || t("unassigned") || "Unassigned"}</td>
                 <td>
                   <button onClick={() => handleEditShift(shift)}>
                     {t("edit") || "Edit"}

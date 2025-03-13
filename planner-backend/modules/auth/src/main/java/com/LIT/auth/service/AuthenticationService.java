@@ -145,7 +145,6 @@ public class AuthenticationService {
             List<User> generatedUsers = List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten);
 
             log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");
-            userService.updateUserCount(generatedUsers.size());
             userRepository.saveAll(generatedUsers);
         }
     }

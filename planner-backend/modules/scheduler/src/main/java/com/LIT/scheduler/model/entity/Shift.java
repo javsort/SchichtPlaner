@@ -26,13 +26,13 @@ public class Shift {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long shiftOwnerId;
+
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String shiftOwnerName;
 
-    @Column(nullable = false)
     private String shiftOwnerRole;
 
     @Column(nullable = false)

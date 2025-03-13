@@ -23,17 +23,9 @@ public class UserService {
 
     private final String logHeader = "[UserService] - ";
 
-    private AtomicInteger userCount = new AtomicInteger(0);
-
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        userCount.set(userRepository.findAll().size());
-    }
-
-    // To be called by auth service after initializing dummy users
-    public void updateUserCount(int count) {
-        userCount.set(count);
     }
 
 
@@ -71,11 +63,8 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        //  Get Id from atomic integer and assign
-        user.setId((long) userCount.incrementAndGet());
 
         log.info(logHeader + "saveUser: Saving user: " + user + "\n" + user.toString());
-        log.info(logHeader + "current user count: " + userCount.get());
 
         userRepository.save(user);
 
@@ -142,7 +131,6 @@ public class UserService {
     public User registerUser(String email, String username, String password) {
         log.info(logHeader + "registerUser: Registering user with email: '" + email + "', username: '" + username + "'");
         User user = User.builder()
-                .id((long) userCount.incrementAndGet())
                 .email(email)
                 .username(username)
                 .password(password)

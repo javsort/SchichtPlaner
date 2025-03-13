@@ -291,3 +291,104 @@ export const rejectShiftProposal = async (shiftId: string) => {
     throw error;
   }
 };
+
+export const supervisorCreateShift = async (shift) => {
+
+  console.log('Creating shift:', shift);
+  
+  const shiftToCreate = {
+    shiftOwnerId: shift.employeeId || null,
+    title: shift.title,
+    shiftOwnerName: shift.shiftOwner || "",
+    shiftOwnerRole: shift.role, 
+    startTime: new Date(shift.start).toISOString(),
+    endTime: new Date(shift.end).toISOString(),
+  };
+
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/scheduler/shifts/create`,
+      shiftToCreate,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    );
+    console.log('Shift created successfully', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating shift', error);
+  }
+
+};
+
+export const supervisorUpdateShift = async (shiftId, shift) => {
+
+  const shiftToUpdate = {
+    shiftOwnerId: shift.employeeId || null,
+    title: shift.title,
+    shiftOwnerName: shift.shiftOwner || "",
+    shiftOwnerRole: shift.role, 
+    startTime: new Date(shift.start).toISOString(),
+    endTime: new Date(shift.end).toISOString(),
+  };
+
+  console.log('Updating shift with ID:', shiftId);
+  
+  const token = localStorage.getItem('token') || '';
+  
+  console.log('Updating shift with token:', token);
+  
+  try {
+    const response = await axios.put(
+      `${baseUrl}/api/scheduler/shifts/${shiftId}`,
+      shiftToUpdate,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        }
+      }
+    );
+    console.log('Shift updated successfully', response.data);
+
+    return response.data;
+  
+  } catch (error: any) {
+    console.error("Error updating shift:", error.response ? error.response.data : error);
+    throw error;
+
+  }
+
+};
+
+export const supervisorDeleteShift = async (shiftId) => {
+
+  console.log('Deleting shift with ID:', shiftId);
+  
+  const token = localStorage.getItem('token') || '';
+  
+  console.log('Deleting shift with token:', token);
+  
+  try {
+    const response = await axios.delete(
+      `${baseUrl}/api/scheduler/shifts/${shiftId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        }
+      }
+    );
+    console.log('Shift deleted successfully', response.data);
+
+    return response.data;
+  
+  } catch (error: any) {
+    console.error("Error deleting shift:", error.response ? error.response.data : error);
+    throw error;
+
+  }
+};
