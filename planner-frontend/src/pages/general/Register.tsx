@@ -80,8 +80,8 @@ function RegisterPage() {
             <select value={role} onChange={(e) => setRole(e.target.value)} className="form-select">
               <option value="Technician">Technician</option>
               <option value="Tester">Tester</option>
-              <option value="Incident Manager">Incident Manager</option>
-              <option value="Shift Supervisor">Shift Supervisor</option>
+              <option value="Incident-Manager">Incident Manager</option>
+              <option value="Shift-Supervisor">Shift Supervisor</option>
               <option value="Administrator">Administrator</option>
             </select>
           </div>

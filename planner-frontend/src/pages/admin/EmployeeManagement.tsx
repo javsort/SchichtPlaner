@@ -1,6 +1,6 @@
 // src/pages/admin/EmployeeManagement.tsx
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useAuth } from "../../AuthContext.tsx"; // Adjust the path as needed
 import { useTranslation } from "react-i18next";
 import "./EmployeeManagement.css";
@@ -16,7 +16,6 @@ interface Employee {
   phone: string;
   email: string;
   role: string; // e.g., "shift_supervisor", "technician", etc.
-  absences: number;
 }
 
 interface EmployeeManagementProps {
@@ -60,19 +59,31 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   
   const fetchEmployees = async () => {
-    const employees = await getAllUsers();
-    
-    const formattedEmployees = employees.map((emp: any) => ({
-      id: emp.id,
-      name: emp.username,
-      address: "N/A",
-      phone: "N/A",
-      email: emp.email,
-      role: emp.roles.length > 0 ? emp.roles[0].name.replace("-", " ") : "unknown",
-      absences: 0,
-    }));
+    try {
+      const employees = await getAllUsers();
 
-    setEmployees(formattedEmployees);
+      if (!employees || !Array.isArray(employees)) {
+        console.error("Error: Received invalid employee data", employees);
+        setEmployees([]); // Set an empty array to prevent errors
+        return;
+      }    
+
+      // Format the employee data for display
+      const formattedEmployees = employees.map((emp: any) => ({
+        id: emp.id,
+        name: emp.username,
+        address: emp.address,
+        phone: emp.phoneNum,
+        email: emp.email,
+        role: emp.roles.length > 0 ? emp.roles[0].name.replace("-", " ") : "unknown"
+      }));
+
+      setEmployees(formattedEmployees);
+    } catch (error) {
+      console.error("Error fetching employees, error:", error);
+      setEmployees([]); // Set an empty array to prevent errors
+    }
+
   };
 
   // Fetch employees on component mount
@@ -124,7 +135,34 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       }
 
     } else {
-      window.alert("User update coming soon!")
+      // Update user
+      try {
+        const selectedRole = roles.find((role) => role.name === data.role);
+
+        if (!selectedRole) {
+          console.error("Invalid role selected.");
+          return;
+        }
+
+        const userToUpdate = {
+          id: editingEmployeeId,
+          email: data.email,
+          username: data.name,
+          address: data.address,
+          phoneNum: data.phone,
+          roles: [{ id: selectedRole.id, name: selectedRole.name }]
+        };
+
+        await updateUser(userToUpdate);
+
+        reset(); // Clear the form after submission
+        fetchEmployees(); // Refresh employee list after adding a new user
+        setEditingEmployeeId(null); // Reset the editing state
+
+
+      } catch (error) {
+        console.error("Error updating user:", error);
+      }
     }
   };
 
@@ -132,11 +170,10 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   const editEmployee = (emp: Employee) => {
     setEditingEmployeeId(emp.id);
     setValue("name", emp.name);
-    setValue("address", emp.address);
-    setValue("phone", emp.phone);
+    setValue("address", emp.address || "");
+    setValue("phone", emp.phone || "");
     setValue("email", emp.email);
     setValue("role", emp.role);
-    setValue("absences", emp.absences);
   };
 
   // Delete an employee (only if allowed and user is Admin)
@@ -230,19 +267,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {errors.role && <p className="error">{errors.role.message}</p>}
         </div>
 
-        <div className="form-row">
-          <label>{t("absences") || "Absences"}:</label>
-          <input
-            {...register("absences", {
-              required: t("absencesRequired") || "Absences is required",
-              valueAsNumber: true,
-            })}
-            type="number"
-            placeholder={t("absencesPlaceholder") || "Number of Absences"}
-          />
-          {errors.absences && <p className="error">{errors.absences.message}</p>}
-        </div>
-
         <div className="form-actions">
           <button type="submit">
             {editingEmployeeId ? t("updateEmployee") || "Update Employee" : t("addEmployee") || "Add Employee"}
@@ -270,33 +294,37 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
             <th>{t("phoneNumber") || "Phone Number"}</th>
             <th>{t("email") || "E-mail"}</th>
             <th>{t("role") || "Role"}</th>
-            <th>{t("absences") || "Absences"}</th>
             <th>{t("action") || "Action"}</th>
           </tr>
         </thead>
         <tbody>
-          {employees.map((emp) => (
-            <tr key={emp.id}>
-              <td>{emp.name}</td>
-              <td>{emp.address}</td>
-              <td>{emp.phone}</td>
-              <td>{emp.email}</td>
-              {/* Map the raw role to a translated label */}
-              <td>{getRoleLabel(emp.role)}</td>
-              <td>{emp.absences}</td>
-              <td align="center">
-                <button onClick={() => editEmployee(emp)}>
-                  {t("edit") || "Edit"}
-                </button>
-                {/* Only show delete if allowed and user is an Administrator */}
-                {allowDelete && (
-                  <button onClick={() => deleteEmployee(emp.id)}>
-                    {t("delete") || "Delete"}
+          {employees.length > 0 ? (
+            employees?.map((emp) => (
+              <tr key={emp.id}>
+                <td>{emp.name}</td>
+                <td>{emp.address}</td>
+                <td>{emp.phone}</td>
+                <td>{emp.email}</td>
+                <td>{getRoleLabel(emp.role)}</td>
+                <td align="center">
+                  <button onClick={() => editEmployee(emp)}>
+                    {t("edit") || "Edit"}
                   </button>
-                )}
+                  {allowDelete && (
+                    <button onClick={() => deleteEmployee(emp.id)}>
+                      {t("delete") || "Delete"}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            )) 
+            ) : (
+            <tr>
+              <td colSpan={6} style={{ textAlign: "center" }}>
+                No employees found
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
