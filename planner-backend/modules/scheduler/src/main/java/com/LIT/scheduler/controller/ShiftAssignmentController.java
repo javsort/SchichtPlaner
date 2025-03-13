@@ -38,9 +38,9 @@ public class ShiftAssignmentController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<ShiftAssignment> getAssignmentsByUser(@PathVariable Long userId) {
-        log.info(logHeader + "getAssignmentsByUser: Getting assignments for user with id: " + userId);
-        return shiftAssignmentService.getAssignmentsByUserId(userId);
+    public List<ShiftAssignment> getAssignmentsByUser(@PathVariable Long employeeId) {
+        log.info(logHeader + "getAssignmentsByUser: Getting assignments for user with id: " + employeeId);
+        return shiftAssignmentService.getAssignmentsByUserId(employeeId);
     }
 
     @GetMapping("/shift/{shiftId}")
@@ -51,7 +51,7 @@ public class ShiftAssignmentController {
 
     @PostMapping
     public ShiftAssignment assignShift(@RequestBody ShiftAssignment assignment) {
-        log.info(logHeader + "assignShift: Assigning shift with id: " + assignment.getShift().getId() + " to user with id: " + assignment.getUserId());
+        log.info(logHeader + "assignShift: Assigning shift with id: " + assignment.getShift().getId() + " to user with id: " + assignment.getEmployeeId());
         return shiftAssignmentService.assignShift(assignment);
     }
 
