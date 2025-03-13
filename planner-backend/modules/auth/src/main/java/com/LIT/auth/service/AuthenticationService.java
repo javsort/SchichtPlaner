@@ -31,6 +31,7 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     private final String logHeader = "[AuthenticationService] - ";
 
@@ -38,11 +39,13 @@ public class AuthenticationService {
     public AuthenticationService(UserRepository userRepository,
                                  RoleRepository roleRepository,
                                  JwtTokenUtil jwtTokenUtil,
-                                 PasswordEncoder passwordEncoder) {
+                                 PasswordEncoder passwordEncoder,
+                                 UserService userService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.jwtTokenUtil = jwtTokenUtil;
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     //Inserts dummy roles and users (only if DB is empty)
@@ -139,8 +142,11 @@ public class AuthenticationService {
                     .phoneNum("123-456-7890")
                     .build();
 
+            List<User> generatedUsers = List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten);
+
             log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");
-            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten));
+            userService.updateUserCount(generatedUsers.size());
+            userRepository.saveAll(generatedUsers);
         }
     }
 

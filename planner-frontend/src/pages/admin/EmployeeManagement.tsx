@@ -121,6 +121,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           email: data.email,
           username: data.name,
           password: "password_test", // Default password (consider making this configurable)
+          address: data.address,
+          phoneNum: data.phone,
           googleId: "",
           roles: [{ id: selectedRole.id, name: selectedRole.name }]
         };
