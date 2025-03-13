@@ -79,6 +79,8 @@ public class AuthenticationService {
                     .email("admin@example.com")
                     .username("admin")
                     .password(passwordEncoder.encode("admin123"))
+                    .address("1234 Admin St")
+                    .phoneNum("123-456-7890")
                     .roles(Set.of(adminRole))
                     .build();
 
@@ -86,6 +88,8 @@ public class AuthenticationService {
                     .email("shiftsupervisor@example.com")
                     .username("shiftSupervisor")
                     .password(passwordEncoder.encode("shiftsuper123"))
+                    .address("1234 Shift Supervisor St")
+                    .phoneNum("123-456-7890")
                     .roles(Set.of(shiftSupervisorRole))
                     .build();
 
@@ -93,6 +97,8 @@ public class AuthenticationService {
                     .email("technician@example.com")
                     .username("technician")
                     .password(passwordEncoder.encode("technician123"))
+                    .address("1234 Technician St")
+                    .phoneNum("123-456-7890")
                     .roles(Set.of(technicianRole))
                     .build();
             
@@ -101,6 +107,8 @@ public class AuthenticationService {
                     .username("tester")
                     .password(passwordEncoder.encode("tester123"))
                     .roles(Set.of(testerRole))
+                    .address("1234 Tester St")
+                    .phoneNum("123-456-7890")
                     .build();
             
             User incidentManager= User.builder()
@@ -108,6 +116,8 @@ public class AuthenticationService {
                     .username("incidentManager")
                     .password(passwordEncoder.encode("incidentmanage123"))
                     .roles(Set.of(incidentManagerRole))
+                    .address("1234 Incident Manager St")
+                    .phoneNum("123-456-7890")
                     .build();
 
             // Trials for Teacher & End-client
@@ -116,6 +126,8 @@ public class AuthenticationService {
                     .username("david")
                     .password(passwordEncoder.encode("david123"))
                     .roles(Set.of(adminRole))
+                    .address("1234 David St")
+                    .phoneNum("123-456-7890")
                     .build();
 
             User trialTorsten = User.builder()
@@ -123,6 +135,8 @@ public class AuthenticationService {
                     .username("torsten")
                     .password(passwordEncoder.encode("torsten123"))
                     .roles(Set.of(adminRole))
+                    .address("1234 Torsten St")
+                    .phoneNum("123-456-7890")
                     .build();
 
             log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");

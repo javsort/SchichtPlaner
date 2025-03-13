@@ -134,7 +134,21 @@ export const createUser = async (user) => {
 }
 
 export const updateUser = async (user) => {
-  
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/auth/users/update`, 
+      user,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    )
+
+  } catch (error) {
+    console.error('Error creating user: ', error)
+  }
 }
 
 export const deleteUser = async (userId) => {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.LIT.auth.model.entity.User;
+import com.LIT.auth.model.dto.Req.UserDTO;
 import com.LIT.auth.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         log.info(logHeader + "getAllUsers: Getting all users");
 
         return userService.getAllUsers();
@@ -65,6 +66,13 @@ public class UserController {
         log.info(logHeader + "createUser: Creating user: " + user);
         
         return userService.saveUser(user);
+    }
+
+    @PostMapping("/update")
+    public UserDTO updateUser(@RequestBody UserDTO user) {
+        log.info(logHeader + "updateUser: Updating user: " + user);
+
+        return userService.updateUser(user);
     }
 
     @DeleteMapping("/{id}")
