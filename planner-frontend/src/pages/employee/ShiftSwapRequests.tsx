@@ -1,11 +1,12 @@
 // src/pages/employee/ShiftSwapRequests.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useAuth } from "../../AuthContext.tsx";
+import { useAuth } from "../../AuthContext";
 import { useTranslation } from "react-i18next";
 import "./ShiftSwapRequests.css";
+import { fetchSwapProposals, createSwapProposal } from "../../Services/api";
 
 export interface Shift {
   id: number;
@@ -26,34 +27,21 @@ export interface SwapRequest {
   status: "Pending" | "Approved" | "Rejected";
 }
 
-const defaultShifts: Shift[] = [
-  // Add your default shifts here if needed
-];
-
-const defaultEmployees = [
-  // Add your default employees here if needed
-];
-
-interface ShiftSwapRequestsProps {
-  shifts?: Shift[];
-  swapRequests?: SwapRequest[];
-  setSwapRequests: React.Dispatch<React.SetStateAction<SwapRequest[]>>;
-  dummyEmployees?: { id: number; name: string }[];
-}
-
 const localizer = momentLocalizer(moment);
 
+interface ShiftSwapRequestsProps {
+  dummyEmployees?: { id: number; name: string }[];
+  dummyShifts?: Shift[];
+}
+
 const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
-  shifts = defaultShifts,
-  swapRequests = [],
-  setSwapRequests,
-  dummyEmployees = defaultEmployees,
+  dummyEmployees = [],
+  dummyShifts = [],
 }) => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const currentUser = user || { id: 1, name: "John Doe" };
 
-  // Calendar localization
   moment.locale(i18n.language);
   const messages = {
     today: t("calendarToday"),
@@ -65,52 +53,80 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
     agenda: t("agenda"),
   };
 
-  // State for form selections and message
   const [selectedOwnShift, setSelectedOwnShift] = useState("");
   const [selectedTargetEmployee, setSelectedTargetEmployee] = useState("");
   const [selectedTargetShift, setSelectedTargetShift] = useState("");
   const [message, setMessage] = useState("");
   const [view, setView] = useState(Views.WEEK);
+  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
+
+  const loadSwapRequests = async () => {
+    try {
+      const proposals = await fetchSwapProposals();
+      const userProposals = proposals.filter(
+        (req: SwapRequest) => req.employeeId === currentUser.id
+      );
+      setSwapRequests(userProposals);
+    } catch (error) {
+      console.error("Error fetching swap proposals:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadSwapRequests();
+  }, [currentUser]);
 
   // Filter available target shifts based on selected target employee
-  const availableTargetShifts = shifts.filter(
+  const availableTargetShifts = dummyShifts.filter(
     (shift) => shift.assignedEmployee === Number(selectedTargetEmployee)
   );
 
-  // Submit swap request
-  const handleSubmitSwapRequest = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitSwapRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const ownShift = shifts.find((shift) => shift.id === Number(selectedOwnShift));
-    const targetShift = shifts.find((shift) => shift.id === Number(selectedTargetShift));
-
+    const ownShift = dummyShifts.find(
+      (shift) => shift.id === Number(selectedOwnShift)
+    );
+    const targetShift = dummyShifts.find(
+      (shift) => shift.id === Number(selectedTargetShift)
+    );
     if (!ownShift || !targetShift || !selectedTargetEmployee) {
       alert(t("selectRequiredFields") || "Please select your shift, target employee, and target shift.");
       return;
     }
-
+    const targetEmp =
+      dummyEmployees.find((emp) => emp.id === Number(selectedTargetEmployee)) || {
+        id: Number(selectedTargetEmployee),
+        name: t("unknownEmployee") || "Unknown",
+      };
     const newRequest: SwapRequest = {
       id: Date.now(),
-      employeeId: Number(currentUser.id),
+      employeeId: currentUser.id,
       employeeName: currentUser.name,
       ownShift,
-      targetEmployee:
-        dummyEmployees.find((emp) => emp.id === Number(selectedTargetEmployee)) || {
-          id: 0,
-          name: t("unknownEmployee") || "Unknown",
-        },
+      targetEmployee: targetEmp,
       targetShift,
       message,
       status: "Pending",
     };
-
-    setSwapRequests([...swapRequests, newRequest]);
-    alert(t("swapRequestSubmitted") || "Swap request submitted!");
-
-    setSelectedOwnShift("");
-    setSelectedTargetEmployee("");
-    setSelectedTargetShift("");
-    setMessage("");
+    try {
+      await createSwapProposal(newRequest);
+      alert(t("swapRequestSubmitted") || "Swap request submitted!");
+      loadSwapRequests();
+      setSelectedOwnShift("");
+      setSelectedTargetEmployee("");
+      setSelectedTargetShift("");
+      setMessage("");
+    } catch (error) {
+      console.error("Error submitting swap request:", error);
+      alert(t("failedSubmitSwap") || "Failed to submit swap request. Please try again.");
+    }
   };
+
+  const calendarEvents = dummyShifts.map((shift) => ({
+    ...shift,
+    title: `${shift.title} (${moment(shift.start).format("HH:mm")} - ${moment(shift.end).format("HH:mm")})`,
+    allDay: false,
+  }));
 
   return (
     <div className="shift-swap-container">
@@ -122,7 +138,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
             localizer={localizer}
             culture={i18n.language}
             messages={messages}
-            events={shifts}
+            events={dummyShifts}
             startAccessor="start"
             endAccessor="end"
             view={view}
@@ -140,12 +156,11 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
                 onChange={(e) => setSelectedOwnShift(e.target.value)}
               >
                 <option value="">{t("selectYourShift") || "-- Select Your Shift --"}</option>
-                {shifts
-                  .filter((shift) => shift.assignedEmployee === Number(currentUser.id))
+                {dummyShifts
+                  .filter((shift) => shift.assignedEmployee === currentUser.id)
                   .map((shift) => (
                     <option key={shift.id} value={shift.id}>
-                      {shift.title} (
-                      {moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
+                      {shift.title} ({moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
                     </option>
                   ))}
               </select>
@@ -162,7 +177,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
               >
                 <option value="">{t("selectTargetEmployee") || "-- Select Target Employee --"}</option>
                 {dummyEmployees
-                  .filter((emp) => emp.id !== Number(currentUser.id))
+                  .filter((emp) => emp.id !== currentUser.id)
                   .map((emp) => (
                     <option key={emp.id} value={emp.id}>
                       {emp.name}
@@ -181,8 +196,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
                   <option value="">{t("selectTargetShift") || "-- Select Target Shift --"}</option>
                   {availableTargetShifts.map((shift) => (
                     <option key={shift.id} value={shift.id}>
-                      {shift.title} (
-                      {moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
+                      {shift.title} ({moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
                     </option>
                   ))}
                 </select>
@@ -205,12 +219,12 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
       </div>
       <div className="mt-4 request-list">
         <h3>{t("myPendingSwapRequests") || "My Pending Swap Requests"}</h3>
-        {swapRequests.filter((req) => req.employeeId === Number(currentUser.id)).length === 0 ? (
+        {swapRequests.filter((req) => req.employeeId === currentUser.id).length === 0 ? (
           <p>{t("noPendingRequests") || "No pending requests."}</p>
         ) : (
           <ul className="list-group">
             {swapRequests
-              .filter((req) => req.employeeId === Number(currentUser.id))
+              .filter((req) => req.employeeId === currentUser.id)
               .map((req) => (
                 <li key={req.id} className="list-group-item">
                   <strong>
