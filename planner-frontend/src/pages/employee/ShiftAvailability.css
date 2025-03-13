@@ -3,6 +3,9 @@
   display: flex;
   width: 100vw;
   height: 100vh;
+  margin: 0;           /* Remove default margins */
+  padding: 0;          /* Remove default padding */
+  background-color: #fff; /* Entire page white, if desired */
 }
 
 /* Main container styling */
@@ -10,9 +13,44 @@
   flex-grow: 1;
   padding: 20px;
   font-family: var(--font-primary, Arial, sans-serif);
-  background-color: var(--main-bg, #f7f7f7);
   box-sizing: border-box;
   overflow: auto;
+  position: relative; /* So we can position notification inside it if desired */
+}
+
+/* 
+  ---------------------------
+  NOTIFICATION (TOAST) STYLES
+  ---------------------------
+*/
+.notification-toast {
+  position: fixed; /* or absolute if you want it relative to container */
+  top: 20px;
+  right: -350px;    /* start off-screen to the right */
+  width: 300px;     /* fixed width for the toast */
+  padding: 15px 20px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.4s ease, right 0.4s ease;
+  z-index: 9999;
+  /* By default, hidden or off-screen */
+}
+
+/* Slide in effect when the toast is shown */
+.notification-toast.show {
+  right: 20px; /* move into the visible area */
+}
+
+/* Success type: green background */
+.notification-toast.success {
+  background-color: #69be28; 
+}
+
+/* Error type: red background */
+.notification-toast.error {
+  background-color: #e74c3c; 
 }
 
 /* Title styling: Align left and use #2c3e50 */

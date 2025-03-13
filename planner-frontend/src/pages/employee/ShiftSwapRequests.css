@@ -1,4 +1,4 @@
-/* Container for the entire Shift Swap page - full width, full height, white background */
+/* Container for the entire Shift Swap page */
 .shift-swap-container {
   width: 100%;
   min-height: 100vh; /* fill full viewport height */
@@ -11,9 +11,9 @@
 
 /* Heading */
 .shift-swap-container h2 {
-  text-align: left;  /* Align header to left instead of center */
+  text-align: left;
   margin-bottom: 20px;
-  color: #2c3e50;    /* Explicitly using #2c3e50 */
+  color: #2c3e50;
 }
 
 /* Calendar container (if any) */
@@ -26,14 +26,14 @@
   border: 1px solid var(--card-border, #ddd);
   padding: 20px;
   border-radius: 8px;
-  background-color: #ffffff; /* white background for form */
+  background-color: #ffffff;
   margin-bottom: 30px;
 }
 
 .request-form h3 {
-  text-align: left;  /* Align form header to left */
+  text-align: left;
   margin-bottom: 15px;
-  color: #2c3e50;    /* Explicitly using #2c3e50 */
+  color: #2c3e50;
 }
 
 .form-group {
@@ -62,9 +62,9 @@
   height: 80px;
 }
 
-/* Updated Request Form Button Styling */
+/* Request Form Button Styling */
 .request-form button {
-  background-color: #4da8d6; /* Primary color for buttons */
+  background-color: #4da8d6;
   color: #fff;
   padding: 10px 15px;
   border: none;
@@ -96,7 +96,6 @@
 }
 
 /* Request List Buttons */
-/* First button uses primary color, last button uses secondary color */
 .request-list button {
   margin-right: 5px;
   padding: 5px 10px;
@@ -111,11 +110,40 @@
 }
 
 .request-list button:first-child {
-  background-color: #4da8d6; /* Primary */
+  background-color: #4da8d6;
   color: #fff;
 }
 
 .request-list button:last-child {
-  background-color: #69be28; /* Secondary */
+  background-color: #69be28;
   color: #fff;
+}
+
+/* ----------------------------------
+   NOTIFICATION (TOAST) STYLES
+------------------------------------- */
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: -350px;  /* Start off-screen */
+  width: 300px;
+  padding: 15px 20px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: right 0.4s ease;
+  z-index: 9999;
+}
+
+.notification-toast.show {
+  right: 20px; /* Slide in */
+}
+
+.notification-toast.success {
+  background-color: #69be28;
+}
+
+.notification-toast.error {
+  background-color: #e74c3c;
 }

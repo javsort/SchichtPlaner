@@ -52,6 +52,21 @@ const ShiftAvailability: React.FC = () => {
     return init;
   });
 
+  // --- NEW: Notification State ---
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  // Helper to show a notification
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotification({ message, type });
+    // Hide automatically after 3 seconds
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   useEffect(() => {
     const newDays = getDaysInMonth(selectedYear, selectedMonth);
     setDays(newDays);
@@ -74,7 +89,10 @@ const ShiftAvailability: React.FC = () => {
     // Example employee
     const employee = localStorage.getItem("user");
     if (!employee) {
-      alert(t("employeeNotFound") || "Error saving availability: Employee not found.");
+      showNotification(
+        t("employeeNotFound") || "Error: Employee not found.",
+        "error"
+      );
       return;
     }
 
@@ -82,40 +100,53 @@ const ShiftAvailability: React.FC = () => {
     const employeeId = employeeData.userId;
     const role = employeeData.role;
     if (!employeeId) {
-      alert(t("employeeIdNotFound") || "Error saving availability: Employee ID not found.");
+      showNotification(
+        t("employeeIdNotFound") || "Error: Employee ID not found.",
+        "error"
+      );
       return;
     }
 
     const proposedTitle = `Shift for Employee ${employeeId} (${role})`;
     const status = "PROPOSED";
 
+    let hasAtLeastOneShift = false;
+
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
       if (from && to) {
-
-        // Add an extra day. Idk why this happens but yea
+        hasAtLeastOneShift = true;
+        // Add an extra day. Idk why this is needed, but it was in your original code
         const startDate = new Date(`${dateStr}T${from}:00`);
         startDate.setDate(startDate.getDate() + 1);
-        const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
+        const start = new Date(
+          startDate.getTime() - startDate.getTimezoneOffset() * 60000
+        ).toISOString();
 
         const endDate = new Date(`${dateStr}T${to}:00`);
         endDate.setDate(endDate.getDate() + 1);
-        const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
-
-        console.log(`Before offset: Start: ${startDate}, End: ${endDate}`);
-        console.log(`After offset: Start: ${start}, End: ${end}`);
+        const end = new Date(
+          endDate.getTime() - endDate.getTimezoneOffset() * 60000
+        ).toISOString();
 
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
           console.log(`Shift proposed for: ${start} - ${end}`);
-          alert(t("availabilitySaved") || "Availability saved!");
-
         } catch (error) {
-          console.log(`Shift proposed for: ${start} - ${end}`);
-          alert(t("errorSavingAvailability") || "Error saving availability:");
-          console.error("Error: ", error);
+          console.error("Error saving availability:", error);
+          showNotification(
+            t("errorSavingAvailability") || "Error saving availability.",
+            "error"
+          );
+          return;
         }
       }
+    }
+
+    if (hasAtLeastOneShift) {
+      showNotification(t("availabilitySaved") || "Availability saved!", "success");
+    } else {
+      showNotification(t("noShiftsSelected") || "No shifts selected.", "error");
     }
   };
 
@@ -124,11 +155,21 @@ const ShiftAvailability: React.FC = () => {
   return (
     <div className="shift-availability-layout">
       <div className="shift-availability-container">
+        {/* Notification Toast */}
+        {notification && (
+          <div className={`notification-toast ${notification.type} show`}>
+            {notification.message}
+          </div>
+        )}
+
         <h2>{t("shiftAvailability") || "Shift Availability"}</h2>
         <div className="month-year-selector">
           <label>
             {t("monthLabel") || "Month:"}{" "}
-            <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+            >
               {MONTH_NAMES.map((name, index) => (
                 <option key={index} value={index}>
                   {name}
@@ -138,7 +179,10 @@ const ShiftAvailability: React.FC = () => {
           </label>
           <label>
             {t("yearLabel") || "Year:"}{" "}
-            <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+            >
               {yearOptions.map((yr) => (
                 <option key={yr} value={yr}>
                   {yr}
