@@ -1,7 +1,6 @@
 package com.LIT.statistics.service;
 
 import com.LIT.statistics.model.dto.ShiftReportDTO;
-import com.LIT.statistics.service.ShiftStatsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
