@@ -30,6 +30,12 @@ public class Shift {
     private String title;
 
     @Column(nullable = false)
+    private String shiftOwnerName;
+
+    @Column(nullable = false)
+    private String shiftOwnerRole;
+
+    @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)

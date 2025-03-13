@@ -34,16 +34,22 @@ public void initializeDummyShifts() {
         shiftRepository.saveAll(List.of(
             Shift.builder()
                 .title("Test Shift")
+                .shiftOwnerName("Test Owner")
+                .shiftOwnerRole("Tester")
                 .startTime(LocalDateTime.of(2025, Month.MARCH, 10, 8, 0))
                 .endTime(LocalDateTime.of(2025, Month.MARCH, 10, 16, 0))
                 .build(),
             Shift.builder()
                 .title("Test Shift II")
+                .shiftOwnerName("Test Owner II")
+                .shiftOwnerRole("Technician")
                 .startTime(LocalDateTime.of(2025, Month.MARCH, 11, 8, 0))
                 .endTime(LocalDateTime.of(2025, Month.MARCH, 11, 16, 0))
                 .build(),
             Shift.builder()
                 .title("Test Shift III")
+                .shiftOwnerName("Test Owner III")
+                .shiftOwnerRole("Incident-Manager")
                 .startTime(LocalDateTime.of(2025, Month.MARCH, 12, 8, 0))
                 .endTime(LocalDateTime.of(2025, Month.MARCH, 12, 16, 0))
                 .build()

@@ -27,9 +27,10 @@ public class ShiftProposalController {
 
     // Employee submits new shift proposal
     @PostMapping("/create")
-    public ResponseEntity<ShiftProposal> createProposal(@RequestBody ShiftProposal proposal) {
-        log.info(logHeader + "createProposal: Creating new shift proposal");
-        ShiftProposal savedProposal = proposalService.createProposal(proposal);
+    public ResponseEntity<ShiftProposal> createProposal(@RequestBody ShiftProposal proposal, @RequestHeader("X-User-Role") String role, @RequestHeader("X-User-Name") String username) {
+        log.info(logHeader + "createProposal: User with role: '" + role + "' and username: '" + username + "' is creating a new shift proposal");
+
+        ShiftProposal savedProposal = proposalService.createProposal(proposal, role, username);
         return ResponseEntity.ok(savedProposal);
     }
 
