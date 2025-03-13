@@ -47,7 +47,7 @@ public class ShiftProposalController {
     public ResponseEntity<List<ShiftProposal>> getAllProposals(@RequestHeader("X-User-Role") String role) {
         log.info(logHeader + "getAllProposals: Getting all proposals");
 
-        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
+        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_Shift-Supervisor")) {
             log.error(logHeader + "User is not authorized to view all proposals");
             return ResponseEntity.status(403).build();
         }

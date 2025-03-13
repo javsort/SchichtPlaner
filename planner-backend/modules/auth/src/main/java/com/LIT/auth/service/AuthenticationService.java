@@ -53,10 +53,10 @@ public class AuthenticationService {
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
                 Role.builder().name("Admin").build(),
-                Role.builder().name("ShiftSupervisor").build(),
+                Role.builder().name("Shift-Supervisor").build(),
                 Role.builder().name("Technician").build(),
                 Role.builder().name("Tester").build(),
-                Role.builder().name("Incident-manager").build()
+                Role.builder().name("Incident-Manager").build()
             ));
         }
 
@@ -66,13 +66,13 @@ public class AuthenticationService {
         if (userRepository.count() == 0) {
             Role adminRole = roleRepository.findByName("Admin")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role shiftSupervisorRole = roleRepository.findByName("ShiftSupervisor")
+            Role shiftSupervisorRole = roleRepository.findByName("Shift-Supervisor")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             Role technicianRole = roleRepository.findByName("Technician")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             Role testerRole = roleRepository.findByName("Tester")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role incidentManagerRole = roleRepository.findByName("Incident-manager")
+            Role incidentManagerRole = roleRepository.findByName("Incident-Manager")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
 
             User admin = User.builder()

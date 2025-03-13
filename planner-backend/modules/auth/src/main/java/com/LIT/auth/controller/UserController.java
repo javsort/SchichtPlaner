@@ -47,7 +47,7 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
 
-        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
+        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_Shift-Supervisor")) {
             log.error(logHeader + "getUserById: ERROR! User does not have the clearance to get a user by id. The user role is: " + role);
 
             return ResponseEntity.badRequest().build();
