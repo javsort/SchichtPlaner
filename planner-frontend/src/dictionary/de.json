@@ -127,7 +127,11 @@
     "testScheduler": "Planer testen",
     "shiftSwap": "Schichttausch",
     "Calendar": "Kalender",
-    "Requests": "Anfragen"
+    "Requests": "Anfragen",
+    "logout": "Abmelden",
+    "myShiftProposals": "Meine Schichtvorschläge",
+  "noShiftProposalsYet": "Keine Schichtvorschläge vorhanden."
+
 
   }
   

@@ -75,6 +75,7 @@ const ShiftAvailability: React.FC = () => {
     }, 3000);
   };
 
+  // Update days & availability when month/year changes
   useEffect(() => {
     const newDays = getDaysInMonth(selectedYear, selectedMonth);
     setDays(newDays);
@@ -97,10 +98,7 @@ const ShiftAvailability: React.FC = () => {
   const handleSave = async () => {
     const employee = localStorage.getItem("user");
     if (!employee) {
-      showNotification(
-        t("employeeNotFound") || "Error: Employee not found.",
-        "error"
-      );
+      showNotification(t("employeeNotFound") || "Error: Employee not found.", "error");
       return;
     }
 
@@ -108,10 +106,7 @@ const ShiftAvailability: React.FC = () => {
     const employeeId = employeeData.userId;
     const role = employeeData.role;
     if (!employeeId) {
-      showNotification(
-        t("employeeIdNotFound") || "Error: Employee ID not found.",
-        "error"
-      );
+      showNotification(t("employeeIdNotFound") || "Error: Employee ID not found.", "error");
       return;
     }
 
@@ -125,6 +120,7 @@ const ShiftAvailability: React.FC = () => {
       const { from, to } = availability[dateStr];
       if (from && to) {
         hasAtLeastOneShift = true;
+
         // Original logic: add +1 day to each date
         const startDate = new Date(`${dateStr}T${from}:00`);
         startDate.setDate(startDate.getDate() + 1);
@@ -266,15 +262,15 @@ const ShiftAvailability: React.FC = () => {
 
       {/* Right: My Shift Proposals Sidebar */}
       <div className="shift-proposals-sidebar">
-        <h2>My Shift Proposals</h2>
+        <h2>{t("myShiftProposals") || "My Shift Proposals"}</h2>
         {myProposals.length > 0 ? (
           <div className="proposals-table-container">
             <table className="shift-proposals-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>From</th>
-                  <th>To</th>
+                  <th>{t("date") || "Date"}</th>
+                  <th>{t("from") || "From"}</th>
+                  <th>{t("to") || "To"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -298,7 +294,9 @@ const ShiftAvailability: React.FC = () => {
             </table>
           </div>
         ) : (
-          <p style={{ fontStyle: "italic" }}>No shift proposals yet.</p>
+          <p style={{ fontStyle: "italic" }}>
+            {t("noShiftProposalsYet") || "No shift proposals yet."}
+          </p>
         )}
       </div>
     </div>
