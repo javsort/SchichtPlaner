@@ -1,7 +1,7 @@
 // src/pages/admin/EmployeeManagement.tsx
 import React, { useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
-import { useAuth } from "../../AuthContext.tsx"; 
+import { useForm } from "react-hook-form";
+import { useAuth } from "../../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
 import "./EmployeeManagement.css";
 
@@ -10,20 +10,22 @@ import { getAllUsers, getAllRoles, createUser, updateUser, deleteUser } from "..
 
 // Define an interface for employee data
 interface Employee {
-  id: number;
+  id: number;          // Primary key from DB
+  employeeId?: string; // <-- New field for a custom employee id
   name: string;
   address: string;
   phone: string;
   email: string;
-  role: string; 
+  role: string;
 }
+
 interface EmployeeManagementProps {
   allowDelete?: boolean;
 }
 
 // Map raw role strings to translation keys
 const roleTranslationMap: { [key: string]: string } = {
-  shift_supervisor: "shiftSupervisorRole", 
+  shift_supervisor: "shiftSupervisorRole",
   technician: "technicianRole",
   tester: "testerRole",
   "incident-manager": "incidentManagerRole",
@@ -34,13 +36,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user && user.role === "Admin") {
-      setAllowDelete(true);
-    } else {
-      setAllowDelete(false);
-    }
-  }, [user]);
+  // State that determines whether delete is allowed (Admin only)
+  const [allowDelete, setAllowDelete] = useState(false);
 
   // Set up React Hook Form
   const {
@@ -51,123 +48,112 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
     formState: { errors },
   } = useForm();
 
-  // Pre-populated list of employees
-  const [allowDelete, setAllowDelete] = useState(false);
+  // Local states for employees and roles
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
-
-  
-  const fetchEmployees = async () => {
-    try {
-      const employees = await getAllUsers();
-
-      if (!employees || !Array.isArray(employees)) {
-        console.error("Error: Received invalid employee data", employees);
-        setEmployees([]); // Set an empty array to prevent errors
-        return;
-      }    
-
-      // Format the employee data for display
-      const formattedEmployees = employees.map((emp: any) => ({
-        id: emp.id,
-        name: emp.username,
-        address: emp.address,
-        phone: emp.phoneNum,
-        email: emp.email,
-        role: emp.roles.length > 0 ? emp.roles[0].name.replace("-", " ") : "unknown"
-      }));
-
-      setEmployees(formattedEmployees);
-    } catch (error) {
-      console.error("Error fetching employees, error:", error);
-      setEmployees([]); // Set an empty array to prevent errors
-    }
-
-  };
-
-  // Fetch employees on component mount
-  useEffect(() => {
-
-    fetchEmployees();
-  }, []);
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const roles = await getAllRoles();
-
-      setRoles(roles);
-    }
-
-    fetchRoles();
-  }, []);
 
   // Track which employee is being edited; null means we're adding a new employee
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (user && user.role === "Admin") {
+      setAllowDelete(true);
+    } else {
+      setAllowDelete(false);
+    }
+  }, [user]);
+
+  // Fetch employees from the backend
+  const fetchEmployees = async () => {
+    try {
+      const rawEmployees = await getAllUsers();
+      if (!rawEmployees || !Array.isArray(rawEmployees)) {
+        console.error("Error: Received invalid employee data", rawEmployees);
+        setEmployees([]); // Set an empty array to prevent errors
+        return;
+      }
+
+      // Format the employee data for display
+      const formattedEmployees = rawEmployees.map((emp: any) => ({
+        id: emp.id,
+        employeeId: emp.employeeId || "", // <-- Use the backend field if available
+        name: emp.username,
+        address: emp.address,
+        phone: emp.phoneNum,
+        email: emp.email,
+        role: emp.roles.length > 0 ? emp.roles[0].name.replace("-", " ") : "unknown",
+      }));
+
+      setEmployees(formattedEmployees);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      setEmployees([]); // Set an empty array to prevent errors
+    }
+  };
+
+  // Fetch roles from the backend
+  const fetchRoles = async () => {
+    try {
+      const rolesData = await getAllRoles();
+      setRoles(rolesData);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      setRoles([]);
+    }
+  };
+
+  // Fetch employees and roles on component mount
+  useEffect(() => {
+    fetchEmployees();
+    fetchRoles();
+  }, []);
+
   // Handle form submission for adding/updating an employee
   const onSubmit = async (data: any) => {
-
-    if(editingEmployeeId == null){
-      try {
-        const selectedRole = roles.find((role) => role.name === data.role);
-        
-        if (!selectedRole) {
-          console.error("Invalid role selected.");
-          return;
-        }
-    
-        const newUser = {
-          email: data.email,
-          username: data.name,
-          password: "password_test", // Default password (consider making this configurable)
-          googleId: "",
-          roles: [{ id: selectedRole.id, name: selectedRole.name }]
-        };
-    
-        await createUser(newUser);
-        
-        reset(); // Clear the form after submission
-        fetchEmployees(); // Refresh employee list after adding a new user
-    
-      } catch (error) {
-        console.error("Error creating user:", error);
+    try {
+      const selectedRole = roles.find((role) => role.name === data.role);
+      if (!selectedRole) {
+        console.error("Invalid role selected.");
+        return;
       }
 
-    } else {
-      // Update user
-      try {
-        const selectedRole = roles.find((role) => role.name === data.role);
+      // Convert form data to user object for creation/updating
+      const userPayload: any = {
+        email: data.email,
+        username: data.name,
+        address: data.address,
+        phoneNum: data.phone,
+        roles: [{ id: selectedRole.id, name: selectedRole.name }],
+      };
 
-        if (!selectedRole) {
-          console.error("Invalid role selected.");
-          return;
-        }
-
-        const userToUpdate = {
-          id: editingEmployeeId,
-          email: data.email,
-          username: data.name,
-          address: data.address,
-          phoneNum: data.phone,
-          roles: [{ id: selectedRole.id, name: selectedRole.name }]
-        };
-
-        await updateUser(userToUpdate);
-
-        reset(); // Clear the form after submission
-        fetchEmployees(); // Refresh employee list after adding a new user
-        setEditingEmployeeId(null); // Reset the editing state
-
-
-      } catch (error) {
-        console.error("Error updating user:", error);
+      // Include employeeId if provided:
+      if (data.employeeId) {
+        userPayload.employeeId = data.employeeId;
       }
+
+      if (editingEmployeeId == null) {
+        // Create new user
+        userPayload.password = "password_test"; // Default password
+        userPayload.googleId = "";
+        await createUser(userPayload);
+      } else {
+        // Update existing user
+        userPayload.id = editingEmployeeId;
+        await updateUser(userPayload);
+      }
+
+      reset(); // Clear the form after submission
+      fetchEmployees(); // Refresh employee list
+      setEditingEmployeeId(null); // Reset editing state
+    } catch (error) {
+      console.error("Error creating/updating user:", error);
     }
   };
 
   // Pre-fill the form with an employee's data for editing
   const editEmployee = (emp: Employee) => {
     setEditingEmployeeId(emp.id);
+    setValue("employeeId", emp.employeeId || ""); // Set employeeId if present
     setValue("name", emp.name);
     setValue("address", emp.address || "");
     setValue("phone", emp.phone || "");
@@ -178,10 +164,12 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   // Delete an employee (only if allowed and user is Admin)
   const deleteEmployee = async (id: number) => {
     if (window.confirm(t("confirmDelete") || "Are you sure you want to delete this employee?")) {
-      
-      await deleteUser(id)
-
-      fetchEmployees();
+      try {
+        await deleteUser(id);
+        fetchEmployees();
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
     }
   };
 
@@ -191,7 +179,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
     if (translationKey) {
       return t(translationKey);
     }
-    // If the role isn't in the map, fallback to the raw string
     return rawRole;
   };
 
@@ -201,6 +188,18 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
       {/* Employee Entry Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="employee-form">
+        {/* Employee Id */}
+        {/* Employee Id */}
+<div className="form-row">
+  <label>Employee Id:</label>
+  <input
+    {...register("employeeId")}
+    placeholder="Employee Id"
+  />
+</div>
+
+
+        {/* Name */}
         <div className="form-row">
           <label>{t("name") || "Name"}:</label>
           <input
@@ -212,6 +211,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           {errors.name && <p className="error">{errors.name.message}</p>}
         </div>
 
+        {/* Address */}
         <div className="form-row">
           <label>{t("address") || "Address"}:</label>
           <input
@@ -223,6 +223,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           {errors.address && <p className="error">{errors.address.message}</p>}
         </div>
 
+        {/* Phone */}
         <div className="form-row">
           <label>{t("phoneNumber") || "Phone Number"}:</label>
           <input
@@ -238,6 +239,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           {errors.phone && <p className="error">{errors.phone.message}</p>}
         </div>
 
+        {/* Email */}
         <div className="form-row">
           <label>{t("email") || "E-mail Address"}:</label>
           <input
@@ -253,22 +255,30 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           {errors.email && <p className="error">{errors.email.message}</p>}
         </div>
 
+        {/* Role */}
         <div className="form-row">
           <label>{t("role") || "Role"}:</label>
-          <select {...register("role", { required: t("roleRequired") || "Role is required" })}>
-            <option value="">{t("Select Role") || "Select a Role"}</option>
-              {roles.map((role) => (
-                <option key={role.id} value={role.name}>
-                  {t(roleTranslationMap[role.name.replace("-", " ")] || role.name.replace("-", " "))}
-                </option>
-              ))}
-        </select>
-        {errors.role && <p className="error">{errors.role.message}</p>}
+          <select
+            {...register("role", {
+              required: t("roleRequired") || "Role is required",
+            })}
+          >
+            <option value="">{t("selectRole") || "Select a Role"}</option>
+            {roles.map((role) => (
+              <option key={role.id} value={role.name}>
+                {t(roleTranslationMap[role.name.replace("-", " ")] || role.name.replace("-", " "))}
+              </option>
+            ))}
+          </select>
+          {errors.role && <p className="error">{errors.role.message}</p>}
         </div>
 
+        {/* Form Buttons */}
         <div className="form-actions">
           <button type="submit">
-            {editingEmployeeId ? t("updateEmployee") || "Update Employee" : t("addEmployee") || "Add Employee"}
+            {editingEmployeeId
+              ? t("updateEmployee") || "Update Employee"
+              : t("addEmployee") || "Add Employee"}
           </button>
           {editingEmployeeId && (
             <button
@@ -288,6 +298,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       <table className="employee-table">
         <thead>
           <tr>
+            <th>{t("employeeId") || "Employee Id"}</th>
             <th>{t("name") || "Name"}</th>
             <th>{t("address") || "Address"}</th>
             <th>{t("phoneNumber") || "Phone Number"}</th>
@@ -298,8 +309,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         </thead>
         <tbody>
           {employees.length > 0 ? (
-            employees?.map((emp) => (
+            employees.map((emp) => (
               <tr key={emp.id}>
+                <td>{emp.employeeId || ""}</td>
                 <td>{emp.name}</td>
                 <td>{emp.address}</td>
                 <td>{emp.phone}</td>
@@ -316,11 +328,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
                   )}
                 </td>
               </tr>
-            )) 
-            ) : (
+            ))
+          ) : (
             <tr>
-              <td colSpan={6} style={{ textAlign: "center" }}>
-                No employees found
+              <td colSpan={7} style={{ textAlign: "center" }}>
+                {t("noEmployeesFound") || "No employees found"}
               </td>
             </tr>
           )}

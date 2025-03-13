@@ -6,7 +6,6 @@
   padding: 20px;
   font-family: var(--font-primary, 'Source Sans Pro', Arial, sans-serif);
   background-color: #ffffff; /* White background filling the entire page */
-  /* Remove box-shadow and border-radius so it spans the entire page */
 }
 
 /* Page Title */
