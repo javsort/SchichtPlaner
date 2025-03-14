@@ -1,9 +1,8 @@
-// src/components/GlobalSidebar.tsx
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { testLogicGate, testAuth, testScheduler } from "../Services/api.ts";
 import { useAuth } from "../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
+import { FiLogOut } from "react-icons/fi"; // Import the logout icon
 import "./GlobalSidebar.css";
 
 interface GlobalSidebarProps {
@@ -18,13 +17,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { labelKey: "employeeManagement", path: "/employee-management", roles: ["Admin", "ShiftSupervisor"] },
-  { labelKey: "shiftApproval", path: "/shift-approval", roles: ["Admin", "ShiftSupervisor"] },
-  { labelKey: "shiftSwapAdmin", path: "/shift-swap-admin", roles: ["Admin", "ShiftSupervisor"] },
-  { labelKey: "shiftManagement", path: "/shift-management", roles: ["Admin", "ShiftSupervisor"] },
-  { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "companyShiftCalendar", path: "/shift-view", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "ShiftSupervisor", "Employee", "Tester", "Technician"] }
+  { labelKey: "employeeManagement", path: "/employee-management", roles: ["Admin", "Shift-Supervisor"] },
+  { labelKey: "shiftApproval", path: "/shift-approval", roles: ["Admin", "Shift-Supervisor"] },
+  { labelKey: "Requests", path: "/shift-swap-admin", roles: ["Admin", "Shift-Supervisor"] },
+  { labelKey: "shiftManagement", path: "/shift-management", roles: ["Admin", "Shift-Supervisor"] },
+  { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
+  { labelKey: "Calendar", path: "/shift-view", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
+  { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] }
 ];
 
 const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
@@ -37,8 +36,13 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  const handleApiTest = (apiFn: () => void) => {
-    apiFn();
+  // Handle logout by clearing localStorage (or call your AuthContext logout function)
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Or call your logout function
+    localStorage.removeItem("token");
+    localStorage.removeItem("lang");
+    localStorage.removeItem("userId");
+    navigate("/login");
     onClose();
   };
 
@@ -49,11 +53,8 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
 
   return (
     <div className={`global-sidebar ${open ? "open" : ""}`}>
-      <button className="close-btn" onClick={onClose} aria-label={t("closeSidebar") || "Close Sidebar"}>
-        ×
-      </button>
       <h3>{t("shiftPlanner") || "Shift Planner"}</h3>
-      <ul>
+      <ul className="nav-list">
         {filteredNavItems.map((item, index) => (
           <li key={index}>
             <Link to={item.path} onClick={() => handleLinkClick(item.path)}>
@@ -61,22 +62,16 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
             </Link>
           </li>
         ))}
-        <li>
-          <button onClick={() => handleApiTest(testLogicGate)}>
-            {t("testLogicGate") || "Test Logic Gate"}
-          </button>
-        </li>
-        <li>
-          <button onClick={() => handleApiTest(testAuth)}>
-            {t("testAuthConnection") || "Test Auth Connection"}
-          </button>
-        </li>
-        <li>
-          <button onClick={() => handleApiTest(testScheduler)}>
-            {t("testScheduler") || "Test Scheduler"}
-          </button>
-        </li>
       </ul>
+      {/* Logout button placed at the bottom */}
+      <div className="logout-container">
+        <button className="logout-btn" onClick={handleLogout}>
+          <span>
+            <FiLogOut style={{ marginRight: "8px" }} />
+          </span>
+          {typeof t("logout") === "string" ? t("logout") : "Logout"}
+        </button>
+      </div>
     </div>
   );
 };

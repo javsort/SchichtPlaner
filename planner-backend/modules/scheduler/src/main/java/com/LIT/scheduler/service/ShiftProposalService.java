@@ -40,7 +40,7 @@ public class ShiftProposalService {
     }
 
     // Employee submits new shift proposal (now with conflict detection)
-    public ShiftProposal createProposal(ShiftProposal proposal) {
+    public ShiftProposal createProposal(ShiftProposal proposal, String role, String username) {
         log.info(logHeader + "createProposal: Creating new shift proposal");
 
         // Check if there is a conflict with existing official assignments for this specific employee
@@ -60,11 +60,51 @@ public class ShiftProposalService {
         }
         
         proposal.setStatus(ShiftProposalStatus.PROPOSED);
+        proposal.setEmployeeRole(role);
+        proposal.setEmployeeName(username);
 
         proposalRepository.save(proposal);
         log.info(logHeader + "Employee " + proposal.getEmployeeId() + " has proposed a new shift: " + proposal.getProposedTitle() + " from " + proposal.getProposedStartTime() + " to " + proposal.getProposedEndTime());
         
         return proposal;
+    }
+
+    // Employee updates a proposal
+    public ShiftProposal updateProposal(Long proposalId, ShiftProposal updatedProposal) {
+        log.info(logHeader + "Employee updated proposal with id: " + proposalId);
+
+        Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
+
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException("Shift proposal not found.");
+        }
+
+        ShiftProposal proposal = opt.get();
+
+        proposal.setProposedTitle(updatedProposal.getProposedTitle());
+        proposal.setProposedStartTime(updatedProposal.getProposedStartTime());
+        proposal.setProposedEndTime(updatedProposal.getProposedEndTime());
+
+        log.info(logHeader + "Employee " + proposal.getEmployeeId() + " updated proposal " + proposalId + " to: " + proposal.getProposedTitle() + " from: " + proposal.getProposedStartTime() + " to: " + proposal.getProposedEndTime());
+        return proposalRepository.save(proposal);
+    }
+
+    // Employee cancels a proposal
+    public ShiftProposal cancelProposal(Long proposalId) {
+        log.info(logHeader + "Employee cancelled proposal with id: " + proposalId);
+
+        Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
+
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException("Shift proposal not found.");
+        }
+
+        ShiftProposal proposal = opt.get();
+
+        proposal.setStatus(ShiftProposalStatus.CANCELLED);
+
+        log.info(logHeader + "Employee " + proposal.getEmployeeId() + " cancelled proposal " + proposalId);
+        return proposalRepository.save(proposal);
     }
 
     // Manager accepts a proposal
@@ -86,6 +126,8 @@ public class ShiftProposalService {
                 .title(proposal.getProposedTitle())
                 .startTime(proposal.getProposedStartTime())
                 .endTime(proposal.getProposedEndTime())
+                .shiftOwnerName(proposal.getEmployeeName())
+                .shiftOwnerRole(proposal.getEmployeeRole())
                 .build();
         newShift = shiftRepository.save(newShift);
 

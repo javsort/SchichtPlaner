@@ -134,7 +134,21 @@ export const createUser = async (user) => {
 }
 
 export const updateUser = async (user) => {
-  
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/auth/users/update`, 
+      user,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    )
+
+  } catch (error) {
+    console.error('Error creating user: ', error)
+  }
 }
 
 export const deleteUser = async (userId) => {
@@ -216,6 +230,70 @@ export const proposeShift = async (
   }
 };
 
+export const fetchUserProposalShifts = async (empId) => {
+
+  console.log('Fetching shifts for user: ', empId);
+
+  try {
+    const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals/employee/${empId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+    console.log('Shifts fetched successfully for user: ', empId, "Resp: ", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
+export const updateShiftProposal = async (propId, empId, proposal) => {
+
+  console.log('Updating proposal shift for user: ', empId);
+
+  try {
+    const response = await axios.put(`${baseUrl}/api/scheduler/shift-proposals/${propId}/update`, 
+      proposal,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+    });
+
+    console.log('Shift proposal updated successfully for user: ', empId, "Resp: ", response.data);
+    return response.data;
+    
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
+export const deleteShiftProposal = async (propId, empId) => {
+
+  console.log('Cancelling proposal shift for user: ', empId);
+
+  try {
+    const response = await axios.delete(`${baseUrl}/api/scheduler/shift-proposals/${propId}/cancel`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    console.log('Shifts proposal deleted successfully for user: ', empId, "Resp: ", response.data);
+    return response.data;
+    
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
 export const fetchProposalShifts = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals`, {
@@ -278,81 +356,3 @@ export const rejectShiftProposal = async (shiftId: string) => {
   }
 };
 
-// Create a new swap proposal (employee requests a swap)
-export const createSwapProposal = async (proposal: any): Promise<any> => {
-  try {
-    const response = await axios.post(
-      `${baseUrl}/api/scheduler/swap-proposals/request-change`,
-      proposal,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('token') || ''
-        }
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error creating swap proposal", error);
-    throw error;
-  }
-};
-
-// Approve a swap proposal (admin/manager action)
-export const acceptSwapProposal = async (proposalId: string, swapEmployeeId: string): Promise<any> => {
-  try {
-    const response = await axios.put(
-      `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/accept-change?swapEmployeeId=${swapEmployeeId}`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('token') || ''
-        }
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error accepting swap proposal", error);
-    throw error;
-  }
-};
-
-// Decline a swap proposal (admin/manager action)
-export const declineSwapProposal = async (proposalId: string, managerComment: string): Promise<any> => {
-  try {
-    const response = await axios.put(
-      `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/decline-change`,
-      { managerComment },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('token') || ''
-        }
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error declining swap proposal", error);
-    throw error;
-  }
-};
-
-// Fetch all swap proposals
-export const getSwapProposals = async (): Promise<any[]> => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/api/scheduler/swap-proposals`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('token') || ''
-        }
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching swap proposals", error);
-    throw error;
-  }
-};

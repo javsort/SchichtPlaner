@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +28,10 @@ public class ShiftProposalController {
 
     // Employee submits new shift proposal
     @PostMapping("/create")
-    public ResponseEntity<ShiftProposal> createProposal(@RequestBody ShiftProposal proposal) {
-        log.info(logHeader + "createProposal: Creating new shift proposal");
-        ShiftProposal savedProposal = proposalService.createProposal(proposal);
+    public ResponseEntity<ShiftProposal> createProposal(@RequestBody ShiftProposal proposal, @RequestHeader("X-User-Role") String role, @RequestHeader("X-User-Name") String username) {
+        log.info(logHeader + "createProposal: User with role: '" + role + "' and username: '" + username + "' is creating a new shift proposal");
+
+        ShiftProposal savedProposal = proposalService.createProposal(proposal, role, username);
         return ResponseEntity.ok(savedProposal);
     }
 
@@ -42,12 +44,26 @@ public class ShiftProposalController {
         return ResponseEntity.ok(proposals);
     }
 
+    @PutMapping("/{proposalId}/update")
+    public ResponseEntity<ShiftProposal> updateProposal(@PathVariable Long proposalId, @RequestBody ShiftProposal updatedProposal) {
+        log.info(logHeader + "Employee updated proposal with id: " + proposalId);
+        ShiftProposal proposal = proposalService.updateProposal(proposalId, updatedProposal);
+        return ResponseEntity.ok(proposal);
+    }
+
+    @DeleteMapping("/{proposalId}/cancel")
+    public ResponseEntity<ShiftProposal> cancelProposal(@PathVariable Long proposalId) {
+        log.info(logHeader + "Employee cancelled proposal with id: " + proposalId);
+        ShiftProposal updatedProposal = proposalService.cancelProposal(proposalId);
+        return ResponseEntity.ok(updatedProposal);
+    }
+
     // Manager retrieves all proposals
     @GetMapping
     public ResponseEntity<List<ShiftProposal>> getAllProposals(@RequestHeader("X-User-Role") String role) {
         log.info(logHeader + "getAllProposals: Getting all proposals");
 
-        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_ShiftSupervisor")) {
+        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_Shift-Supervisor")) {
             log.error(logHeader + "User is not authorized to view all proposals");
             return ResponseEntity.status(403).build();
         }

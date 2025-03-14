@@ -1,22 +1,18 @@
-/* src/pages/EmployeeManagement.css */
-
 /* Container for the employee management page: full width, full height */
 .container {
   width: 100%;
   min-height: 100vh; /* fill the full browser height */
-  margin: 0 auto;
-  max-width: 80%; /* Center content on larger screens */
+  margin: 0 auto; /* remove auto so it's not centered */
   padding: 20px;
   font-family: var(--font-primary, 'Source Sans Pro', Arial, sans-serif);
-  background-color: #ffffff; /* White background */
-  /* Remove box-shadow and border-radius so it spans the entire page */
+  background-color: #ffffff; /* White background filling the entire page */
 }
 
 /* Page Title */
 .container h2 {
   margin-top: 0;
-  text-align: center;
-  color: #333; /* Dark text for good contrast */
+  text-align: left; /* Align header to the left */
+  color: #2c3e50; /* Always use #2c3e50 */
 }
 
 /* Employee Form Styles */
@@ -43,7 +39,8 @@
   color: #333; /* Dark text for labels */
 }
 
-.employee-form input {
+.employee-form input,
+.employee-form select {
   padding: 10px;
   font-size: 16px;
   border: 1px solid var(--card-border, #ccc);
@@ -99,13 +96,6 @@
   overflow: hidden; /* so rounded corners apply to table edges */
 }
 
-/* Optional zebra striping (uncomment if desired) */
-/*
-.employee-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-*/
-
 .employee-table th,
 .employee-table td {
   border: 1px solid var(--card-border, #ddd);
@@ -134,7 +124,6 @@
   cursor: pointer;
   transition: background 0.3s ease;
   text-align: center;
-
 }
 
 .employee-table button:first-of-type {

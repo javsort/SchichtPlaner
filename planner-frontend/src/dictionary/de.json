@@ -125,8 +125,13 @@
     "testLogicGate": "Logik-Gatter testen",
     "testAuthConnection": "Authentifizierung testen",
     "testScheduler": "Planer testen",
-    "shiftSwapAdmin": "Schichttausch Admin",
-    "companyShiftCalendar": "Firmen-Schichtkalender",
-    "shiftSwap": "Schichttausch"
+    "shiftSwap": "Schichttausch",
+    "Calendar": "Kalender",
+    "Requests": "Anfragen",
+    "logout": "Abmelden",
+    "myShiftProposals": "Meine Schichtvorschläge",
+  "noShiftProposalsYet": "Keine Schichtvorschläge vorhanden."
+
+
   }
   
