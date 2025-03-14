@@ -17,11 +17,6 @@ interface Shift {
   assignedEmployees?: number[];
 }
 
-interface Employee {
-  id: number;
-  name: string;
-}
-
 interface CompanyShiftCalendarProps {
   currentUser?: { id: number; name: string };
 }
@@ -33,7 +28,6 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   moment.locale(i18n.language);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [view, setView] = useState(Views.WEEK);
   const [calendarFilter, setCalendarFilter] = useState("all");
@@ -75,6 +69,17 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     return true;
   });
 
+  const calendarEvents = filteredShifts.map((shift) => {
+    const assignedNames = (shift.assignedEmployees || []).map((id) => {
+      const emp = employees.find((e) => e.id === id);
+      return emp ? emp.name : `Unknown #${id}`;
+    });
+    return {
+      ...shift,
+      title: `${shift.title} (${assignedNames.length ? assignedNames.join(", ") : t("unassigned") || "Unassigned"})`,
+    };
+  });
+
   const eventStyleGetter = (event: any) => ({
     style: {
       backgroundColor: "#3174ad",
@@ -84,8 +89,18 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     },
   });
 
+  const messages = {
+    today: t("calendarToday"),
+    previous: t("calendarBack"),
+    next: t("calendarNext"),
+    month: t("month"),
+    week: t("week"),
+    day: t("day"),
+    agenda: t("agenda"),
+  };
+
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <div className="company-shift-calendar-container">
       <header className="calendar-header">
         <div></div>
         <div className="import-export-buttons">
@@ -101,22 +116,23 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
           />
         </div>
       </header>
-      <div style={{ flex: 1, display: "flex", height: "100vh", flexDirection: "column" }}>
-        <GlobalSidebar 
-            open={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-        />
-        <main style={{ flex: 1, padding: "10px", boxSizing: "border-box" }}>
+      <div className="calendar-main-layout">
+        <main className="calendar-main-content">
           <div className="calendar-filters">
             <span className="filter-label">{t("viewLabel") || "View:"}</span>
             <button onClick={() => setCalendarFilter("my")}>{t("myShifts") || "My Shifts"}</button>
             <button onClick={() => setCalendarFilter("all")}>{t("allShifts") || "All Shifts"}</button>
-            <button onClick={() => setCalendarFilter("unoccupied")}>{t("unoccupiedShifts") || "Unoccupied Shifts"}</button>
+            <button onClick={() => setCalendarFilter("unoccupied")}>
+              {t("unoccupiedShifts") || "Unoccupied Shifts"}
+            </button>
           </div>
           <div className="calendar-container">
             <Calendar
+              key={i18n.language}
               localizer={localizer}
-              events={filteredShifts}
+              culture={i18n.language}
+              messages={messages}
+              events={calendarEvents}
               startAccessor="start"
               endAccessor="end"
               view={view}

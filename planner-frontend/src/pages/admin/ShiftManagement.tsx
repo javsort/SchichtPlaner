@@ -106,6 +106,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     employeeId: shift.employeeId
   }));
 
+  // Dynamic event styling
   const eventStyleGetter = (event) => {
     let backgroundColor = "#3174ad";
     /*if (event.role.includes("Supervisor")) backgroundColor = "#2980b9";
@@ -113,6 +114,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
     return { style: { backgroundColor, borderRadius: "5px", color: "white" } };
   };
+
 
   const handleAddOrUpdateShift = async (e) => {
     e.preventDefault();
@@ -136,7 +138,30 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       alert(t("endTimeAfterStart") || "End time must be after start time.");
       return;
     }
+    
+    // Fix pls
+    /* Check for conflicts
+    let conflictFound = false;
+    assignedEmployees.forEach((empId) => {
+      shifts.forEach((existingShift) => {
+        if (isEditing && existingShift.id === editingShiftId) return;
+        if (existingShift.assignedEmployees.includes(empId)) {
+          if (start < existingShift.end && existingShift.start < end) {
+            conflictFound = true;
+            alert(
+              t("conflictFound", {
+                empName: empId,
+                existingTitle: existingShift.title,
+              }) ||
+                `Conflict: Employee ${empId} already has an overlapping shift "${existingShift.title}".`
+            );
+          }
+        }
+      });
+    });
+    if (conflictFound) return; */
 
+    // If no conflicts, proceed to add or update
     if (startDate.toDateString() !== endDate.toDateString()) {
       alert(t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day.");
       return;
@@ -174,6 +199,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     }
   };
   
+
   const handleEditShift = (shift) => {
     
     setNewShift({
@@ -190,7 +216,11 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   };
 
   const handleDeleteShift = async (shiftId) => {
-    if (window.confirm(t("confirmDeleteShift") || "Are you sure you want to delete this shift?")) {
+    if (
+      window.confirm(
+        t("confirmDeleteShift") || "Are you sure you want to delete this shift?"
+      )
+    ) {
       try {
         await supervisorDeleteShift(shiftId); 
         await loadShifts();
@@ -202,6 +232,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     loadShifts();
   };
 
+  // Calendar translation messages
   const messages = {
     today: t("calendarToday"),
     previous: t("calendarBack"),
@@ -209,7 +240,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     month: t("month"),
     week: t("week"),
     day: t("day"),
-    agenda: t("agenda")
+    agenda: t("agenda"),
   };
 
   const handleEmployeeChange = (e) => {
@@ -234,9 +265,12 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
   return (
     <div className="shift-management">
-      <h2>{t("shiftManagement") || "Shift Management"}</h2>
+      {/* Heading aligned left via CSS class */}
+      <h2 className="page-header">{t("shiftManagement") || "Shift Management"}</h2>
+
       <div className="shift-management-top">
-        <div className="shift-card shift-creation">
+        {/* Shift Creation / Edit Form */}
+        <div className="shift-creation">
           <h3>
             {isEditing
               ? t("editShift") || "Edit Shift"
@@ -277,6 +311,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 />
               </div>
             </div>
+
             <div className="form-row">
               <div className="form-group">
                 <label>{t("startDateTime") || "Start Date & Time"}:</label>
@@ -297,6 +332,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 />
               </div>
             </div>
+
             <div className="form-row">
               <div className="form-group">
                 <label>
@@ -305,6 +341,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 <div className="role-display">{newShift.role}</div>
               </div>
             </div>
+
             <div className="form-actions">
               <button type="submit">
                 {isEditing ? t("updateShift") || "Update Shift" : t("addShift") || "Add Shift"}
@@ -331,7 +368,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             </div>
           </form>
         </div>
-        <div className="shift-card calendar-card">
+
+        {/* Calendar Card */}
+        <div className="calendar-card">
           <h3>{t("calendar") || "Calendar"}</h3>
           <Calendar
             key={i18n.language}
@@ -348,7 +387,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           />
         </div>
       </div>
-      <div className="shift-card shift-overview">
+
+      {/* Shift Overview Table */}
+      <div className="shift-overview">
         <h3>{t("shiftOverview") || "Shift Overview"}</h3>
         <table>
           <thead>
