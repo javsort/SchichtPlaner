@@ -57,7 +57,7 @@ const ShiftApprovalCalendar = () => {
       const fetchedPendingShifts = await fetchProposalShifts();
       if (fetchedPendingShifts.length > 0) {
         const formattedPendingShifts = fetchedPendingShifts
-          .filter((shift) => shift.status !== "ACCEPTED" && shift.status !== "REJECTED")
+          .filter((shift) => shift.status !== "ACCEPTED" && shift.status !== "REJECTED" && shift.status !== "CANCELLED")
           .map((shift) => ({
             id: shift.id,
             employee: shift.employeeId

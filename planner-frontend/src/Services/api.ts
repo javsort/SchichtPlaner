@@ -243,6 +243,50 @@ export const fetchUserProposalShifts = async (empId) => {
     });
     console.log('Shifts fetched successfully for user: ', empId, "Resp: ", response.data);
     return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
+export const updateShiftProposal = async (propId, empId, proposal) => {
+
+  console.log('Updating proposal shift for user: ', empId);
+
+  try {
+    const response = await axios.put(`${baseUrl}/api/scheduler/shift-proposals/${propId}/update`, 
+      proposal,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+    });
+
+    console.log('Shift proposal updated successfully for user: ', empId, "Resp: ", response.data);
+    return response.data;
+    
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
+export const deleteShiftProposal = async (propId, empId) => {
+
+  console.log('Cancelling proposal shift for user: ', empId);
+
+  try {
+    const response = await axios.delete(`${baseUrl}/api/scheduler/shift-proposals/${propId}/cancel`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+
+    console.log('Shifts proposal deleted successfully for user: ', empId, "Resp: ", response.data);
+    return response.data;
     
   } catch (error) {
     console.error('Error with the request', error);

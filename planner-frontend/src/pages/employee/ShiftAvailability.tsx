@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ShiftAvailability.css";
-import { proposeShift, fetchUserProposalShifts } from "../../Services/api.ts";
+import { proposeShift, fetchUserProposalShifts, updateShiftProposal, deleteShiftProposal } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
 
 function getDaysInMonth(year: number, month: number): Date[] {
@@ -64,13 +64,17 @@ const ShiftAvailability: React.FC = () => {
       console.error("Error: Employee ID not found.");
       return;
     }
-    
+
     try {
       // Fetch the employee's shift proposals
       const proposals = await fetchUserProposalShifts(empId);
 
+      const proposedOnly = proposals.filter(
+        (proposal: any) => proposal.status === "PROPOSED"
+      );
+
       // Transform each proposal into { date, from, to }
-      const mappedProposals = proposals.map((proposal: any) => {
+      const mappedProposals = proposedOnly.map((proposal: any) => {
         const startDate = new Date(proposal.proposedStartTime);
         const endDate = new Date(proposal.proposedEndTime);
 
@@ -91,6 +95,7 @@ const ShiftAvailability: React.FC = () => {
         });
 
         return {
+          id: proposal.id,
           date: dateStr,
           from: fromStr,
           to: toStr,
@@ -175,9 +180,9 @@ const ShiftAvailability: React.FC = () => {
 
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
+
       if (from && to) {
         hasAtLeastOneShift = true;
-        // Adjust dates as needed (this example adds 1 day)
         const startDate = new Date(`${dateStr}T${from}:00`);
         startDate.setDate(startDate.getDate() + 1);
         const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
@@ -189,12 +194,16 @@ const ShiftAvailability: React.FC = () => {
         try {
           await proposeShift(employeeId, proposedTitle, start, end, status);
           console.log(`Shift proposed for: ${start} - ${end}`);
-          newProposals.push({ date: dateStr, from, to });
+          // newProposals.push({ date: dateStr, from, to });
+
         } catch (error) {
           console.error("Error saving availability:", error);
           showNotification(t("errorSavingAvailability") || "Error saving availability.", "error");
           return;
+
         }
+
+        getMyProposals();
       }
     }
 
@@ -211,15 +220,82 @@ const ShiftAvailability: React.FC = () => {
     setEditIndex(index);
     setEditFrom(myProposals[index].from);
     setEditTo(myProposals[index].to);
+
   };
 
-  const handleSaveEdit = () => {
+  const handleDelete = async (index: number) => {
+    const proposal = myProposals[index];
+    if (!proposal) return;
+
+    const empId = localStorage.getItem("userId");
+
+    if (!empId) {
+      showNotification("Error: Employee not found.", "error");
+      return;
+    }
+
+    try {
+      await deleteShiftProposal(proposal.id, empId);
+      showNotification("Shift proposal deleted!", "success");
+
+      getMyProposals();
+
+    } catch (error) {
+      showNotification("Error deleting shift proposal.", "error");
+      console.error(error);
+    }
+  };
+
+  const handleSaveEdit = async () => {
     if (editIndex === null) return;
-    setMyProposals((prevProposals) => {
-      const updated = [...prevProposals];
-      updated[editIndex] = { ...updated[editIndex], from: editFrom, to: editTo };
-      return updated;
-    });
+
+      const oldProposal = myProposals[editIndex];
+
+    // You’ll need the employee ID:
+    const empId = localStorage.getItem("userId");
+    
+    if (!empId) {
+      showNotification("Error: Employee not found.", "error");
+      return;
+    }
+
+    const dateStr = oldProposal.date; 
+    const startDate = new Date(`${dateStr}T${editFrom}:00`);
+    const endDate = new Date(`${dateStr}T${editTo}:00`);
+
+    // Add 1 hr to the end date
+    startDate.setHours(startDate.getHours() + 1);
+    endDate.setHours(endDate.getHours() + 1);
+
+    const proposedStartTime = startDate.toISOString();
+    const proposedEndTime = endDate.toISOString();
+    const proposedTitle = `Shift for Employee ${empId}`;
+    const status = "PROPOSED";
+
+    // Construct the payload the server expects
+    const updatedPayload = {
+      proposedTitle,
+      proposedStartTime,
+      proposedEndTime,
+      status
+    };
+
+    try {
+      // Actually call your API
+      await updateShiftProposal(oldProposal.id, empId, updatedPayload);
+
+      showNotification("Shift proposal updated!", "success");
+
+      // Refresh from the server
+      getMyProposals();
+
+    } catch (error) {
+      showNotification("Error updating shift proposal.", "error");
+      console.error(error);
+
+    }
+
+    // Finish editing mode
     setEditIndex(null);
   };
 
@@ -391,6 +467,9 @@ const ShiftAvailability: React.FC = () => {
                         <td>
                           <button onClick={() => handleEditClick(idx)}>
                             {t("edit") || "Edit"}
+                          </button>
+                          <button onClick={() => handleDelete(idx)}>
+                            {t("delete") || "Delete"}
                           </button>
                         </td>
                       </tr>
