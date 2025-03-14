@@ -121,11 +121,24 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       return;
     }
 
-    const start = new Date(newShift.start);
-    const end = new Date(newShift.end);
+    const startDate = new Date(newShift.start);
+    startDate.setDate(startDate.getDate());
+    const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
+
+    const endDate = new Date(newShift.end);
+    endDate.setDate(endDate.getDate());
+    const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
+
+    console.log(`Before offset: Start: ${startDate}, End: ${endDate}`);
+    console.log(`After offset: Start: ${start}, End: ${end}`);
 
     if (start >= end) {
       alert(t("endTimeAfterStart") || "End time must be after start time.");
+      return;
+    }
+
+    if (startDate.toDateString() !== endDate.toDateString()) {
+      alert(t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day.");
       return;
     }
 
@@ -133,8 +146,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       if (isEditing) {
         await supervisorUpdateShift(editingShiftId, {
           title: newShift.title,
-          start: start.toISOString(),
-          end: end.toISOString(),
+          start: start,
+          end: end,
           role: newShift.role,
           employeeId: newShift.employeeId || null,
           shiftOwner: newShift.shiftOwner,
@@ -146,8 +159,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       } else {
         await supervisorCreateShift({
           title: newShift.title,
-          start: start.toISOString(),
-          end: end.toISOString(),
+          start: start,
+          end: end,
           role: newShift.role,
           employeeId: newShift.employeeId || null,
           shiftOwner: newShift.shiftOwner,
