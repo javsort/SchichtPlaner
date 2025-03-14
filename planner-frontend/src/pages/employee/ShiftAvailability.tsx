@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ShiftAvailability.css";
-import { proposeShift } from "../../Services/api.ts";
+import { proposeShift, fetchUserProposalShifts } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
 
 function getDaysInMonth(year: number, month: number): Date[] {
@@ -57,6 +57,58 @@ const ShiftAvailability: React.FC = () => {
     });
     return init;
   });
+
+  const getMyProposals = async () => {
+    const empId = localStorage.getItem("userId");
+    if (!empId) {
+      console.error("Error: Employee ID not found.");
+      return;
+    }
+    
+    try {
+      // Fetch the employee's shift proposals
+      const proposals = await fetchUserProposalShifts(empId);
+
+      // Transform each proposal into { date, from, to }
+      const mappedProposals = proposals.map((proposal: any) => {
+        const startDate = new Date(proposal.proposedStartTime);
+        const endDate = new Date(proposal.proposedEndTime);
+
+        // Convert both start & end to "YYYY-MM-DD"
+        const dateStr = startDate.toISOString().split("T")[0];
+
+        // Convert times to "HH:mm" (24-hour format)
+        const fromStr = startDate.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+
+        const toStr = endDate.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+
+        return {
+          date: dateStr,
+          from: fromStr,
+          to: toStr,
+        };
+      });
+
+      setMyProposals(mappedProposals);
+
+    } catch (error) {
+      console.error("Error fetching shift proposals:", error);
+
+    }
+  }
+
+  useEffect(() => {
+    getMyProposals();
+
+  } , []);
 
   // Notification Toast
   const [notification, setNotification] = useState<{

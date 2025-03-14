@@ -94,7 +94,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   }, [user]);
 
   // Fetch employees from the backend
-  const fetchEmployees = async () => {
+  /*const fetchEmployees = async () => {
     try {
       const rawEmployees = await getAllUsers();
       if (!rawEmployees || !Array.isArray(rawEmployees)) {
@@ -119,7 +119,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       console.error("Error fetching employees:", error);
       setEmployees([]);
     }
-  };
+  };*/
 
   // Fetch roles from the backend
   const fetchRoles = async () => {
@@ -140,7 +140,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   // Handle form submission for adding/updating an employee
   const onSubmit = async (data: any) => {
-    try {
       const selectedRole = roles.find((role) => role.name === data.role);
       if (!selectedRole) {
         console.error("Invalid role selected.");
@@ -199,12 +198,13 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         reset(); // Clear the form after submission
         fetchEmployees(); // Refresh employee list after adding a new user
         setEditingEmployeeId(null); // Reset the editing state
-
+      
 
       } catch (error) {
         console.error("Error updating user:", error);
       }
     }
+    
   };
 
   // Pre-fill the form with an employee's data for editing

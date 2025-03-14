@@ -230,6 +230,26 @@ export const proposeShift = async (
   }
 };
 
+export const fetchUserProposalShifts = async (empId) => {
+
+  console.log('Fetching shifts for user: ', empId);
+
+  try {
+    const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals/employee/${empId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+    console.log('Shifts fetched successfully for user: ', empId, "Resp: ", response.data);
+    return response.data;
+    
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+  }
+}
+
 export const fetchProposalShifts = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals`, {

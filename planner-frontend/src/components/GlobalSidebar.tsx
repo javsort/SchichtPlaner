@@ -39,6 +39,9 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
   // Handle logout by clearing localStorage (or call your AuthContext logout function)
   const handleLogout = () => {
     localStorage.removeItem("user"); // Or call your logout function
+    localStorage.removeItem("token");
+    localStorage.removeItem("lang");
+    localStorage.removeItem("userId");
     navigate("/login");
     onClose();
   };
