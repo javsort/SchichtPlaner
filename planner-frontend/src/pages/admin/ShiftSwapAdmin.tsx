@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import "./ShiftSwapAdmin.css"; // Ensure this file exists (even if empty for now)
+import "moment/locale/de";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./ShiftSwapAdmin.css";
+import { useTranslation } from "react-i18next";
 
-// --------------------
-// Data Types
-// --------------------
 export interface Shift {
   id: number;
   title: string;
@@ -26,9 +26,6 @@ export interface SwapRequest {
   status: "Pending" | "Approved" | "Rejected";
 }
 
-// --------------------
-// Dummy Data
-// --------------------
 const dummyShifts: Shift[] = [
   {
     id: 101,
@@ -60,12 +57,6 @@ const dummyShifts: Shift[] = [
   },
 ];
 
-const dummyEmployees = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Bob Johnson" },
-];
-
 const initialSwapRequests: SwapRequest[] = [
   {
     id: 201,
@@ -89,23 +80,27 @@ const initialSwapRequests: SwapRequest[] = [
   },
 ];
 
-// --------------------
-// Props Interface
-// --------------------
-interface ShiftSwapAdminProps {
-  initialRequests?: SwapRequest[];
-}
-
-// --------------------
-// Component
-// --------------------
 const localizer = momentLocalizer(moment);
 
-const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initialSwapRequests }) => {
-  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialRequests);
+const ShiftSwapAdmin: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialSwapRequests);
   const [view, setView] = useState(Views.WEEK);
 
-  // Create calendar events from swapRequests (using the own shift's time)
+  // Notification state for toast messages
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  // Function to show toast notification
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   const calendarEvents = swapRequests.map((req) => ({
     id: req.id,
     title: `Req #${req.id} - ${req.status}`,
@@ -115,56 +110,68 @@ const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initi
   }));
 
   const handleApprove = (requestId: number) => {
-    if (window.confirm("Are you sure you want to approve this swap?")) {
-      setSwapRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId ? { ...req, status: "Approved" } : req
-        )
-      );
-      alert("Swap request approved.");
-    }
+    // Immediately update status without a confirmation dialog
+    setSwapRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: "Approved" } : req))
+    );
+    showNotification(t("swapApproved") || "Swap request approved.", "success");
   };
 
   const handleReject = (requestId: number) => {
-    if (window.confirm("Are you sure you want to reject this swap?")) {
-      setSwapRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId ? { ...req, status: "Rejected" } : req
-        )
-      );
-      alert("Swap request rejected.");
-    }
+    // Immediately update status without a confirmation dialog
+    setSwapRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: "Rejected" } : req))
+    );
+    showNotification(t("swapRejected") || "Swap request rejected.", "error");
+  };
+
+  // Define messages for the Calendar toolbar
+  const messages = {
+    today: t("calendarToday"),
+    previous: t("calendarBack"),
+    next: t("calendarNext"),
+    month: t("month"),
+    week: t("week"),
+    day: t("day"),
+    agenda: t("agenda")
   };
 
   return (
     <div className="shift-swap-admin-container container mt-4">
-      <h2 className="mb-4">Manage Shift Swap Requests</h2>
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`notification-toast ${notification.type} show`}>
+          {notification.message}
+        </div>
+      )}
 
-      {/* Calendar View */}
-      <div className="mb-4">
+      <h2 className="mb-4">{t("manageShiftSwapRequests") || "Manage Shift Swap Requests"}</h2>
+
+      <div className="calendar-container mb-4">
         <Calendar
+          key={i18n.language}
           localizer={localizer}
+          culture={i18n.language}
+          messages={messages}
           events={calendarEvents}
           startAccessor="start"
           endAccessor="end"
           view={view}
           onView={(newView) => setView(newView)}
-          style={{ height: 400, width: "100%" }}
         />
       </div>
 
-      {/* Swap Requests Table */}
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Request ID</th>
-            <th>Employee</th>
-            <th>Your Shift</th>
-            <th>Target Employee</th>
-            <th>Target Shift</th>
-            <th>Message</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{t("requestID") || "Request ID"}</th>
+            <th>{t("employee") || "Employee"}</th>
+            <th>{t("yourShift") || "Your Shift"}</th>
+            <th>{t("targetEmployee") || "Target Employee"}</th>
+            <th>{t("targetShift") || "Target Shift"}</th>
+            <th>{t("message") || "Message"}</th>
+            <th>{t("status") || "Status"}</th>
+            <th>{t("actions") || "Actions"}</th>
           </tr>
         </thead>
         <tbody>
@@ -190,20 +197,20 @@ const ShiftSwapAdmin: React.FC<ShiftSwapAdminProps> = ({ initialRequests = initi
               <td>{req.status}</td>
               <td>
                 {req.status === "Pending" ? (
-                  <>
+                  <div className="action-buttons">
                     <button
-                      className="btn btn-success btn-sm me-2"
+                      className="btn btn-sm btn-approve"
                       onClick={() => handleApprove(req.id)}
                     >
-                      Approve
+                      {t("approve") || "Approve"}
                     </button>
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-sm btn-danger"
                       onClick={() => handleReject(req.id)}
                     >
-                      Reject
+                      {t("reject") || "Reject"}
                     </button>
-                  </>
+                  </div>
                 ) : (
                   <span>{req.status}</span>
                 )}

@@ -53,8 +53,6 @@ Regarding the scripts, only [`build-n-run-local.bat`](./schichtconfig/automation
 
 - For deployment on **Linux / MacOS**:
 ```sh
-$ chmod +x ./build-n-run-local.sh
-
 $ ./build-n-run-local.sh
 ```
 **:warning:!** - build-n-run-local.sh already gives the `chmod` permissions to the maven wrapper, so it is only needed to give it once to this script.

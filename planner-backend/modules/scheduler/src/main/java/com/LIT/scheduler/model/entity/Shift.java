@@ -26,8 +26,14 @@ public class Shift {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long shiftOwnerId;
+
     @Column(nullable = false)
     private String title;
+
+    private String shiftOwnerName;
+
+    private String shiftOwnerRole;
 
     @Column(nullable = false)
     private LocalDateTime startTime;

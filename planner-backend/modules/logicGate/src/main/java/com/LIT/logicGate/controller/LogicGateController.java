@@ -58,19 +58,6 @@ public class LogicGateController {
         log.info(logHeader + "test: Test from logicGate module! JWT is working!");
         return "Test from logicGate module! JWT is working!";
     }
-
-    /*
-     * Authentication endpoints
-     *
-    @PostMapping("/auth/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok();
-    }
-
-    @PostMapping("/auth/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
-    }*/
-    
     
     /*
      * Forward endpoints
@@ -127,8 +114,13 @@ public class LogicGateController {
 
         // Add the role as attribute for the request -> turn into header
         String role = (String) requestWrap.getAttribute("role");
+        String userName = (String) requestWrap.getAttribute("userName");
         if(role != null){
             headers.set("X-User-Role", role);
+        }
+
+        if(userName != null){
+            headers.set("X-User-Name", userName);
         }
         
         // Form entity to send for the request

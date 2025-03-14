@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import "./MyShifts.css";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL || "";
@@ -16,7 +15,6 @@ interface Shift {
 const MyShifts: React.FC = () => {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchShifts();
@@ -36,7 +34,8 @@ const MyShifts: React.FC = () => {
   };
 
   const reportAbsence = async (shiftId: number) => {
-    if (!window.confirm("Are you sure you want to report absence for this shift?")) return;
+    if (!window.confirm("Are you sure you want to report absence for this shift?"))
+      return;
 
     try {
       await axios.post(
@@ -81,14 +80,25 @@ const MyShifts: React.FC = () => {
                 <td>{shift.title}</td>
                 <td>{new Date(shift.start).toLocaleString()}</td>
                 <td>{new Date(shift.end).toLocaleString()}</td>
-                <td className={shift.status === "Replacement Needed" ? "warning" : ""}>{shift.status}</td>
+                <td
+                  className={
+                    shift.status === "Replacement Needed" ? "warning" : ""
+                  }
+                >
+                  {shift.status}
+                </td>
                 <td>
                   {shift.status === "Assigned" && (
-                    <button className="btn btn-danger btn-sm" onClick={() => reportAbsence(shift.id)}>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => reportAbsence(shift.id)}
+                    >
                       Report Absence
                     </button>
                   )}
-                  {shift.status === "Replacement Needed" && <span className="alert-text">Needs Replacement</span>}
+                  {shift.status === "Replacement Needed" && (
+                    <span className="alert-text">Needs Replacement</span>
+                  )}
                 </td>
               </tr>
             ))}

@@ -1,85 +1,222 @@
-/* /src/pages/ShiftManagement.css */
+/* Overall container */
 .shift-management {
-  margin: 20px;
-  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  font-family: var(--font-primary, Arial, sans-serif);
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.shift-management h2,
-.shift-management h3 {
-  text-align: center;
+/* Main header styling - aligned left */
+.page-header {
+  margin: 0;
+  margin-bottom: 10px;
+  text-align: left;
+  color: #2c3e50;
 }
 
-/* Vertical (classic) layout for the creation/edit form */
+/* Container for form and calendar side-by-side */
+.shift-management-top {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Shift creation form container */
 .shift-creation {
-  max-width: 500px;
-  margin: 0 auto 30px auto;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f9f9f9;
+  flex: 0 0 35%;
+  min-width: 250px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Calendar card styling */
+.calendar-card {
+  flex: 1;
+  min-width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Section headers for shift creation, calendar and shift overview 
+   All headings now use the same font color, weight, and spacing */
+.shift-creation h3,
+.calendar-card h3,
+.shift-overview h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+/* Shift creation form styles */
 .shift-creation form {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .shift-creation .form-row {
-  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .shift-creation .form-group {
-  margin-bottom: 10px;
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
 .shift-creation label {
-  display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .shift-creation input {
-  padding: 5px;
-  width: 100%;
+  padding: 8px;
+  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #2c3e50;
 }
 
 .shift-creation .form-actions {
-  text-align: center;
-  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  margin-top: 0;
 }
 
+/* Buttons for shift creation form */
 .shift-creation button {
-  padding: 8px 16px;
-  margin: 0 5px;
-  background-color: #27ae60;
-  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4da8d6;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.shift-creation button[type="button"] {
-  background-color: #c0392b;
+.shift-creation button:hover {
+  background-color: #4da8d6;
 }
 
-.calendar-container {
-  margin-bottom: 30px;
+.shift-creation button[type="button"] {
+  background-color: #69be28;
+}
+
+.shift-creation button[type="button"]:hover {
+  background-color: #69be28;
+}
+
+/* Calendar card header */
+.calendar-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  /* Uses the same styles as section headers */
+}
+
+/* Shift overview table */
+.shift-overview {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shift-overview h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2c3e50;
 }
 
 .shift-overview table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .shift-overview th,
 .shift-overview td {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 12px;
   text-align: center;
+  font-size: 14px;
 }
 
 .shift-overview th {
   background-color: #f2f2f2;
+  font-weight: 600;
+  color: #333;
+}
+
+.shift-overview tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Buttons for shift overview table */
+.shift-overview button {
+  padding: 6px 12px;
+  margin: 0 4px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.shift-overview button:first-of-type {
+  background-color: #4da8d6;
+  color: #fff;
+}
+
+.shift-overview button:first-of-type:hover {
+  background-color: #4da8d6;
+}
+
+.shift-overview button:last-of-type {
+  background-color: #69be28;
+  color: #fff;
+}
+
+.shift-overview button:last-of-type:hover {
+  background-color: #69be28;
+}
+
+/* Notification bar styling */
+.notification-bar {
+  position: fixed;
+  top: 20px;
+  right: -300px; /* Start off-screen */
+  width: 250px;
+  padding: 10px;
+  border-radius: 4px;
+  color: #fff;
+  transition: right 0.5s ease;
+  z-index: 9999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.notification-bar.show {
+  right: 20px;
+}
+
+.notification-bar.success {
+  background-color: #28a745;
+}
+
+.notification-bar.error {
+  background-color: #dc3545;
 }

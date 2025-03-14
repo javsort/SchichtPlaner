@@ -1,77 +1,37 @@
-/* Ensure the whole layout fits properly */
-.shift-approval-layout {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden; /* Prevent unnecessary scrollbars */
-}
-
-/* Sidebar */
-.admin-sidebar {
-  width: 250px;
-  height: 100vh;
-  background-color: #2c3e50;
-  color: white;
-  padding: 20px;
-  flex-shrink: 0;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  overflow-y: auto;
-}
-
-/* Main Content */
+/* Overall content area for the Shift Approval page */
 .shift-approval-content {
-  flex-grow: 1;
-  margin-left: 250px; /* Ensure content does not overlap sidebar */
   padding: 20px;
-  font-family: Arial, sans-serif;
-  background-color: #f7f7f7;
+  background-color: var(--main-bg, #f7f7f7);
+  /* Ensure the content area takes up the available height */
+  min-height: calc(100vh - 60px); /* subtract fixed header height if applicable */
   overflow: auto;
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* Make it take full height */
+  font-family: var(--font-primary, 'Source Sans Pro', Arial, sans-serif);
 }
 
-/* Calendar Container - Expands to Fit */
-.calendar-container {
-  flex-grow: 1; /* Allows it to take available space */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
+/* Hide Calendar View label */
+.view-selector label {
+  display: none;
 }
 
-/* Ensures Calendar is Big */
-.rbc-calendar {
-  width: 90%; /* Expands to a large part of the screen */
-  height: 70vh; /* Uses most of the viewport height */
-  max-width: 1200px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* View Selector */
+/* Calendar View Selector container */
 .view-selector {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.view-selector label {
-  font-weight: bold;
-  margin-right: 10px;
+/* Calendar container takes full available space */
+.calendar-container {
+  width: 100%;
+  height: calc(70vh);  /* Adjust as needed for desired height */
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  background: var(--card-bg, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-.view-selector select {
-  padding: 5px 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Pending Table */
+/* Pending shifts table styling */
 .pending-table {
   width: 100%;
   border-collapse: collapse;
@@ -80,25 +40,34 @@
 
 .pending-table th,
 .pending-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--card-border, #ddd);
   padding: 10px;
   text-align: center;
 }
 
 .pending-table th {
-  background-color: #f2f2f2;
+  background-color: var(--card-heading, #f2f2f2);
 }
 
-/* Approve Button */
+/* Approve button styling */
 .approve-btn {
   padding: 8px 12px;
-  background-color: #27ae60;
-  color: white;
+  background-color: var(--button-bg, #69be28);
+  color: var(--button-text, #ffffff);
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background 0.3s ease;
+  margin-right: 8px;
 }
 
 .approve-btn:hover {
-  background-color: #219150;
+  background-color: var(--button-hover-bg, #69be28);
+}
+
+/* Header for the content area: Shift Approval header */
+.shift-approval-content h2 {
+  margin-bottom: 20px;
+  text-align: left;      /* Align header to the left */
+  color: #2c3e50;        /* Always use #2c3e50 */
 }

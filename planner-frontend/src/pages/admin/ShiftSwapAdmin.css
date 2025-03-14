@@ -1,0 +1,121 @@
+/* FULL-PAGE CONTAINER */
+.shift-swap-admin-container {
+  width: 100%;
+  min-height: 100vh; /* fill the full browser height */
+  margin: 0 auto;
+  padding: 10px;     /* Reduced padding moves heading higher */
+  background-color: #fff;
+  font-family: var(--font-primary, Arial, sans-serif);
+}
+
+/* Heading Styles */
+.shift-swap-admin-container h2 {
+  margin-top: 0;      /* Remove default top margin */
+  margin-bottom: 20px; /* Slight space below heading */
+  text-align: left;
+  color: #2c3e50;
+}
+
+/* TABLE STYLES */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Keeps columns aligned */
+  margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead th,
+.table tbody td {
+  border: 1px solid var(--card-border, #ddd);
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* Example column widths (optional) */
+.table thead th:nth-child(1),
+.table tbody td:nth-child(1) {
+  width: 60px;
+}
+
+.table thead th:nth-child(2),
+.table tbody td:nth-child(2) {
+  width: 120px;
+}
+
+.table thead th:nth-child(3),
+.table tbody td:nth-child(3) {
+  width: 150px;
+}
+
+.table thead th:nth-child(4),
+.table tbody td:nth-child(4) {
+  width: 120px;
+}
+
+.table thead th:nth-child(5),
+.table tbody td:nth-child(5) {
+  width: 150px;
+}
+
+/* CALENDAR CONTAINER */
+.calendar-container {
+  width: 100%;           /* Fill entire page width */
+  max-width: none;       /* Remove any max-width */
+  margin: 20px 0;        /* Vertical spacing */
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-container .rbc-calendar {
+  background-color: #fff;
+  height: 600px;         /* Adjust as needed */
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* APPROVE BUTTON */
+.btn-approve {
+  background-color: #69be28 !important;
+  color: #fff !important;
+  border: none;
+}
+
+/* ----------------------------------
+   NOTIFICATION (TOAST) STYLES
+------------------------------------- */
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: -350px;  /* Start off-screen */
+  width: 300px;
+  padding: 15px 20px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: right 0.4s ease;
+  z-index: 9999;
+}
+
+.notification-toast.show {
+  right: 20px; /* Slide in */
+}
+
+.notification-toast.success {
+  background-color: #69be28;
+}
+
+.notification-toast.error {
+  background-color: #e74c3c;
+}

@@ -1,86 +1,109 @@
-/* /src/pages/CompanyShiftCalendar.css */
-  .company-shift-calendar {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .company-shift-calendar h2 {
-    text-align: center;
-    font-size: 24px;
-    color: #2c3e50;
-    margin-bottom: 20px;
-  }
- 
-  .calendar-container {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    overflow-y: auto;
-    min-width: 0;
-  }
+/* Container for the entire calendar page */
+.company-shift-calendar-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary, sans-serif);
+}
 
-  .calendar-filters {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  .calendar-filters button {
-    background-color: #3174ad;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-  }
-  
-  .calendar-filters button.active {
-    background-color: #1e5b8c;
-  }
+/* Header styles */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--card-border, #ccc);
+  background-color: var(--main-bg, #f5f5f5);
+  flex: 0 0 auto;
+}
 
-  .calendar-filters button:hover {
-    background-color: #265f96;
-  }
-  
-  .calendar-container {
-    margin-bottom: 30px;
-  }
-  
-  .shift-creation {
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
-  .shift-creation h3 {
-    text-align: center;
-  }
-  
-  .shift-creation form > div {
-    margin-bottom: 10px;
-  }
-  
-  .shift-creation label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .shift-creation input {
-    padding: 5px;
-    width: 100%;
-    max-width: 300px;
-  }
-  
-  .shift-creation button {
-    padding: 8px 16px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
+.calendar-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--header-text, #2c3e50);
+}
+
+/* Import/Export buttons container */
+.import-export-buttons button {
+  margin: 0 5px;
+  background: none;
+  color: var(--text-color, #000);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.import-export-buttons button:hover {
+  color: var(--text-color-hover, #666);
+}
+
+/* Main layout */
+.calendar-main-layout {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+/* Main content styles */
+.calendar-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* Filter buttons styles */
+.calendar-filters {
+  text-align: center;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+
+.calendar-filters button {
+  background-color: #4da8d6;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.calendar-filters button.active {
+  background-color: #69be28;
+}
+
+.calendar-filters button:hover {
+  background-color: #4da8d6;
+}
+
+/* Calendar container */
+.calendar-container {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+/* Force the Big Calendar to fill this container */
+.calendar-container .rbc-calendar {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  background-color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}

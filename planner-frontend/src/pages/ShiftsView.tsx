@@ -3,9 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./ShiftView.css"; // Create this CSS file for custom styling
-
-const localizer = momentLocalizer(moment);
+import "./ShiftView.css"; // Updated CSS with theme variables
 
 // Dummy employee data (in production, fetch this from your API)
 const dummyEmployees = [
@@ -19,9 +17,10 @@ const isOverlap = (startA, endA, startB, endB) => {
   return startA < endB && startB < endA;
 };
 
+const localizer = momentLocalizer(moment);
+
 const ShiftView = ({ currentUser = { id: 1, name: "John Doe" } }) => {
-  // State for shifts
-  // Each shift includes: id, title, start, end, rolesRequired (array), assignedEmployees (array of employee IDs)
+  // State for shifts; each shift includes: id, title, start, end, rolesRequired, assignedEmployees
   const [shifts, setShifts] = useState([
     {
       id: 101,
@@ -76,18 +75,19 @@ const ShiftView = ({ currentUser = { id: 1, name: "John Doe" } }) => {
       (shift.assignedEmployees
         .map(
           (id) =>
-            dummyEmployees.find((emp) => emp.id === id)?.name ||
-            "Unknown"
+            dummyEmployees.find((emp) => emp.id === id)?.name || "Unknown"
         )
         .join(", ") || "Unassigned") +
       ")",
   }));
 
-  // Event style getter for calendar events (example: different color if Supervisor role is required)
+  // Event style getter for calendar events
   const eventStyleGetter = (event) => {
     const requiresSupervisor = event.rolesRequired.includes("Supervisor");
     const style = {
-      backgroundColor: requiresSupervisor ? "#2980b9" : "#27ae60",
+      backgroundColor: requiresSupervisor
+        ? "var(--button-bg, #2980b9)"
+        : "var(--button-bg, #27ae60)",
       borderRadius: "5px",
       opacity: 0.8,
       color: "white",
@@ -151,7 +151,13 @@ const ShiftView = ({ currentUser = { id: 1, name: "John Doe" } }) => {
     };
 
     setShifts([...shifts, newShiftEvent]);
-    setNewShift({ title: "", start: "", end: "", rolesRequired: "", assignedEmployees: "" });
+    setNewShift({
+      title: "",
+      start: "",
+      end: "",
+      rolesRequired: "",
+      assignedEmployees: "",
+    });
   };
 
   return (

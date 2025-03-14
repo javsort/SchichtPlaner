@@ -1,0 +1,12 @@
+.main-layout {
+    position: relative;
+    min-height: 100vh;
+  }
+  
+  /* The content starts below the fixed header */
+  .main-content {
+    margin-top: 60px; /* same as header height */
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+  }
+  

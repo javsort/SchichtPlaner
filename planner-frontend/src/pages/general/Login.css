@@ -1,31 +1,96 @@
-/* src/pages/Login.css */
-.login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    background-color: #fff;
-  }
-  
-  .login-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .login-container button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .login-container button:hover {
-    background-color: #0056b3;
-  }
-  
+/* Make the entire page white */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #fef9f9;
+}
+
+/* Center the login box on the page (vertically & horizontally) */
+.login-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*
+  The outer white box for the login form.
+  Larger size for a bigger visual container.
+*/
+.login-box {
+  width: 700px;      /* Outer box is larger */
+  max-width: 90%;
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 60px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/*
+  The inner content wrapper:
+  Keeps the form and inputs at the original size.
+*/
+.login-content {
+  max-width: 400px;  /* Keeps input fields and content the same size as before */
+  margin: 0 auto;
+}
+
+/* Logo styling */
+.login-logo {
+  display: block;
+  margin: 0 auto 20px;
+  width: 120px;
+  height: auto;
+}
+
+/* Center the heading and add spacing */
+.login-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Error message styling */
+.error-message {
+  color: #d9534f;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Login button styling */
+.login-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4da8d6;  /* Set to #4da8d6 */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #4da8d6;  /* Keeps the same color on hover */
+}

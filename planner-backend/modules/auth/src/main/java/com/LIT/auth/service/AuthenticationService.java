@@ -31,6 +31,7 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     private final String logHeader = "[AuthenticationService] - ";
 
@@ -38,11 +39,13 @@ public class AuthenticationService {
     public AuthenticationService(UserRepository userRepository,
                                  RoleRepository roleRepository,
                                  JwtTokenUtil jwtTokenUtil,
-                                 PasswordEncoder passwordEncoder) {
+                                 PasswordEncoder passwordEncoder,
+                                 UserService userService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.jwtTokenUtil = jwtTokenUtil;
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     //Inserts dummy roles and users (only if DB is empty)
@@ -53,10 +56,10 @@ public class AuthenticationService {
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
                 Role.builder().name("Admin").build(),
-                Role.builder().name("ShiftSupervisor").build(),
+                Role.builder().name("Shift-Supervisor").build(),
                 Role.builder().name("Technician").build(),
                 Role.builder().name("Tester").build(),
-                Role.builder().name("Incident-manager").build()
+                Role.builder().name("Incident-Manager").build()
             ));
         }
 
@@ -66,19 +69,21 @@ public class AuthenticationService {
         if (userRepository.count() == 0) {
             Role adminRole = roleRepository.findByName("Admin")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role shiftSupervisorRole = roleRepository.findByName("ShiftSupervisor")
+            Role shiftSupervisorRole = roleRepository.findByName("Shift-Supervisor")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             Role technicianRole = roleRepository.findByName("Technician")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             Role testerRole = roleRepository.findByName("Tester")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
-            Role incidentManagerRole = roleRepository.findByName("Incident-manager")
+            Role incidentManagerRole = roleRepository.findByName("Incident-Manager")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
 
             User admin = User.builder()
                     .email("admin@example.com")
                     .username("admin")
                     .password(passwordEncoder.encode("admin123"))
+                    .address("1234 Admin St")
+                    .phoneNum("123-456-7890")
                     .roles(Set.of(adminRole))
                     .build();
 
@@ -86,6 +91,8 @@ public class AuthenticationService {
                     .email("shiftsupervisor@example.com")
                     .username("shiftSupervisor")
                     .password(passwordEncoder.encode("shiftsuper123"))
+                    .address("1234 Shift Supervisor St")
+                    .phoneNum("123-456-7890")
                     .roles(Set.of(shiftSupervisorRole))
                     .build();
 
@@ -93,6 +100,8 @@ public class AuthenticationService {
                     .email("technician@example.com")
                     .username("technician")
                     .password(passwordEncoder.encode("technician123"))
+                    .address("1234 Technician St")
+                    .phoneNum("123-456-7890")
                     .roles(Set.of(technicianRole))
                     .build();
             
@@ -101,6 +110,8 @@ public class AuthenticationService {
                     .username("tester")
                     .password(passwordEncoder.encode("tester123"))
                     .roles(Set.of(testerRole))
+                    .address("1234 Tester St")
+                    .phoneNum("123-456-7890")
                     .build();
             
             User incidentManager= User.builder()
@@ -108,6 +119,8 @@ public class AuthenticationService {
                     .username("incidentManager")
                     .password(passwordEncoder.encode("incidentmanage123"))
                     .roles(Set.of(incidentManagerRole))
+                    .address("1234 Incident Manager St")
+                    .phoneNum("123-456-7890")
                     .build();
 
             // Trials for Teacher & End-client
@@ -116,6 +129,8 @@ public class AuthenticationService {
                     .username("david")
                     .password(passwordEncoder.encode("david123"))
                     .roles(Set.of(adminRole))
+                    .address("1234 David St")
+                    .phoneNum("123-456-7890")
                     .build();
 
             User trialTorsten = User.builder()
@@ -123,10 +138,14 @@ public class AuthenticationService {
                     .username("torsten")
                     .password(passwordEncoder.encode("torsten123"))
                     .roles(Set.of(adminRole))
+                    .address("1234 Torsten St")
+                    .phoneNum("123-456-7890")
                     .build();
 
+            List<User> generatedUsers = List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten);
+
             log.info(logHeader + "initializeDummyUsers: Users initialized. Saving to DB...");
-            userRepository.saveAll(List.of(admin, shiftSupervisor, technician, tester, incidentManager, trialDavid, trialTorsten));
+            userRepository.saveAll(generatedUsers);
         }
     }
 
@@ -154,12 +173,13 @@ public class AuthenticationService {
         log.info(logHeader + "login: User found. Generating token...");
 
         // Generate token
-        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role);
+        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role, user.getId(), user.getUsername());
 
-         Map<String, String> toReturn = new HashMap<>();
-            toReturn.put("token", token);
-            toReturn.put("email", user.getEmail());
-            toReturn.put("role", role);
+        Map<String, String> toReturn = new HashMap<>();
+        toReturn.put("token", token);
+        toReturn.put("email", user.getEmail());
+        toReturn.put("role", role);
+        toReturn.put("userId", user.getId().toString());
 
         log.info(logHeader + "User " + user.getEmail() + " logged in successfully. Returnig token.");
 

@@ -1,0 +1,39 @@
+/* src/pages/general/theme.css */
+
+/* 1) Import Google Fonts for Source Sans Pro & Consolas */
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Consolas:wght@400;700&display=swap");
+
+/* 2) Define global CSS variables (adjust colors as needed) */
+:root {
+  --font-primary: 'Source Sans Pro', sans-serif;
+  --font-secondary: 'Consolas', monospace;
+
+  /* Example brand colors (Hellblau, Hellgrün, Schwarz, Weiß) */
+  --color-hellblau: #0092CB; /* or #64a3de if you prefer a lighter shade */
+  --color-hellgruen: #46BE2A; /* or #c3e888 for a lighter version */
+  --color-schwarz: #000000;
+  --color-weiss: #ffffff;
+
+  /* For gradients (Hellblau to Hellgrün) */
+  --gradient-blue-green: linear-gradient(to right, var(--color-hellblau), var(--color-hellgruen));
+}
+
+/* 3) Basic Global Resets & Defaults */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary), sans-serif;
+  background-color: var(--color-weiss);
+  color: var(--color-schwarz);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Headings share the primary font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary), sans-serif;
+  font-weight: bold;
+}

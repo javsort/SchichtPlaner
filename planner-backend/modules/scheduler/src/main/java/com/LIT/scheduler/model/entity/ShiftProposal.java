@@ -1,9 +1,22 @@
 package com.LIT.scheduler.model.entity;
 
-import com.LIT.scheduler.model.enums.ShiftProposalStatus;
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDateTime;
+
+import com.LIT.scheduler.model.enums.ShiftProposalStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -21,9 +34,11 @@ public class ShiftProposal {
     @Column(name = "employee_id", nullable = false)
     private Long employeeId;
 
-    // Employee name who submitted the proposal
     @Column(name = "employee_name", nullable = false)
     private String employeeName;
+
+    @Column(name = "employee_role", nullable = false)
+    private String employeeRole;
 
     // Proposed shift details by employee
     @Column(nullable = false)
