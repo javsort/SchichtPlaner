@@ -12,7 +12,7 @@ import Register from "./pages/general/Register.tsx";
 import NotAuthorized from "./pages/general/NotAuthorized.tsx";
 import MyShifts from "./pages/MyShifts.tsx";
 
-// Protected UI Pages (Admin, ShiftSupervisor, etc.)
+// Protected UI Pages (Admin, Shift-Supervisor, etc.)
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
 import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
 import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
@@ -66,10 +66,10 @@ const App: React.FC = () => {
 
           <Route element={<PrivateRoute allowedRoles={[
               "Admin",
-              "ShiftSupervisor",
+              "Shift-Supervisor",
               "Technician",
               "Tester",
-              "Incident Manager",
+              "Incident-Manager",
               "Extra Role",
             ]} />}>
             <Route element={<MainLayout />}>

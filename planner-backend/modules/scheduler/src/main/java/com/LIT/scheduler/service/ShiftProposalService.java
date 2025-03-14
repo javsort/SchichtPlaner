@@ -40,7 +40,7 @@ public class ShiftProposalService {
     }
 
     // Employee submits new shift proposal (now with conflict detection)
-    public ShiftProposal createProposal(ShiftProposal proposal) {
+    public ShiftProposal createProposal(ShiftProposal proposal, String role, String username) {
         log.info(logHeader + "createProposal: Creating new shift proposal");
 
         // Check if there is a conflict with existing official assignments for this specific employee
@@ -60,6 +60,8 @@ public class ShiftProposalService {
         }
         
         proposal.setStatus(ShiftProposalStatus.PROPOSED);
+        proposal.setEmployeeRole(role);
+        proposal.setEmployeeName(username);
 
         proposalRepository.save(proposal);
         log.info(logHeader + "Employee " + proposal.getEmployeeId() + " has proposed a new shift: " + proposal.getProposedTitle() + " from " + proposal.getProposedStartTime() + " to " + proposal.getProposedEndTime());
@@ -86,6 +88,8 @@ public class ShiftProposalService {
                 .title(proposal.getProposedTitle())
                 .startTime(proposal.getProposedStartTime())
                 .endTime(proposal.getProposedEndTime())
+                .shiftOwnerName(proposal.getEmployeeName())
+                .shiftOwnerRole(proposal.getEmployeeRole())
                 .build();
         newShift = shiftRepository.save(newShift);
 

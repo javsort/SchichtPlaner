@@ -45,22 +45,22 @@ class UserControllerTest {
         .andExpect(status().isNoContent());
     }
 
-    // Test the delete user endpoint -> with ShiftSupervisor (should fail)
+    // Test the delete user endpoint -> with Shift-Supervisor (should fail)
     @Test
-    @DisplayName("DELETE /api/auth/users/{id} with ROLE_ShiftSupervisor should fail with 400")
+    @DisplayName("DELETE /api/auth/users/{id} with ROLE_Shift-Supervisor should fail with 400")
     void deleteUserAsShiftSupervisorShouldReturnBadRequest() throws Exception {
         // Given: same mocking, still do nothing
         Mockito.doNothing().when(userService).deleteUser(anyLong());
 
         mockMvc.perform(
                 delete("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_ShiftSupervisor")
+                  .header("X-User-Role", "ROLE_Shift-Supervisor")
         )
         .andExpect(status().isBadRequest());
     }
 
     /*
-     * Test getting user info (Only Admin & ShiftSupervisor can get user info)
+     * Test getting user info (Only Admin & Shift-Supervisor can get user info)
      */
     // Test getting user info -> with Admin (should succeed)
     @Test
@@ -76,16 +76,16 @@ class UserControllerTest {
         .andExpect(status().isNotFound());
     }
 
-    // Test getting user info -> with ShiftSupervisor (should succeed)  
+    // Test getting user info -> with Shift-Supervisor (should succeed)  
     @Test
-    @DisplayName("GET /api/auth/users/{id} with ROLE_ShiftSupervisor should succeed")
+    @DisplayName("GET /api/auth/users/{id} with ROLE_Shift-Supervisor should succeed")
     void getUserInfoAsShiftSupervisorShouldReturnOk() throws Exception {
         // Given: mock the user service to return an empty optional
         Mockito.when(userService.getUserById(anyLong())).thenReturn(Optional.empty());
 
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_ShiftSupervisor")
+                  .header("X-User-Role", "ROLE_Shift-Supervisor")
         )
         .andExpect(status().isNotFound());
     }
