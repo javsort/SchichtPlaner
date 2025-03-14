@@ -126,7 +126,13 @@
     "testAuthConnection": "Test Auth Connection",
     "testScheduler": "Test Scheduler",
     "shiftSwapAdmin": "Shift Swap Admin",
-    "companyShiftCalendar": "Company Shift Calendar",
-    "shiftSwap": "Shift Swap"
+    "shiftSwap": "Shift Swap",
+    "Requests": "Requests",
+    "calendar": "Calendar", 
+    "logout": "Logout",
+    "myShiftProposals": "My Shift Proposals",
+  "noShiftProposalsYet": "No shift proposals yet."
+
+
   }
   

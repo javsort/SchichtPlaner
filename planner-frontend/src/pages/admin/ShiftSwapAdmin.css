@@ -1,65 +1,82 @@
-/* src/pages/ShiftSwapAdmin.css */
-
-/* Container styles */
+/* FULL-PAGE CONTAINER */
 .shift-swap-admin-container {
-  padding: 20px;
+  width: 100%;
+  min-height: 100vh; /* fill the full browser height */
+  margin: 0;
+  padding: 10px;     /* Reduced padding moves heading higher */
+  background-color: #fff;
   font-family: var(--font-primary, Arial, sans-serif);
-  background-color: #fff; /* White background, no gray */
 }
 
-/* Heading styles */
+/* Heading Styles */
 .shift-swap-admin-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--header-text, #2c3e50);
+  margin-top: 0;      /* Remove default top margin */
+  margin-bottom: 20px; /* Slight space below heading */
+  text-align: left;
+  color: #2c3e50;
 }
 
-/* (Optional) Override Bootstrap table styles if desired */
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: var(--card-bg, #ffffff);
+/* TABLE STYLES */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Keeps columns aligned */
+  margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.table th,
-.table td {
+.table thead th,
+.table tbody td {
   border: 1px solid var(--card-border, #ddd);
-  padding: 8px;
-  text-align: center;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
 }
 
-.table th {
-  background-color: var(--card-heading, #f2f2f2);
-  color: var(--card-text, #333);
+/* Example column widths (optional) */
+.table thead th:nth-child(1),
+.table tbody td:nth-child(1) {
+  width: 60px;
 }
 
-/* Approved row styling */
-.approved-row {
-  background-color: var(--button-bg, #27ae60) !important;
-  color: var(--button-text, #ffffff);
+.table thead th:nth-child(2),
+.table tbody td:nth-child(2) {
+  width: 120px;
 }
 
-/* 
-  -------------------------------------
-  CALENDAR-SPECIFIC STYLES
-  -------------------------------------
-*/
+.table thead th:nth-child(3),
+.table tbody td:nth-child(3) {
+  width: 150px;
+}
 
-/* Make the calendar a bit bigger but not full width */
+.table thead th:nth-child(4),
+.table tbody td:nth-child(4) {
+  width: 120px;
+}
+
+.table thead th:nth-child(5),
+.table tbody td:nth-child(5) {
+  width: 150px;
+}
+
+/* CALENDAR CONTAINER */
 .calendar-container {
-  margin: 0 auto;     /* Centers the calendar horizontally */
-  width: 85%;         /* Adjust as needed (could be 80%, 90%, etc.) */
-  max-width: 1400px;  /* Optional: prevents the calendar from becoming too wide */
+  width: 100%;           /* Fill entire page width */
+  max-width: none;       /* Remove any max-width */
+  margin: 20px 0;        /* Vertical spacing */
   background-color: #fff;
   padding: 20px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Force react-big-calendar to remain white */
 .calendar-container .rbc-calendar {
   background-color: #fff;
-  height: 600px; /* Adjust the height as needed */
+  height: 600px;         /* Adjust as needed */
 }
 
-/* Action buttons container to place buttons side by side */
+/* ACTION BUTTONS */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -67,13 +84,38 @@
   align-items: center;
 }
 
-/* Custom styles for Approve button */
+/* APPROVE BUTTON */
 .btn-approve {
   background-color: #69be28 !important;
   color: #fff !important;
   border: none;
 }
 
-.btn-approve:hover {
-  background-color: #69be28 !important;
+/* ----------------------------------
+   NOTIFICATION (TOAST) STYLES
+------------------------------------- */
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: -350px;  /* Start off-screen */
+  width: 300px;
+  padding: 15px 20px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: right 0.4s ease;
+  z-index: 9999;
+}
+
+.notification-toast.show {
+  right: 20px; /* Slide in */
+}
+
+.notification-toast.success {
+  background-color: #69be28;
+}
+
+.notification-toast.error {
+  background-color: #e74c3c;
 }
