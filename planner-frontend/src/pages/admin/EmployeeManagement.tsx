@@ -171,6 +171,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   // Pre-fill the form with an employee's data for editing
   const editEmployee = (emp: Employee) => {
     setEditingEmployeeId(emp.id);
+    setValue("id", emp.id);
     setValue("name", emp.name);
     setValue("address", emp.address || "");
     setValue("phone", emp.phone || "");
@@ -204,6 +205,36 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
       {/* Employee Entry Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="employee-form">
+        { editingEmployeeId == null &&
+          <>
+          <div className="form-row">
+          <label>{t("selectEmployee") || "Select Employee"}:</label>
+          <select
+            onChange={(e) => {
+              const selectedId = Number(e.target.value);
+              const selectedEmployee = employees.find(emp => emp.id === selectedId);
+              if (selectedEmployee) {
+                editEmployee(selectedEmployee);
+              }
+            }}
+          >
+            <option value="">{t("selectEmployee") || "Select an Employee"}</option>
+            {employees.map((emp) => (
+              <option key={emp.id} value={emp.id}>{emp.id} - {emp.name}</option>
+            ))}
+          </select>
+        </div>
+        </>
+        }
+        { editingEmployeeId != null &&
+        <>
+          <div className="form-row">
+            <label>{t("id") || "User ID"}:</label>
+            <div className="id-display">{editingEmployeeId ?? "N/A"}</div>
+          </div>
+        </>
+        }
+        
         <div className="form-row">
           <label>{t("name") || "Name"}:</label>
           <input
@@ -291,6 +322,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
       <table className="employee-table">
         <thead>
           <tr>
+            <th>{t("employeeId") || "Employee ID"}</th>
             <th>{t("name") || "Name"}</th>
             <th>{t("address") || "Address"}</th>
             <th>{t("phoneNumber") || "Phone Number"}</th>
@@ -303,6 +335,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           {employees.length > 0 ? (
             employees?.map((emp) => (
               <tr key={emp.id}>
+                <td>{emp.id}</td>
                 <td>{emp.name}</td>
                 <td>{emp.address}</td>
                 <td>{emp.phone}</td>
