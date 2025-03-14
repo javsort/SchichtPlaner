@@ -2,7 +2,7 @@
 .container {
   width: 100%;
   min-height: 100vh; /* fill the full browser height */
-  margin: 0; /* remove auto so it's not centered */
+  margin: 0 auto; /* remove auto so it's not centered */
   padding: 20px;
   font-family: var(--font-primary, 'Source Sans Pro', Arial, sans-serif);
   background-color: #ffffff; /* White background filling the entire page */
