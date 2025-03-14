@@ -69,6 +69,44 @@ public class ShiftProposalService {
         return proposal;
     }
 
+    // Employee updates a proposal
+    public ShiftProposal updateProposal(Long proposalId, ShiftProposal updatedProposal) {
+        log.info(logHeader + "Employee updated proposal with id: " + proposalId);
+
+        Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
+
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException("Shift proposal not found.");
+        }
+
+        ShiftProposal proposal = opt.get();
+
+        proposal.setProposedTitle(updatedProposal.getProposedTitle());
+        proposal.setProposedStartTime(updatedProposal.getProposedStartTime());
+        proposal.setProposedEndTime(updatedProposal.getProposedEndTime());
+
+        log.info(logHeader + "Employee " + proposal.getEmployeeId() + " updated proposal " + proposalId + " to: " + proposal.getProposedTitle() + " from: " + proposal.getProposedStartTime() + " to: " + proposal.getProposedEndTime());
+        return proposalRepository.save(proposal);
+    }
+
+    // Employee cancels a proposal
+    public ShiftProposal cancelProposal(Long proposalId) {
+        log.info(logHeader + "Employee cancelled proposal with id: " + proposalId);
+
+        Optional<ShiftProposal> opt = proposalRepository.findById(proposalId);
+
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException("Shift proposal not found.");
+        }
+
+        ShiftProposal proposal = opt.get();
+
+        proposal.setStatus(ShiftProposalStatus.CANCELLED);
+
+        log.info(logHeader + "Employee " + proposal.getEmployeeId() + " cancelled proposal " + proposalId);
+        return proposalRepository.save(proposal);
+    }
+
     // Manager accepts a proposal
     public ShiftProposal acceptProposal(Long proposalId) {
         log.info(logHeader + "Manager is accepting proposal: " + proposalId);

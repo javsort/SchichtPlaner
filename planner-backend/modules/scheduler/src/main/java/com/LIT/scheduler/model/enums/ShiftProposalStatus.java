@@ -4,5 +4,6 @@ public enum ShiftProposalStatus {
     PROPOSED,           // Proposed by employee, waiting for manager review
     ACCEPTED,           // Manager accepted, becomes official shift
     REJECTED,           // Manager rejected
-    ALTERNATIVE_PROPOSED // Manager rejected, proposed alternative shift
+    ALTERNATIVE_PROPOSED, // Manager rejected, proposed alternative shift
+    CANCELLED            // Employee canceled proposal
 }

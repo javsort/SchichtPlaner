@@ -87,6 +87,20 @@ const ShiftSwapAdmin: React.FC = () => {
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>(initialSwapRequests);
   const [view, setView] = useState(Views.WEEK);
 
+  // Notification state for toast messages
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  // Function to show toast notification
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   const calendarEvents = swapRequests.map((req) => ({
     id: req.id,
     title: `Req #${req.id} - ${req.status}`,
@@ -96,21 +110,19 @@ const ShiftSwapAdmin: React.FC = () => {
   }));
 
   const handleApprove = (requestId: number) => {
-    if (window.confirm(t("approveSwapConfirm") || "Are you sure you want to approve this swap?")) {
-      setSwapRequests((prev) =>
-        prev.map((req) => (req.id === requestId ? { ...req, status: "Approved" } : req))
-      );
-      alert(t("swapApproved") || "Swap request approved.");
-    }
+    // Immediately update status without a confirmation dialog
+    setSwapRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: "Approved" } : req))
+    );
+    showNotification(t("swapApproved") || "Swap request approved.", "success");
   };
 
   const handleReject = (requestId: number) => {
-    if (window.confirm(t("rejectSwapConfirm") || "Are you sure you want to reject this swap?")) {
-      setSwapRequests((prev) =>
-        prev.map((req) => (req.id === requestId ? { ...req, status: "Rejected" } : req))
-      );
-      alert(t("swapRejected") || "Swap request rejected.");
-    }
+    // Immediately update status without a confirmation dialog
+    setSwapRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: "Rejected" } : req))
+    );
+    showNotification(t("swapRejected") || "Swap request rejected.", "error");
   };
 
   // Define messages for the Calendar toolbar
@@ -126,6 +138,13 @@ const ShiftSwapAdmin: React.FC = () => {
 
   return (
     <div className="shift-swap-admin-container container mt-4">
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`notification-toast ${notification.type} show`}>
+          {notification.message}
+        </div>
+      )}
+
       <h2 className="mb-4">{t("manageShiftSwapRequests") || "Manage Shift Swap Requests"}</h2>
 
       <div className="calendar-container mb-4">

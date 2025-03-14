@@ -72,6 +72,20 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
   const [message, setMessage] = useState("");
   const [view, setView] = useState(Views.WEEK);
 
+  // NEW: Notification state for toast messages
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  // Helper to show toast notification
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   // Filter available target shifts based on selected target employee
   const availableTargetShifts = shifts.filter(
     (shift) => shift.assignedEmployee === Number(selectedTargetEmployee)
@@ -84,7 +98,11 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
     const targetShift = shifts.find((shift) => shift.id === Number(selectedTargetShift));
 
     if (!ownShift || !targetShift || !selectedTargetEmployee) {
-      alert(t("selectRequiredFields") || "Please select your shift, target employee, and target shift.");
+      showNotification(
+        t("selectRequiredFields") ||
+          "Please select your shift, target employee, and target shift.",
+        "error"
+      );
       return;
     }
 
@@ -104,7 +122,7 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
     };
 
     setSwapRequests([...swapRequests, newRequest]);
-    alert(t("swapRequestSubmitted") || "Swap request submitted!");
+    showNotification(t("swapRequestSubmitted") || "Swap request submitted!", "success");
 
     setSelectedOwnShift("");
     setSelectedTargetEmployee("");
@@ -114,6 +132,13 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
 
   return (
     <div className="shift-swap-container">
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`notification-toast ${notification.type} show`}>
+          {notification.message}
+        </div>
+      )}
+
       <h2>{t("requestShiftSwap") || "Request a Shift Swap"}</h2>
       <div className="row">
         <div className="col-md-8">

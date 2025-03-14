@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,20 @@ public class ShiftProposalController {
         List<ShiftProposal> proposals = proposalService.getProposalsByEmployee(employeeId);
 
         return ResponseEntity.ok(proposals);
+    }
+
+    @PutMapping("/{proposalId}/update")
+    public ResponseEntity<ShiftProposal> updateProposal(@PathVariable Long proposalId, @RequestBody ShiftProposal updatedProposal) {
+        log.info(logHeader + "Employee updated proposal with id: " + proposalId);
+        ShiftProposal proposal = proposalService.updateProposal(proposalId, updatedProposal);
+        return ResponseEntity.ok(proposal);
+    }
+
+    @DeleteMapping("/{proposalId}/cancel")
+    public ResponseEntity<ShiftProposal> cancelProposal(@PathVariable Long proposalId) {
+        log.info(logHeader + "Employee cancelled proposal with id: " + proposalId);
+        ShiftProposal updatedProposal = proposalService.cancelProposal(proposalId);
+        return ResponseEntity.ok(updatedProposal);
     }
 
     // Manager retrieves all proposals
