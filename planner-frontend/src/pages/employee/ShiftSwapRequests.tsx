@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import "./ShiftSwapRequests.css";
 import { fetchAllSwapProposals } from "../../Services/api.ts";
 
-// Extend the AuthUser type with properties used in this component.
+// Extend the AuthUser type with additional properties used in this component.
 interface ExtendedAuthUser extends AuthUser {
   id: number;
   name: string;
@@ -22,40 +22,28 @@ export interface Shift {
   assignedEmployee: number;
 }
 
+// Updated SwapRequest interface without targetEmployee and message fields.
 export interface SwapRequest {
   id: number;
   employeeId: number;
   employeeName: string;
   ownShift: Shift;
-  targetEmployee: { id: number; name: string };
   targetShift: Shift;
-  message: string;
   status: "Pending" | "Approved" | "Rejected";
 }
-
-const defaultEmployees: { id: number; name: string }[] = [
-  // You can fetch employee data from your backend as well.
-];
 
 type CalendarView = "month" | "week" | "day" | "agenda";
 
 const localizer = momentLocalizer(moment);
 
-interface ShiftSwapRequestsProps {
-  dummyEmployees?: { id: number; name: string }[];
-}
-
-const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
-  dummyEmployees = defaultEmployees,
-}) => {
+const ShiftSwapRequests: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   // Cast or default to an ExtendedAuthUser type
   const currentUser: ExtendedAuthUser =
     (user as ExtendedAuthUser) || { id: 1, name: "John Doe", email: "", role: "" };
 
-  // Calendar localization
-  moment.locale(i18n.language);
+  // Set calendar messages based on translations.
   const messages = {
     today: t("calendarToday"),
     previous: t("calendarBack"),
@@ -66,15 +54,13 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
     agenda: t("agenda")
   };
 
-  // State for form selections and message
+  // State for form selections.
   const [selectedOwnShift, setSelectedOwnShift] = useState("");
-  const [selectedTargetEmployee, setSelectedTargetEmployee] = useState("");
   const [selectedTargetShift, setSelectedTargetShift] = useState("");
-  const [message, setMessage] = useState("");
   const [view, setView] = useState<CalendarView>(Views.WEEK as CalendarView);
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
 
-  // Load swap proposals from backend for the current user on mount
+  // Load swap proposals for the current user on mount.
   useEffect(() => {
     const loadUserSwapProposals = async () => {
       try {
@@ -90,11 +76,32 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
     loadUserSwapProposals();
   }, [currentUser.id]);
 
-  // For demonstration, assume an empty shifts array; in production, fetch from backend.
-  const shifts: Shift[] = [];
+  // For demonstration purposes, define a dummy shifts array.
+  // In production, you would fetch this list from your backend.
+  const shifts: Shift[] = [
+    {
+      id: 1,
+      title: "Morning Shift",
+      start: new Date("2025-02-26T08:00:00"),
+      end: new Date("2025-02-26T12:00:00"),
+      assignedEmployee: currentUser.id, // User’s own shift
+    },
+    {
+      id: 2,
+      title: "Evening Shift",
+      start: new Date("2025-02-26T14:00:00"),
+      end: new Date("2025-02-26T18:00:00"),
+      assignedEmployee: 2, // A target shift from another employee
+    },
+  ];
 
-  const availableTargetShifts = shifts.filter(
-    (shift) => shift.assignedEmployee === Number(selectedTargetEmployee)
+  // Filter shifts: "Your Shift" are those assigned to the current user;
+  // "Targeted Shift" are those NOT assigned to the current user.
+  const ownShifts = shifts.filter(
+    (shift) => shift.assignedEmployee === currentUser.id
+  );
+  const targetShifts = shifts.filter(
+    (shift) => shift.assignedEmployee !== currentUser.id
   );
 
   const handleSubmitSwapRequest = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,8 +109,8 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
     const ownShift = shifts.find((shift) => shift.id === Number(selectedOwnShift));
     const targetShift = shifts.find((shift) => shift.id === Number(selectedTargetShift));
 
-    if (!ownShift || !targetShift || !selectedTargetEmployee) {
-      alert(t("selectRequiredFields") || "Please select your shift, target employee, and target shift.");
+    if (!ownShift || !targetShift) {
+      alert(t("selectRequiredFields") || "Please select your shift and target shift.");
       return;
     }
 
@@ -111,27 +118,18 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
       employeeId: Number(currentUser.id),
       employeeName: currentUser.name,
       ownShift,
-      targetEmployee:
-        dummyEmployees.find((emp) => emp.id === Number(selectedTargetEmployee)) || {
-          id: 0,
-          name: t("unknownEmployee") || "Unknown"
-        },
       targetShift,
-      message,
       status: "Pending"
     };
 
-    // Simulate creating a new swap proposal locally (since proposeSwapProposal is not available)
     const newRequest: SwapRequest = { id: Date.now(), ...newRequestData };
 
-    // Optionally, you could also merge with proposals fetched from backend:
+    // Optionally, you could post this new request to your backend.
     setSwapRequests((prev) => [...prev, newRequest]);
     alert(t("swapRequestSubmitted") || "Swap request submitted!");
 
     setSelectedOwnShift("");
-    setSelectedTargetEmployee("");
     setSelectedTargetShift("");
-    setMessage("");
   };
 
   return (
@@ -162,60 +160,27 @@ const ShiftSwapRequests: React.FC<ShiftSwapRequestsProps> = ({
                 onChange={(e) => setSelectedOwnShift(e.target.value)}
               >
                 <option value="">{t("selectYourShift") || "-- Select Your Shift --"}</option>
-                {shifts
-                  .filter((shift) => shift.assignedEmployee === Number(currentUser.id))
-                  .map((shift) => (
-                    <option key={shift.id} value={shift.id}>
-                      {shift.title} ({moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
-                    </option>
-                  ))}
+                {ownShifts.map((shift) => (
+                  <option key={shift.id} value={shift.id}>
+                    {shift.title} ({moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
+                  </option>
+                ))}
               </select>
             </div>
             <div className="form-group">
-              <label>{t("targetEmployee") || "Target Employee:"}</label>
+              <label>{t("targetShift") || "Targeted Shift:"}</label>
               <select
                 className="form-select"
-                value={selectedTargetEmployee}
-                onChange={(e) => {
-                  setSelectedTargetEmployee(e.target.value);
-                  setSelectedTargetShift("");
-                }}
+                value={selectedTargetShift}
+                onChange={(e) => setSelectedTargetShift(e.target.value)}
               >
-                <option value="">{t("selectTargetEmployee") || "-- Select Target Employee --"}</option>
-                {dummyEmployees
-                  .filter((emp) => emp.id !== Number(currentUser.id))
-                  .map((emp) => (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.name}
-                    </option>
-                  ))}
+                <option value="">{t("selectTargetShift") || "-- Select Target Shift --"}</option>
+                {targetShifts.map((shift) => (
+                  <option key={shift.id} value={shift.id}>
+                    {shift.title} ({moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
+                  </option>
+                ))}
               </select>
-            </div>
-            {selectedTargetEmployee && (
-              <div className="form-group">
-                <label>{t("targetShift") || "Target Shift:"}</label>
-                <select
-                  className="form-select"
-                  value={selectedTargetShift}
-                  onChange={(e) => setSelectedTargetShift(e.target.value)}
-                >
-                  <option value="">{t("selectTargetShift") || "-- Select Target Shift --"}</option>
-                  {availableTargetShifts.map((shift) => (
-                    <option key={shift.id} value={shift.id}>
-                      {shift.title} ({moment(shift.start).format("HH:mm")} - {moment(shift.end).format("HH:mm")})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            <div className="form-group">
-              <label>{t("messageOptional") || "Message (optional):"}</label>
-              <textarea
-                className="form-control"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={t("enterMessage") || "Enter a message..."}
-              />
             </div>
             <button type="submit" className="btn btn-primary w-100">
               {t("submitSwapRequest") || "Submit Swap Request"}
