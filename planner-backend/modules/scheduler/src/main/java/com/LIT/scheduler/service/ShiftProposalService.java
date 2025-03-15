@@ -135,7 +135,7 @@ public class ShiftProposalService {
         log.info(logHeader + "Official shift created: " + newShift.getId() + " from " + newShift.getStartTime() + " to " + newShift.getEndTime() + ".");
 
         ShiftAssignment assignment = ShiftAssignment.builder()
-                .employeeId(proposal.getEmployeeId())
+                .userId(proposal.getEmployeeId())
                 .shift(newShift)
                 .status(com.LIT.scheduler.model.enums.AssignmentStatus.CONFIRMED)
                 .build();

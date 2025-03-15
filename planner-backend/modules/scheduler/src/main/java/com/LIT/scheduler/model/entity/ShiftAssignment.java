@@ -17,7 +17,7 @@ public class ShiftAssignment {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private Long employeeId;
+    private Long userId;
 
     @ManyToOne
     @JoinColumn(name = "shift_id", nullable = false)
