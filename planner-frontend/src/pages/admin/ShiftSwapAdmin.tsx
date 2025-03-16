@@ -17,21 +17,27 @@ export interface Shift {
   title: string;
   start: Date;
   end: Date;
-  assignedEmployee: number;
+  assignedEmployees: number[]; // now an array of candidate employee IDs
 }
 
 export interface SwapRequest {
   id: number;
   employeeId: number;
   employeeName: string;
-  ownShift: Shift;
-  targetEmployee: { id: number; name: string };
+  // ownShift may sometimes be missing; we'll synthesize one if needed.
+  ownShift?: Shift;
+  // Minimal fields available if ownShift is missing:
+  currentShiftId?: number;
+  proposedTitle?: string;
+  proposedStartTime?: string;
+  proposedEndTime?: string;
+  // targetEmployee is now optional; admin will select one if not provided.
+  targetEmployee?: { id: number; name: string };
   targetShift: Shift;
   message: string;
   status: "Pending" | "Approved" | "Rejected";
 }
 
-// Define a type for calendar view options
 type CalendarView = "month" | "week" | "day" | "agenda";
 
 const localizer = momentLocalizer(moment);
@@ -58,7 +64,7 @@ const ShiftSwapAdmin: React.FC = () => {
   // Load swap proposals from backend on mount and when refreshed
   const loadProposals = async () => {
     try {
-      const proposals = await fetchAllSwapProposals();
+      const proposals = (await fetchAllSwapProposals()) as SwapRequest[];
       setSwapRequests(proposals);
     } catch (error) {
       console.error("Error loading proposals:", error);
@@ -69,24 +75,42 @@ const ShiftSwapAdmin: React.FC = () => {
     loadProposals();
   }, []);
 
-  const calendarEvents = swapRequests.map((req) => ({
-    id: req.id,
-    title: `Req #${req.id} - ${req.status}`,
-    start: req.ownShift.start,
-    end: req.ownShift.end,
-    allDay: false,
-  }));
+  // Helper function to ensure we have a valid ownShift object
+  const getOwnShift = (req: SwapRequest): Shift => {
+    if (req.ownShift && req.ownShift.start && req.ownShift.end) {
+      return req.ownShift;
+    }
+    // If ownShift is missing, synthesize one using minimal fields
+    return {
+      id: req.currentShiftId || 0,
+      title: req.proposedTitle || t("unnamedShift"),
+      start: req.proposedStartTime ? new Date(req.proposedStartTime) : new Date(),
+      end: req.proposedEndTime ? new Date(req.proposedEndTime) : new Date(),
+      assignedEmployees: req.targetShift.assignedEmployees || []
+    };
+  };
 
+  // Map swap requests to calendar events.
+  const calendarEvents = swapRequests.map((req) => {
+    const ownShift = getOwnShift(req);
+    return {
+      id: req.id,
+      title: `Req #${req.id} - ${req.status}`,
+      start: ownShift.start,
+      end: ownShift.end,
+      allDay: false,
+    };
+  });
+
+  // In the approval handler, ensure a candidate is selected.
   const handleApprove = async (requestId: number) => {
-    const swapEmployeeInput = window.prompt(t("enterSwapEmployeeId") || "Enter swap employee ID:");
-    if (!swapEmployeeInput) return;
-    const swapEmployeeId = parseInt(swapEmployeeInput);
-    if (isNaN(swapEmployeeId)) {
-      showNotification(t("invalidEmployeeId") || "Invalid employee ID", "error");
+    const swapRequest = swapRequests.find(r => r.id === requestId);
+    if (!swapRequest?.targetEmployee) {
+      alert(t("selectCandidatePrompt") || "Please select a candidate for swap.");
       return;
     }
     try {
-      await approveSwapProposal(requestId.toString(), swapEmployeeId);
+      await approveSwapProposal(requestId.toString(), swapRequest.targetEmployee.id);
       await loadProposals();
       showNotification(t("swapApproved") || "Swap request approved.", "success");
     } catch (error) {
@@ -95,7 +119,10 @@ const ShiftSwapAdmin: React.FC = () => {
   };
 
   const handleReject = async (requestId: number) => {
-    const managerComment = window.prompt(t("enterManagerComment") || "Enter manager comment (optional):", "");
+    const managerComment = window.prompt(
+      t("enterManagerComment") || "Enter manager comment (optional):",
+      ""
+    );
     try {
       await declineSwapProposal(requestId.toString(), managerComment || "");
       await loadProposals();
@@ -155,43 +182,77 @@ const ShiftSwapAdmin: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {swapRequests.map((req) => (
-            <tr key={req.id} className={req.status === "Approved" ? "approved-row" : ""}>
-              <td>{req.id}</td>
-              <td>{req.employeeName}</td>
-              <td>
-                {req.ownShift.title} ({moment(req.ownShift.start).format("HH:mm")} -{" "}
-                {moment(req.ownShift.end).format("HH:mm")})
-              </td>
-              <td>{req.targetEmployee.name}</td>
-              <td>
-                {req.targetShift.title} ({moment(req.targetShift.start).format("HH:mm")} -{" "}
-                {moment(req.targetShift.end).format("HH:mm")})
-              </td>
-              <td>{req.message || "-"}</td>
-              <td>{req.status}</td>
-              <td>
-                {req.status === "Pending" ? (
-                  <div className="action-buttons">
-                    <button
-                      className="btn btn-sm btn-approve"
-                      onClick={() => handleApprove(req.id)}
+          {swapRequests.map((req) => {
+            const ownShift = getOwnShift(req);
+            return (
+              <tr key={req.id} className={req.status === "Approved" ? "approved-row" : ""}>
+                <td>{req.id}</td>
+                <td>{req.employeeName}</td>
+                <td>
+                  {ownShift.title} (
+                  {moment(ownShift.start).format("HH:mm")} -{" "}
+                  {moment(ownShift.end).format("HH:mm")})
+                </td>
+                <td>
+                  {req.targetEmployee ? (
+                    req.targetEmployee.name
+                  ) : (
+                    <select
+                      value={req.targetEmployee?.id || ""}
+                      onChange={(e) => {
+                        const selectedId = Number(e.target.value);
+                        // Update the targetEmployee property for this swap request in state
+                        setSwapRequests((prev: SwapRequest[]) =>
+                          prev.map((item: SwapRequest): SwapRequest =>
+                            item.id === req.id
+                              ? {
+                                  ...item,
+                                  targetEmployee: { id: selectedId, name: t("employee") + " #" + selectedId },
+                                }
+                              : item
+                          )
+                        );
+                      }}
                     >
-                      {t("approve") || "Approve"}
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleReject(req.id)}
-                    >
-                      {t("reject") || "Reject"}
-                    </button>
-                  </div>
-                ) : (
-                  <span>{req.status}</span>
-                )}
-              </td>
-            </tr>
-          ))}
+                      <option value="">{t("selectCandidate") || "Select Candidate"}</option>
+                      {req.targetShift.assignedEmployees.map((candidateId) => (
+                        <option key={candidateId} value={candidateId}>
+                          {t("employee")} #{candidateId}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </td>
+                <td>
+                  {req.targetShift.title} (
+                  {moment(req.targetShift.start).format("HH:mm")} -{" "}
+                  {moment(req.targetShift.end).format("HH:mm")})
+                </td>
+                <td>{req.message || "-"}</td>
+                <td>{req.status}</td>
+                <td>
+                  {req.status === "Pending" ? (
+                    <div className="action-buttons">
+                      <button
+                        className="btn btn-sm btn-approve"
+                        onClick={() => handleApprove(req.id)}
+                      >
+                        {t("approve") || "Approve"}
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleReject(req.id)}
+                      >
+                        {t("reject") || "Reject"}
+                      </button>
+                    </div>
+                  ) : (
+                    <span>{req.status}</span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

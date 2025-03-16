@@ -8,13 +8,13 @@ import { useAuth, AuthUser } from "../../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
 import "./ShiftSwapRequests.css";
 import {
-  fetchAllSwapProposals, // Example: if you have an API to get all swap proposals
-  fetchShifts            // Example: your API call that returns all shifts
+  fetchAllSwapProposals, // API to get all swap proposals
+  fetchShifts,           // API call that returns all shifts
+  requestSwapProposal    // New API function to persist swap requests
 } from "../../Services/api.ts";
 
 /** 
  * Extend your AuthUser type to match how you store user data.
- * If your user object already has an `id` or `name`, you may not need this.
  */
 interface ExtendedAuthUser extends AuthUser {
   id: number;
@@ -35,14 +35,17 @@ export interface Shift {
 }
 
 /**
- * Minimal SwapRequest interface (no message, no targetEmployee field).
+ * Minimal SwapRequest interface.
+ * Note: We removed ownShift and targetShift properties and will use the minimal fields.
  */
 export interface SwapRequest {
   id: number;
   employeeId: number;        // The user requesting the swap
-  employeeName: string;      // The user’s name
-  ownShift: Shift;           // The user’s chosen shift
-  targetShift: Shift;        // The shift they want to swap into
+  // For the API, we only need the following fields:
+  currentShiftId: number;    // The shift to swap out (own shift id)
+  proposedTitle: string;     // The title of the own shift
+  proposedStartTime: string; // ISO string of the target shift start time
+  proposedEndTime: string;   // ISO string of the target shift end time
   status: "Pending" | "Approved" | "Rejected";
 }
 
@@ -54,7 +57,7 @@ const ShiftSwapRequests: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
 
-  // Update: Extract current user id from either user.id or user.userId
+  // Extract current user details (using user.userId if available)
   const currentUser: ExtendedAuthUser =
     user && (user as any).userId
       ? {
@@ -70,7 +73,14 @@ const ShiftSwapRequests: React.FC = () => {
           role: "",
         };
 
-  // React-Big-Calendar i18n messages
+  // Debug logs
+  useEffect(() => {
+    console.log("Email:", currentUser.email);
+    console.log("Login.tsx:44 Role:", currentUser.role);
+    console.log("Login.tsx:45 Id:", currentUser.id);
+    console.log("Login.tsx:46 Token:", localStorage.getItem("token"));
+  }, [currentUser]);
+
   const messages = {
     today: t("calendarToday"),
     previous: t("calendarBack"),
@@ -98,7 +108,6 @@ const ShiftSwapRequests: React.FC = () => {
     return fetchedShifts.map((shift) => {
       const id = shift.id;
       const title = shift.title || t("unnamedShift");
-      // Use only the shiftOwnerId—if it's null or undefined, then this shift is not owned.
       const employeeId =
         shift.shiftOwnerId !== null && shift.shiftOwnerId !== undefined
           ? Number(shift.shiftOwnerId)
@@ -112,9 +121,7 @@ const ShiftSwapRequests: React.FC = () => {
     });
   };
 
-  /**
-   * Load all shifts from the backend on mount.
-   */
+  // Load all shifts on mount.
   useEffect(() => {
     const loadShifts = async () => {
       try {
@@ -133,15 +140,11 @@ const ShiftSwapRequests: React.FC = () => {
     loadShifts();
   }, []);
 
-  /**
-   * Load all swap proposals from the backend (if you have a separate endpoint).
-   * Filter only the proposals from the current user.
-   */
+  // Load swap proposals for the current user.
   useEffect(() => {
     const loadUserSwapProposals = async () => {
       try {
-        const proposals = await fetchAllSwapProposals(); // or your function name
-        // Filter proposals for the current user
+        const proposals = await fetchAllSwapProposals();
         const userProposals = proposals.filter(
           (req: SwapRequest) => req.employeeId === currentUser.id
         );
@@ -153,28 +156,20 @@ const ShiftSwapRequests: React.FC = () => {
     loadUserSwapProposals();
   }, [currentUser.id]);
 
-  /**
-   * Filter out only the shifts belonging to the current user.
-   */
+  // Filter out only the shifts belonging to the current user.
   const userShifts = shifts.filter(
     (shift) => shift.employeeId === currentUser.id
-  );  
-
-  // Log the filtered user shifts for debugging
+  );
   useEffect(() => {
     console.log("User shifts:", userShifts);
   }, [userShifts]);
 
-  /**
-   * Among the user’s shifts, only show future shifts for the "ownShift" selection.
-   */
+  // Among the user’s shifts, only show future shifts for "ownShift" selection.
   const ownShifts = userShifts.filter((shift) =>
     moment(shift.start).isAfter(moment(), "day")
   );
 
-  /**
-   * For the "targetShift" selection, we only show future shifts not assigned to the current user.
-   */
+  // For the "targetShift" selection, show future shifts not assigned to the current user.
   const targetShifts = shifts.filter(
     (shift) =>
       shift.employeeId !== currentUser.id &&
@@ -183,6 +178,14 @@ const ShiftSwapRequests: React.FC = () => {
 
   /**
    * Handle submitting a new swap request.
+   * The payload now matches the expected JSON format:
+   * {
+   *   "employeeId": currentUser.id,
+   *   "currentShiftId": ownShift.id,
+   *   "proposedTitle": ownShift.title,
+   *   "proposedStartTime": targetShift.start (ISO string),
+   *   "proposedEndTime": targetShift.end (ISO string)
+   * }
    */
   const handleSubmitSwapRequest = async (
     e: React.FormEvent<HTMLFormElement>
@@ -204,28 +207,28 @@ const ShiftSwapRequests: React.FC = () => {
       return;
     }
 
-    // Build the new request object
-    const newRequestData: Omit<SwapRequest, "id"> = {
+    // Build the new request object with the expected fields.
+    const newRequestData = {
       employeeId: currentUser.id,
-      employeeName: currentUser.name,
-      ownShift,
-      targetShift,
-      status: "Pending",
+      currentShiftId: ownShift.id,
+      proposedTitle: ownShift.title,
+      proposedStartTime: targetShift.start.toISOString(),
+      proposedEndTime: targetShift.end.toISOString(),
     };
 
-    const newRequest: SwapRequest = {
-      id: Date.now(),
-      ...newRequestData,
-    };
-
-    // Optionally POST this to your server here, e.g. await createSwapProposal(newRequest);
-    setSwapRequests((prev) => [...prev, newRequest]);
-
-    alert(t("swapRequestSubmitted") || "Swap request submitted!");
-
-    // Reset form fields
-    setSelectedOwnShift("");
-    setSelectedTargetShift("");
+    try {
+      const createdRequest: SwapRequest = await requestSwapProposal(newRequestData);
+      setSwapRequests((prev) => [...prev, createdRequest]);
+      alert(t("swapRequestSubmitted") || "Swap request submitted!");
+      setSelectedOwnShift("");
+      setSelectedTargetShift("");
+    } catch (error) {
+      console.error("Error creating swap proposal:", error);
+      alert(
+        t("errorSubmittingSwapRequest") ||
+          "There was an error submitting your swap request. Please try again."
+      );
+    }
   };
 
   return (
@@ -240,7 +243,6 @@ const ShiftSwapRequests: React.FC = () => {
             localizer={localizer}
             culture={i18n.language}
             messages={messages}
-            // Only display shifts for the current user:
             events={userShifts}
             startAccessor="start"
             endAccessor="end"
@@ -315,8 +317,9 @@ const ShiftSwapRequests: React.FC = () => {
                     {t("requestNumber") || "Request #"}
                     {req.id}
                   </strong>
-                  : {req.ownShift.title} {t("swapArrow") || "→"}{" "}
-                  {req.targetShift.title} (
+                  : {req.proposedTitle} {t("swapArrow") || "→"}{" "}
+                  {moment(req.proposedStartTime).format("HH:mm")} -{" "}
+                  {moment(req.proposedEndTime).format("HH:mm")} (
                   {t("status") || "Status"}: {req.status})
                 </li>
               ))}
