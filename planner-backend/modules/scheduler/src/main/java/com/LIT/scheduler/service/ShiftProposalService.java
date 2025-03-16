@@ -40,13 +40,19 @@ public class ShiftProposalService {
     }
 
     // Employee submits new shift proposal (now with conflict detection)
-    public ShiftProposal createProposal(ShiftProposal proposal, String role, String username) {
+    public ShiftProposal createProposal(ShiftProposal proposal, String role, String username, Long userId) {
         log.info(logHeader + "createProposal: Creating new shift proposal");
 
         // Check if there is a conflict with existing official assignments for this specific employee
         LocalDateTime proposedStart = proposal.getProposedStartTime();
 
         LocalDateTime proposedEnd = proposal.getProposedEndTime();
+
+
+        // Ensure userId matches the employeeId in the proposal
+        if (!userId.equals(proposal.getEmployeeId())) {
+            throw new IllegalArgumentException("User ID does not match the employee ID in the proposal.");
+        }
 
         log.info(logHeader + "Checking for conflicts with existing official assignments for employee: " + proposal.getEmployeeId() + " from: " + proposedStart + " to: " + proposedEnd);
                 
@@ -58,9 +64,13 @@ public class ShiftProposalService {
         } else {
             log.info(logHeader + "No conflicts detected for employee " + proposal.getEmployeeId() + " from " + proposedStart + " to " + proposedEnd + ". Proceeding with proposal creation.");
         }
+
+        String formattedRole = role.startsWith("ROLE_")
+                            ? role.substring("ROLE_".length())
+                            : role;
         
         proposal.setStatus(ShiftProposalStatus.PROPOSED);
-        proposal.setEmployeeRole(role);
+        proposal.setEmployeeRole(formattedRole);
         proposal.setEmployeeName(username);
 
         proposalRepository.save(proposal);
@@ -123,24 +133,26 @@ public class ShiftProposalService {
 
         // Convert proposal to an official shift and create an assignment.
         Shift newShift = Shift.builder()
+                .shiftOwnerId(proposal.getEmployeeId())
                 .title(proposal.getProposedTitle())
-                .startTime(proposal.getProposedStartTime())
-                .endTime(proposal.getProposedEndTime())
                 .shiftOwnerName(proposal.getEmployeeName())
                 .shiftOwnerRole(proposal.getEmployeeRole())
+                .startTime(proposal.getProposedStartTime())
+                .endTime(proposal.getProposedEndTime())
                 .build();
+                
         newShift = shiftRepository.save(newShift);
 
         log.info(logHeader + "Official shift created: " + newShift.getId() + " from " + newShift.getStartTime() + " to " + newShift.getEndTime() + ".");
 
-        ShiftAssignment assignment = ShiftAssignment.builder()
+        /*ShiftAssignment assignment = ShiftAssignment.builder()
                 .userId(proposal.getEmployeeId())
                 .shift(newShift)
                 .status(com.LIT.scheduler.model.enums.AssignmentStatus.CONFIRMED)
                 .build();
 
         assignmentService.assignShift(assignment);
-        log.info(logHeader + "Manager accepted proposal " + proposalId + ". Official shift " + newShift.getId() + " created for employee " + proposal.getEmployeeId() + ".");
+        log.info(logHeader + "Manager accepted proposal " + proposalId + ". Official shift " + newShift.getId() + " created for employee " + proposal.getEmployeeId() + ".");*/
 
         return proposalRepository.save(proposal);
     }

@@ -1,7 +1,5 @@
 package com.LIT.scheduler.service;
 
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import java.util.Objects;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.LIT.scheduler.model.entity.Shift;
 import com.LIT.scheduler.model.repository.ShiftRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
