@@ -41,7 +41,6 @@ export interface Shift {
 export interface SwapRequest {
   id: number;
   employeeId: number;        // The user requesting the swap
-  // For the API, we only need the following fields:
   currentShiftId: number;    // The shift to swap out (own shift id)
   proposedTitle: string;     // The title of the own shift
   proposedStartTime: string; // ISO string of the target shift start time
@@ -50,7 +49,6 @@ export interface SwapRequest {
 }
 
 type CalendarView = "month" | "week" | "day" | "agenda";
-
 const localizer = momentLocalizer(moment);
 
 const ShiftSwapRequests: React.FC = () => {
@@ -88,7 +86,7 @@ const ShiftSwapRequests: React.FC = () => {
     month: t("month"),
     week: t("week"),
     day: t("day"),
-    agenda: t("agenda"),
+    agenda: t("agenda")
   };
 
   // Form state for selecting shifts
@@ -169,11 +167,13 @@ const ShiftSwapRequests: React.FC = () => {
     moment(shift.start).isAfter(moment(), "day")
   );
 
-  // For the "targetShift" selection, show future shifts not assigned to the current user.
+  // For the "targetShift" selection, show future shifts not assigned to the current user
+  // and only those shifts that have the same role as the current user.
   const targetShifts = shifts.filter(
     (shift) =>
       shift.employeeId !== currentUser.id &&
-      moment(shift.start).isAfter(moment(), "day")
+      moment(shift.start).isAfter(moment(), "day") &&
+      shift.role.toLowerCase() === currentUser.role.toLowerCase()
   );
 
   /**
