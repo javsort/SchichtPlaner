@@ -33,7 +33,7 @@ export interface SwapRequest {
   proposedEndTime?: string;
   // targetEmployee is now optional; admin will select one if not provided.
   targetEmployee?: { id: number; name: string };
-  targetShift: Shift;
+  targetShift?: Shift;
   message: string;
   status: "Pending" | "Approved" | "Rejected";
 }
@@ -86,7 +86,7 @@ const ShiftSwapAdmin: React.FC = () => {
       title: req.proposedTitle || t("unnamedShift"),
       start: req.proposedStartTime ? new Date(req.proposedStartTime) : new Date(),
       end: req.proposedEndTime ? new Date(req.proposedEndTime) : new Date(),
-      assignedEmployees: req.targetShift.assignedEmployees || []
+      assignedEmployees: req.targetShift?.assignedEmployees || []
     };
   };
 
@@ -182,8 +182,10 @@ const ShiftSwapAdmin: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {swapRequests.map((req) => {
+          {swapRequests.map((req: SwapRequest) => {
             const ownShift = getOwnShift(req);
+            // Use optional chaining to safely access assignedEmployees.
+            const candidateIds: number[] = req.targetShift?.assignedEmployees || [];
             return (
               <tr key={req.id} className={req.status === "Approved" ? "approved-row" : ""}>
                 <td>{req.id}</td>
@@ -198,16 +200,20 @@ const ShiftSwapAdmin: React.FC = () => {
                     req.targetEmployee.name
                   ) : (
                     <select
-                      value={req.targetEmployee?.id || ""}
+                      // When targetEmployee is not set, use an empty string as value.
+                      value={""}
                       onChange={(e) => {
                         const selectedId = Number(e.target.value);
-                        // Update the targetEmployee property for this swap request in state
+                        // Update the targetEmployee property for this swap request in state.
                         setSwapRequests((prev: SwapRequest[]) =>
                           prev.map((item: SwapRequest): SwapRequest =>
                             item.id === req.id
                               ? {
                                   ...item,
-                                  targetEmployee: { id: selectedId, name: t("employee") + " #" + selectedId },
+                                  targetEmployee: {
+                                    id: selectedId,
+                                    name: t("employee") + " #" + selectedId,
+                                  },
                                 }
                               : item
                           )
@@ -215,7 +221,7 @@ const ShiftSwapAdmin: React.FC = () => {
                       }}
                     >
                       <option value="">{t("selectCandidate") || "Select Candidate"}</option>
-                      {req.targetShift.assignedEmployees.map((candidateId) => (
+                      {candidateIds.map((candidateId: number) => (
                         <option key={candidateId} value={candidateId}>
                           {t("employee")} #{candidateId}
                         </option>
@@ -224,9 +230,11 @@ const ShiftSwapAdmin: React.FC = () => {
                   )}
                 </td>
                 <td>
-                  {req.targetShift.title} (
-                  {moment(req.targetShift.start).format("HH:mm")} -{" "}
-                  {moment(req.targetShift.end).format("HH:mm")})
+                  {req.targetShift ? (
+                    `${req.targetShift.title} (${moment(req.targetShift.start).format("HH:mm")} - ${moment(req.targetShift.end).format("HH:mm")})`
+                  ) : (
+                    "-"
+                  )}
                 </td>
                 <td>{req.message || "-"}</td>
                 <td>{req.status}</td>
