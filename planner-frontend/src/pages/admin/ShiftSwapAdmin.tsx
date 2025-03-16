@@ -1,4 +1,5 @@
 // src/pages/ShiftSwapAdmin.tsx
+
 import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
@@ -36,7 +37,8 @@ export interface SwapRequest {
   targetEmployee?: { id: number; name: string };
   targetShift?: Shift;
   message: string;
-  status: "Pending" | "Approved" | "Rejected";
+  // Note: The backend now returns "PROPOSED", "ACCEPTED", or "REJECTED"
+  status: "PROPOSED" | "ACCEPTED" | "REJECTED";
 }
 
 type CalendarView = "month" | "week" | "day" | "agenda";
@@ -171,10 +173,6 @@ const ShiftSwapAdmin: React.FC = () => {
   };
 
   // Updated candidate list builder:
-  // If targetShift exists in the proposal with assignedEmployees, use that.
-  // Otherwise, if a proposedTitle is provided and is a string, find a shift in the loaded shifts
-  // whose title matches (ignoring case). If found and its assignedEmployees is empty,
-  // fall back to its employeeId.
   const buildCandidateList = (req: SwapRequest): number[] => {
     let candidateIds: number[] = [];
     if (req.targetShift && req.targetShift.assignedEmployees && req.targetShift.assignedEmployees.length > 0) {
@@ -187,7 +185,6 @@ const ShiftSwapAdmin: React.FC = () => {
         candidateIds = (targetShift.assignedEmployees && targetShift.assignedEmployees.length > 0)
           ? targetShift.assignedEmployees
           : [];
-        // Fallback: if still empty, use the shiftOwner (employeeId)
         if (candidateIds.length === 0 && targetShift.employeeId) {
           candidateIds = [targetShift.employeeId];
         }
@@ -238,9 +235,6 @@ const ShiftSwapAdmin: React.FC = () => {
             <th>{t("employee") || "Employee"}</th>
             <th>{t("yourShift") || "Your Shift"}</th>
             <th>{t("targetEmployee") || "Target Employee"}</th>
-            <th>{t("targetShift") || "Target Shift"}</th>
-            <th>{t("message") || "Message"}</th>
-            <th>{t("status") || "Status"}</th>
             <th>{t("actions") || "Actions"}</th>
           </tr>
         </thead>
@@ -249,7 +243,7 @@ const ShiftSwapAdmin: React.FC = () => {
             const ownShift = getOwnShift(req);
             const candidateIds = buildCandidateList(req);
             return (
-              <tr key={req.id} className={req.status === "Approved" ? "approved-row" : ""}>
+              <tr key={req.id} className={req.status !== "PROPOSED" ? "approved-row" : ""}>
                 <td>{req.id}</td>
                 <td>{getEmployeeName(req.employeeId)}</td>
                 <td>
@@ -292,21 +286,18 @@ const ShiftSwapAdmin: React.FC = () => {
                   )}
                 </td>
                 <td>
-                  {req.targetShift ? (
-                    `${req.targetShift.title} (${moment(req.targetShift.start).format("HH:mm")} - ${moment(req.targetShift.end).format("HH:mm")})`
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td>{req.message || "-"}</td>
-                <td>{req.status}</td>
-                <td>
-                  {req.status === "Pending" ? (
+                  {req.status === "PROPOSED" ? (
                     <div className="action-buttons">
-                      <button className="btn btn-sm btn-approve" onClick={() => handleApprove(req.id)}>
-                        {t("approve") || "Approve"}
+                      <button
+                        className="btn btn-sm btn-approve"
+                        onClick={() => handleApprove(req.id)}
+                      >
+                        {t("approve") || "Accept"}
                       </button>
-                      <button className="btn btn-sm btn-danger" onClick={() => handleReject(req.id)}>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleReject(req.id)}
+                      >
                         {t("reject") || "Reject"}
                       </button>
                     </div>
