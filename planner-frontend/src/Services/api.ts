@@ -202,15 +202,17 @@ export const proposeShift = async (
   status: string
 ) => {
   try {
+    const proposal = {
+      employeeId: employeeId,
+      proposedTitle: proposedTitle,
+      proposedStartTime: proposedStartTime,
+      proposedEndTime: proposedEndTime,
+      status: status
+    }
+
     const response = await axios.post(
       `${baseUrl}/api/scheduler/shift-proposals/create`,
-      {
-        employeeId: employeeId,
-        proposedTitle: proposedTitle,
-        proposedStartTime: proposedStartTime,
-        proposedEndTime: proposedEndTime,
-        status: status
-      },
+      proposal,
       {
         headers: {
           'Content-Type': 'application/json',
