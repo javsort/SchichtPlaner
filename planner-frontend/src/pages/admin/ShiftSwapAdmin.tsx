@@ -152,7 +152,6 @@ const ShiftSwapAdmin: React.FC = () => {
       alert(t("selectCandidatePrompt") || "Please select a candidate for swap.");
       return;
     }
-    // Log detailed information before calling API:
     console.log(
       "Approving swap for proposal",
       requestId,
@@ -160,7 +159,6 @@ const ShiftSwapAdmin: React.FC = () => {
       swapRequest.targetEmployee.id.toString()
     );
     try {
-      // Ensure both parameters are passed as strings
       await approveSwapProposal(requestId.toString(), swapRequest.targetEmployee.id.toString());
       await loadProposals();
       showNotification(t("swapApproved") || "Swap request approved.", "success");
@@ -260,39 +258,35 @@ const ShiftSwapAdmin: React.FC = () => {
                   {ownShift.title} ({moment(ownShift.start).format("HH:mm")} - {moment(ownShift.end).format("HH:mm")})
                 </td>
                 <td>
-                  {req.targetEmployee ? (
-                    req.targetEmployee.name
+                  {candidateIds.length > 0 ? (
+                    <select
+                      value={req.targetEmployee ? req.targetEmployee.id.toString() : ""}
+                      onChange={(e) => {
+                        const selectedId = Number(e.target.value);
+                        setSwapRequests((prev: SwapRequest[]) =>
+                          prev.map((item: SwapRequest): SwapRequest =>
+                            item.id === req.id
+                              ? {
+                                  ...item,
+                                  targetEmployee: {
+                                    id: selectedId,
+                                    name: getEmployeeName(selectedId),
+                                  },
+                                }
+                              : item
+                          )
+                        );
+                      }}
+                    >
+                      <option value="">{t("selectCandidate") || "Select Candidate"}</option>
+                      {candidateIds.map((candidateId: number) => (
+                        <option key={candidateId} value={candidateId}>
+                          {getEmployeeName(candidateId)}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
-                    candidateIds.length > 0 ? (
-                      <select
-                        value={(req.targetEmployee as { id: number; name: string } | undefined)?.id?.toString() || ""}
-                        onChange={(e) => {
-                          const selectedId = Number(e.target.value);
-                          setSwapRequests((prev: SwapRequest[]) =>
-                            prev.map((item: SwapRequest): SwapRequest =>
-                              item.id === req.id
-                                ? {
-                                    ...item,
-                                    targetEmployee: {
-                                      id: selectedId,
-                                      name: getEmployeeName(selectedId),
-                                    },
-                                  }
-                                : item
-                            )
-                          );
-                        }}
-                      >
-                        <option value="">{t("selectCandidate") || "Select Candidate"}</option>
-                        {candidateIds.map((candidateId: number) => (
-                          <option key={candidateId} value={candidateId}>
-                            {getEmployeeName(candidateId)}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span>{t("noEligibleCandidates") || "No eligible candidates"}</span>
-                    )
+                    <span>{t("noEligibleCandidates") || "No eligible candidates"}</span>
                   )}
                 </td>
                 <td>
