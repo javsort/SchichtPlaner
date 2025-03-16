@@ -37,7 +37,6 @@ export interface SwapRequest {
   targetEmployee?: { id: number; name: string };
   targetShift?: Shift;
   message: string;
-  // Note: The backend now returns "PROPOSED", "ACCEPTED", or "REJECTED"
   status: "PROPOSED" | "ACCEPTED" | "REJECTED";
 }
 
@@ -77,9 +76,10 @@ const ShiftSwapAdmin: React.FC = () => {
       const mapped: Shift[] = fetchedShifts.map((shift: any) => {
         const id = shift.id;
         const title = shift.title || t("unnamedShift");
-        const employeeId = shift.shiftOwnerId !== null && shift.shiftOwnerId !== undefined
-          ? Number(shift.shiftOwnerId)
-          : null;
+        const employeeId =
+          shift.shiftOwnerId !== null && shift.shiftOwnerId !== undefined
+            ? Number(shift.shiftOwnerId)
+            : null;
         const shiftOwner = shift.shiftOwnerName || t("unassigned");
         const role = shift.shiftOwnerRole || t("unassigned");
         const start = shift.startTime ? new Date(shift.startTime) : new Date();
@@ -152,11 +152,20 @@ const ShiftSwapAdmin: React.FC = () => {
       alert(t("selectCandidatePrompt") || "Please select a candidate for swap.");
       return;
     }
+    // Log detailed information before calling API:
+    console.log(
+      "Approving swap for proposal",
+      requestId,
+      "with target employee id",
+      swapRequest.targetEmployee.id.toString()
+    );
     try {
-      await approveSwapProposal(requestId.toString(), swapRequest.targetEmployee.id);
+      // Ensure both parameters are passed as strings
+      await approveSwapProposal(requestId.toString(), swapRequest.targetEmployee.id.toString());
       await loadProposals();
       showNotification(t("swapApproved") || "Swap request approved.", "success");
     } catch (error) {
+      console.error("Error in handleApprove:", error);
       showNotification(t("errorApprovingSwap") || "Error approving swap.", "error");
     }
   };
@@ -168,6 +177,7 @@ const ShiftSwapAdmin: React.FC = () => {
       await loadProposals();
       showNotification(t("swapRejected") || "Swap request rejected.", "error");
     } catch (error) {
+      console.error("Error in handleReject:", error);
       showNotification(t("errorRejectingSwap") || "Error rejecting swap.", "error");
     }
   };
@@ -255,7 +265,7 @@ const ShiftSwapAdmin: React.FC = () => {
                   ) : (
                     candidateIds.length > 0 ? (
                       <select
-                        value={""}
+                        value={(req.targetEmployee as { id: number; name: string } | undefined)?.id?.toString() || ""}
                         onChange={(e) => {
                           const selectedId = Number(e.target.value);
                           setSwapRequests((prev: SwapRequest[]) =>
@@ -291,6 +301,7 @@ const ShiftSwapAdmin: React.FC = () => {
                       <button
                         className="btn btn-sm btn-approve"
                         onClick={() => handleApprove(req.id)}
+                        disabled={!req.targetEmployee}
                       >
                         {t("approve") || "Accept"}
                       </button>
