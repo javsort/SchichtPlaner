@@ -211,7 +211,7 @@ const ShiftSwapRequests: React.FC = () => {
     const newRequestData = {
       employeeId: currentUser.id,
       currentShiftId: ownShift.id,
-      proposedTitle: ownShift.title,
+      proposedTitle: targetShift.title,
       proposedStartTime: targetShift.start.toISOString(),
       proposedEndTime: targetShift.end.toISOString(),
     };
