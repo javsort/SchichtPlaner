@@ -8,7 +8,7 @@ import { useAuth, AuthUser } from "../../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
 import "./ShiftSwapRequests.css";
 import {
-  fetchAllSwapProposals, // API to get all swap proposals
+  fetchAllSwapProposals, // API to get all swap proposalss
   fetchShifts,           // API call that returns all shifts
   requestSwapProposal    // New API function to persist swap requests
 } from "../../Services/api.ts";
