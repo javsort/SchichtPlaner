@@ -64,12 +64,18 @@ export const login = async (email: string, password: string) => {
       password: password
     });
 
-    const data = await response;
+    const data = await response.data;
 
-    localStorage.setItem('token', data.data.token);
-    localStorage.setItem('userId', data.data.userId);
+    const permissionsArray = data.permissions ? data.permissions.split(",") : [];
 
-    return { email: data.data.email, role: data.data.role, token: data.data.token, userId: data.data.userId };
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.userId);
+    localStorage.setItem('role', data.role);
+    localStorage.setItem('permissions', JSON.stringify(permissionsArray));
+
+    console.log('Logged in successfully! user:', data.email, 'role:', data.role, 'token:', data.token, 'userId:', data.userId, 'permissions:', permissionsArray);
+
+    return { email: data.email, role: data.role, token: data.token, userId: data.userId, permissions: permissionsArray };
 
   } catch (error) {
     console.error('Error logging in', error);
@@ -558,5 +564,114 @@ export const fetchAllSwapProposals = async () => {
   } catch (error) {
     console.error("Error fetching all swap proposals", error);
     return [];
+  }
+};
+
+/*
+ * Role admin stuff
+ */
+export const getRoles = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/auth/roles`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+    console.log('Roles fetched successfully', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+
+  }
+};
+
+export const getRolePermissions = async (roleId) => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/auth/roles/${roleId}/permissions`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      }
+    });
+    console.log('Role permissions fetched successfully', response.data);
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+
+  }
+};
+
+export const updateRole = async (roleId, permissions) => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}/api/auth/roles/${roleId}/permissions`,
+      permissions,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    );
+
+    console.log('Role updated successfully', response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+
+  }
+};
+
+export const createRole = async (role) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/auth/roles`,
+      role,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    );
+
+    console.log('Role created successfully', response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+
+  }
+};
+
+export const deleteRole = async (roleId) => {
+  try {
+    const response = await axios.delete(
+      `${baseUrl}/api/auth/roles/${roleId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        }
+      }
+    );
+
+    console.log('Role deleted successfully', response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error('Error with the request', error);
+    return [];
+
   }
 };

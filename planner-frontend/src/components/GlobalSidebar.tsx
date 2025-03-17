@@ -13,17 +13,18 @@ interface GlobalSidebarProps {
 interface NavItem {
   labelKey: string;
   path: string;
-  roles: string[];
+  permission: string;
 }
 
 const navItems: NavItem[] = [
-  { labelKey: "employeeManagement", path: "/employee-management", roles: ["Admin", "Shift-Supervisor"] },
-  { labelKey: "shiftApproval", path: "/shift-approval", roles: ["Admin", "Shift-Supervisor"] },
-  { labelKey: "Requests", path: "/shift-swap-admin", roles: ["Admin", "Shift-Supervisor"] },
-  { labelKey: "shiftManagement", path: "/shift-management", roles: ["Admin", "Shift-Supervisor"] },
-  { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "Calendar", path: "/shift-view", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] }
+  { labelKey: "employeeManagement", path: "/employee-management", permission: "EMPLOYEE_MANAGEMENT" },
+  { labelKey: "roleManagement", path: "/role-management", permission: "ROLE_MANAGEMENT" },
+  { labelKey: "shiftApproval", path: "/shift-approval", permission: "PROPOSAL_APPROVAL" },
+  { labelKey: "Requests", path: "/shift-swap-admin", permission: "SWAP_APPROVAL" },
+  { labelKey: "shiftManagement", path: "/shift-management", permission: "SHIFT_MANAGEMENT" },
+  { labelKey: "shiftAvailability", path: "/shift-availability", permission: "SHIFT_PROPOSAL" },
+  { labelKey: "Calendar", path: "/shift-view", permission: "CALENDAR_VIEW" },
+  { labelKey: "shiftSwap", path: "/shift-swap", permission: "SWAP_PROPOSAL" }
 ];
 
 const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
@@ -48,7 +49,7 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
 
   // Filter items based on user role
   const filteredNavItems = navItems.filter(
-    (item) => user && item.roles.includes(user.role)
+    (item) => user && user.permissions?.includes(item.permission)
   );
 
   return (
