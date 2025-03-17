@@ -455,4 +455,44 @@ export const supervisorDeleteShift = async (shiftId) => {
     throw error;
 
   }
+  
+};
+
+/*
+ * Employee Report stuff
+ */
+export const getEmployeeReportCSV = async (): Promise<string> => {
+  console.log('Fetching Employee CSV Report... URL:', `${baseUrl}/api/employee/reports/csv`);
+  try {
+    const response = await axios.get(`${baseUrl}/api/employee/reports/csv`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      },
+      responseType: 'text'
+    });
+    console.log('Employee CSV Report fetched successfully', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching Employee CSV Report:', error);
+    throw error;
+  }
+};
+
+export const getEmployeeReportExcel = async (): Promise<Blob> => {
+  console.log('Fetching Employee Excel Report... URL:', `${baseUrl}/api/employee/reports/excel`);
+  try {
+    const response = await axios.get(`${baseUrl}/api/employee/reports/excel`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      },
+      responseType: 'blob'
+    });
+    console.log('Employee Excel Report fetched successfully');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching Employee Excel Report:', error);
+    throw error;
+  }
 };

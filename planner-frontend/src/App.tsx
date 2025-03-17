@@ -22,10 +22,14 @@ import ShiftManagement from "./pages/admin/ShiftManagement.tsx";
 // Employee Pages
 import Shifts from "./pages/employee/Shifts.tsx";
 import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
-
 import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
 
+// Employee Report Page
+import EmployeeReport from "./pages/employee/EmployeeReport.tsx";
+
+// Global Layout for authenticated pages (includes GlobalSidebar and Header)
+import MainLayout from "./components/MainLayout.tsx";
 
 // Context & Private Route
 import { AuthProvider } from "./AuthContext.tsx";
@@ -33,9 +37,6 @@ import PrivateRoute from "./pages/PrivateRoute.tsx";
 
 // Ensure language load to avoid flicker
 import { useTranslation } from "react-i18next";
-
-// Global Layout for authenticated pages (includes GlobalSidebar and Header)
-import MainLayout from "./components/MainLayout.tsx";
 
 const App: React.FC = () => {
   const { i18n } = useTranslation();
@@ -46,7 +47,6 @@ const App: React.FC = () => {
     i18n.changeLanguage(storedLang).then(() => setLoading(false));
   }, []);
 
-  // Only render the app once the language has been loaded
   if (loading) return null;
 
   return (
@@ -56,7 +56,6 @@ const App: React.FC = () => {
           <title>My Shift Planner</title>
         </Helmet>
 
-        {/* Protected Routes Wrapped in MainLayout */}
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
@@ -64,14 +63,21 @@ const App: React.FC = () => {
           <Route path="/not-authorized" element={<NotAuthorized />} />
           <Route path="/my-shifts" element={<MyShifts />} />
 
-          <Route element={<PrivateRoute allowedRoles={[
-              "Admin",
-              "Shift-Supervisor",
-              "Technician",
-              "Tester",
-              "Incident-Manager",
-              "Extra Role",
-            ]} />}>
+          <Route
+            element={
+              <PrivateRoute
+                allowedRoles={[
+                  "Admin",
+                  "Shift-Supervisor",
+                  "Technician",
+                  "Tester",
+                  "Incident-Manager",
+                  "Extra Role",
+                  "Employee", // Added Employee role
+                ]}
+              />
+            }
+          >
             <Route element={<MainLayout />}>
               <Route path="employee-management" element={<EmployeeManagement />} />
               <Route path="shift-approval" element={<ShiftApprovalCalendar />} />
@@ -82,7 +88,7 @@ const App: React.FC = () => {
               <Route path="shift-availability" element={<ShiftAvailability />} />
               <Route path="shift-view" element={<CompanyShiftCalendar />} />
               <Route path="shift-swap" element={<ShiftSwapRequests />} />
-              
+              <Route path="employee-report" element={<EmployeeReport />} />
             </Route>
           </Route>
 

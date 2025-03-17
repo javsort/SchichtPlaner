@@ -23,7 +23,8 @@ const navItems: NavItem[] = [
   { labelKey: "shiftManagement", path: "/shift-management", roles: ["Admin", "Shift-Supervisor"] },
   { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
   { labelKey: "Calendar", path: "/shift-view", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] }
+  { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
+  { labelKey: "Employee Report", path: "/employee-report", roles: ["Admin", "Shift-Supervisor", "Employee"] },
 ];
 
 const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {

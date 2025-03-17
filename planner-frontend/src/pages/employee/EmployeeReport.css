@@ -1,0 +1,57 @@
+/* src/pages/EmployeeReport.css */
+.employee-report-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+  
+  .report-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+  }
+  
+  .notification-toast {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .notification-toast.success {
+    background-color: #69be28;
+    color: white;
+  }
+  
+  .notification-toast.error {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .btn-primary {
+    background-color: #4da8d6;
+    color: white;
+  }
+  
+  .btn-secondary {
+    background-color: #69be28;
+    color: white;
+  }
+  
