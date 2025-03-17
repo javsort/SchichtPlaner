@@ -11,6 +11,7 @@ interface AuthUser {
   userId: number;
   email: string;
   role: string;
+  permissions: string;
 }
 
 const useAuthTyped = () => {
@@ -39,13 +40,15 @@ const Login: React.FC = () => {
         const retEmail = loginInfo.email;
         const token = loginInfo.token;
         const userId = loginInfo.userId;
+        const permissions = Array.isArray(loginInfo.permissions) ? loginInfo.permissions : [];
         
         console.log('Email:', retEmail);
         console.log('Role:', retRole);
         console.log('Id:', userId);
         console.log("Token: '" +  token + "'");
+        console.log("Permissions: '" +  permissions + "'");
 
-        setUser({ email: retEmail, role: retRole, userId: userId });
+        setUser({ email: retEmail, role: retRole, userId: userId, permissions: permissions });
 
         // Instead of navigating based on role, always redirect to the Company Shift Calendar page.
         navigate("/shift-view");

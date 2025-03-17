@@ -3,11 +3,13 @@ package com.LIT.auth.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +45,21 @@ public class RoleController {
         log.info(logHeader + "getRoleById: Getting role by id: " + id);
         Optional<Role> role = roleService.getRoleById(id);
         return role.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/permissions")
+    public ResponseEntity<Role> updateRolePermissions(@PathVariable Long id, @RequestBody Set<String> permissions) {
+        log.info(logHeader + "updateRolePermissions: Updating role permissions by id: " + id);
+
+        Optional<Role> role = roleService.updateRolePermissions(id, permissions);
+
+        return role.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/permissions")
+    public Set<String> getAllPermissions() {
+        log.info(logHeader + "getAllPermissions: Getting all permissions");
+        return roleService.getAllPermissions();
     }
 
     @PostMapping

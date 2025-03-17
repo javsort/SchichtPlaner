@@ -14,6 +14,7 @@ import MyShifts from "./pages/MyShifts.tsx";
 
 // Protected UI Pages (Admin, Shift-Supervisor, etc.)
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
+import RoleManagement from "./pages/admin/RoleManagement.tsx";
 import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
 import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
 import CreateShift from "./pages/admin/ShiftCreationForm.tsx";
@@ -73,6 +74,7 @@ const App: React.FC = () => {
               "Extra Role",
             ]} />}>
             <Route element={<MainLayout />}>
+              <Route path="role-management" element={<RoleManagement />} />
               <Route path="employee-management" element={<EmployeeManagement />} />
               <Route path="shift-approval" element={<ShiftApprovalCalendar />} />
               <Route path="shift-swap-admin" element={<ShiftSwapAdmin />} />

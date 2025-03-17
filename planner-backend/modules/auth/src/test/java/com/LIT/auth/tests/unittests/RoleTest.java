@@ -10,7 +10,7 @@ public class RoleTest {
     //Verifies that object Role is definied
     @Test
     void testRoleCreation() {
-        Role role = new Role(1L, "ADMIN");
+        Role role = new Role(1L, "ADMIN", null);
         assertEquals(1L, role.getId());  // Direct comparison with primitive long
         assertEquals("ADMIN", role.getName());
     }
@@ -18,7 +18,7 @@ public class RoleTest {
     //Checks if setName works correctly
     @Test
     void testRoleModification() {
-        Role role = new Role(2L, "USER");
+        Role role = new Role(2L, "USER", null);
         role.setName("MODERATOR");
         assertEquals("MODERATOR", role.getName());
     }

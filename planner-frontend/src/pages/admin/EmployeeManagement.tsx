@@ -86,7 +86,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   };
 
   useEffect(() => {
-    if (user && user.role === "Admin") {
+    if (user && user.permissions.includes("EMPLOYEE_DELETE")) {
       setAllowDelete(true);
     } else {
       setAllowDelete(false);
@@ -402,7 +402,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
                   <button onClick={() => editEmployee(emp)}>
                     {t("edit") || "Edit"}
                   </button>
-                  {allowDelete && (
+                  {user?.permissions.includes("EMPLOYEE_DELETE") && (
                     <button onClick={() => deleteEmployee(emp.id)}>
                       {t("delete") || "Delete"}
                     </button>
