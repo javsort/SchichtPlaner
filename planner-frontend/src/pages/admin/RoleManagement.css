@@ -1,0 +1,77 @@
+.role-management-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.role-selection {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.role-name-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.role-name-container input {
+    width: 50%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.permissions-container {
+    margin-top: 20px;
+}
+
+.permissions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.permissions-table th,
+.permissions-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.permissions-table th {
+    background-color: #f4f4f4;
+}
+
+/* Centering Buttons */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.save-btn,
+.create-btn,
+.delete-btn {
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.create-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}

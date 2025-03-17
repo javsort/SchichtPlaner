@@ -55,11 +55,11 @@ public class AuthenticationService {
         //Create roles if none exist
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                Role.builder().name("Admin").build(),
-                Role.builder().name("Shift-Supervisor").build(),
-                Role.builder().name("Technician").build(),
-                Role.builder().name("Tester").build(),
-                Role.builder().name("Incident-Manager").build()
+                Role.builder().name("Admin").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "ROLE_MANAGEMENT", "EMPLOYEE_MANAGEMENT", "EMPLOYEE_DELETE", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL")).build(),
+                Role.builder().name("Shift-Supervisor").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "EMPLOYEE_MANAGEMENT", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL")).build(),
+                Role.builder().name("Technician").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build(),
+                Role.builder().name("Tester").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build(),
+                Role.builder().name("Incident-Manager").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build()
             ));
         }
 
@@ -169,6 +169,7 @@ public class AuthenticationService {
         User user = userOptional.get();
         //get the first one (this is assuming each user has AT LEAST one)
         String role = user.getRoles().iterator().next().getName();
+        String permissions = String.join(",", user.getRoles().iterator().next().getPermissions());
 
         log.info(logHeader + "login: User found. Generating token...");
 
@@ -180,6 +181,7 @@ public class AuthenticationService {
         toReturn.put("email", user.getEmail());
         toReturn.put("role", role);
         toReturn.put("userId", user.getId().toString());
+        toReturn.put("permissions", permissions);
 
         log.info(logHeader + "User " + user.getEmail() + " logged in successfully. Returnig token.");
 

@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.LIT.auth.model.entity.User;
 import com.LIT.auth.model.entity.Role;
@@ -20,12 +21,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    
+    private final PasswordEncoder passwordEncoder;
 
     private final String logHeader = "[UserService] - ";
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -66,9 +70,19 @@ public class UserService {
 
         log.info(logHeader + "saveUser: Saving user: " + user + "\n" + user.toString());
 
-        userRepository.save(user);
+        User toSave = User.builder()
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .password(passwordEncoder.encode(user.getPassword()))
+                .address(user.getAddress())
+                .phoneNum(user.getPhoneNum())
+                .googleId(user.getGoogleId())
+                .roles(user.getRoles())
+                .build();
 
-        Optional<User> exists = userRepository.findByEmail(user.getEmail());
+        userRepository.save(toSave);
+
+        Optional<User> exists = userRepository.findByEmail(toSave.getEmail());
         User toRet = exists.get();
 
         if(toRet != null) {
@@ -133,7 +147,7 @@ public class UserService {
         User user = User.builder()
                 .email(email)
                 .username(username)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .build();
 
         if (userRepository != null) {

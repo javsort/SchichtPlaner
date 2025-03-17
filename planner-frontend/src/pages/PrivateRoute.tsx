@@ -4,10 +4,10 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../AuthContext.tsx";
 
 interface PrivateRouteProps {
-  allowedRoles: string[];
+  requiredPermissions: string[];
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ requiredPermissions }) => {
   const { user } = useAuth();
 
   // If no user is logged in, redirect to login.
@@ -16,7 +16,11 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
   }
 
   // If the user's role is not allowed, redirect to the "Not Authorized" page.
-  if (!allowedRoles.includes(user.role)) {
+  const hasPermission = requiredPermissions.some((perm) =>
+    user.permissions.includes(perm)
+  );
+
+  if (!hasPermission) {
     return <Navigate to="/not-authorized" replace />;
   }
 
