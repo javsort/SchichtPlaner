@@ -158,7 +158,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         const newUser = {
           email: data.email,
           username: data.name,
-          password: "password_test", // Default password (consider making this configurable)
+          password: "password", // Default password (consider making this configurable)
           address: data.address,
           phoneNum: data.phone,
           googleId: "",
