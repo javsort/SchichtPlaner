@@ -492,7 +492,7 @@ export const approveSwapProposal = async (proposalId: string, swapEmployeeId: st
   console.log('Approving shiftSwapProposal with ID:', proposalId);
   try {
     const response = await axios.put(
-      `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/accept-change?swapEmployeeId=${swapEmployeeId}`,
+      `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/accept-change/${swapEmployeeId}`,
       {},
       {
         headers: {

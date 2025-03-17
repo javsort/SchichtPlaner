@@ -32,17 +32,19 @@ public class SwapProposalController {
     }
 
     // Manager accepts swap change request and specifies the swap employee id as a request parameter
-    @PutMapping("/{proposalId}/accept-change")
-    public ResponseEntity<SwapProposal> acceptShiftChange(@PathVariable Long proposalId, @RequestParam Long swapEmployeeId) {
+    @PutMapping("/{proposalId}/accept-change/{swapEmployeeId}")
+    public ResponseEntity<SwapProposal> acceptShiftChange(@PathVariable Long proposalId, @PathVariable Long swapEmployeeId) {
         log.info(logHeader + "acceptShiftChange: Manager accepting swap change for proposal " + proposalId + " with swap employee " + swapEmployeeId);
+        
         SwapProposal updatedProposal = proposalService.acceptShiftChange(proposalId, swapEmployeeId);
+        
         return ResponseEntity.ok(updatedProposal);
     }
 
     // Manager declines swap change request
     @PutMapping("/{proposalId}/decline-change")
     public ResponseEntity<SwapProposal> declineShiftChange(@PathVariable Long proposalId, @RequestBody(required = false) String managerComment) {
-        log.info(logHeader + "declineShiftChange: Manager declining swap change for proposal " + proposalId);
+            log.info(logHeader + "declineShiftChange: Manager declining swap change for proposal " + proposalId);
         SwapProposal updatedProposal = proposalService.declineShiftChange(proposalId, managerComment);
         return ResponseEntity.ok(updatedProposal);
     }
