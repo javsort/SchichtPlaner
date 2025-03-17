@@ -1,0 +1,4 @@
+To run the tests
+
+- cd SchichtPlaner/planner-backend/modules/scheduler
+- mvn clean test -Dtest="SwapProposalServiceTest"

@@ -23,13 +23,16 @@ public class SwapProposalService {
 
     private final SwapProposalRepository proposalRepository;
     private final ShiftAssignmentRepository assignmentRepository; // For conflict detection.
-    private final String logHeader = "[SwapProposalService] - ";
+    private final NotificationService notificationService;
+    private final String logHeader = "[ShiftProposalService] - ";
 
     @Autowired
     public SwapProposalService(SwapProposalRepository proposalRepository,
-                                ShiftAssignmentRepository assignmentRepository) {
+                                ShiftAssignmentRepository assignmentRepository,
+                                NotificationService notificationService) {
         this.proposalRepository = proposalRepository;
         this.assignmentRepository = assignmentRepository;
+        this.notificationService = notificationService;
     }
 
     // Employee submits new shift change request (with conflict detection)
@@ -114,6 +117,15 @@ public class SwapProposalService {
              throw new RuntimeException("Assignment for user " + proposal.getEmployeeId() + " and shift " + proposal.getCurrentShiftId() + " not found.");
         }
         ShiftAssignment assignmentA = optAssignmentA.get();
+
+        // **** Enhanced Check ****
+        // Ensure that the swap employee does NOT already have an assignment for the shift being swapped away from (Assignment A).
+        Optional<ShiftAssignment> duplicateAssignment = assignmentRepository.findByUserIdAndShiftId(swapEmployeeId, assignmentA.getShift().getId());
+        if (duplicateAssignment.isPresent()) {
+            String conflictMsg = "Swap conflict: Employee " + swapEmployeeId + " already has an assignment for shift " + assignmentA.getShift().getTitle();
+            log.error(logHeader + conflictMsg);
+            throw new ShiftConflictException(conflictMsg);
+        }
         
         // At this point, all conflict checks have passed.
         // Mark the proposal as accepted.
@@ -133,7 +145,12 @@ public class SwapProposalService {
                  " now has shift: " + assignmentA.getShift().getTitle() + ", and user " + swapEmployeeId +
                  " now has shift: " + assignmentB.getShift().getTitle());
         
-        // Save and return the updated proposal.
+        // Send email notification to the employee who initiated the swap.
+        notificationService.sendEmail(
+            getEmployeeEmail(proposal.getEmployeeId()),
+            "Shift Swap Accepted",
+            "Your shift swap request has been accepted. Your new shift is: " + assignmentA.getShift().getTitle()
+        );
         return proposalRepository.save(proposal);
     }
     
@@ -154,6 +171,12 @@ public class SwapProposalService {
         
         log.info(logHeader + "Manager declined proposal " + proposalId + " for employee " + proposal.getEmployeeId() + " with comment: " + managerComment);
         
+        notificationService.sendEmail(
+            getEmployeeEmail(proposal.getEmployeeId()),
+            "Shift Swap Declined",
+            "Your shift swap request has been declined. Manager comment: " + managerComment
+        );
+
         return proposalRepository.save(proposal);
     }
 
@@ -171,5 +194,12 @@ public class SwapProposalService {
         List<SwapProposal> proposals = proposalRepository.findAll();
         
         return proposals;
+    }
+
+    private String getEmployeeEmail(Long employeeId) {
+        return "eddie.pekaric@hotmail.com"; // Hardcoded as all of the mails are not real mails
+        //return userService.getUserById(employeeId)
+        //                  .map(User::getEmail)
+        //                  .orElse("eddie.pekaric@hotmail.com");
     }
 }
