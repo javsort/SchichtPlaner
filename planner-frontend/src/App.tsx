@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -24,11 +25,9 @@ import Shifts from "./pages/employee/Shifts.tsx";
 import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
 import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
-
-// Employee Report Page
 import EmployeeReport from "./pages/employee/EmployeeReport.tsx";
+import EmployeeICS from "./pages/employee/EmployeeICS.tsx";
 
-// Global Layout for authenticated pages (includes GlobalSidebar and Header)
 import MainLayout from "./components/MainLayout.tsx";
 
 // Context & Private Route
@@ -73,7 +72,7 @@ const App: React.FC = () => {
                   "Tester",
                   "Incident-Manager",
                   "Extra Role",
-                  "Employee", // Added Employee role
+                  "Employee",
                 ]}
               />
             }
@@ -89,6 +88,7 @@ const App: React.FC = () => {
               <Route path="shift-view" element={<CompanyShiftCalendar />} />
               <Route path="shift-swap" element={<ShiftSwapRequests />} />
               <Route path="employee-report" element={<EmployeeReport />} />
+              <Route path="employee-ics" element={<EmployeeICS />} />
             </Route>
           </Route>
 

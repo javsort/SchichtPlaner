@@ -496,3 +496,24 @@ export const getEmployeeReportExcel = async (): Promise<Blob> => {
     throw error;
   }
 };
+
+/*
+ * Employee ICS Report stuff
+ */
+export const getEmployeeReportICS = async (): Promise<string> => {
+  console.log('Fetching Employee ICS Report... URL:', `${baseUrl}/api/employee/reports/ics`);
+  try {
+    const response = await axios.get(`${baseUrl}/api/employee/reports/ics`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      },
+      responseType: 'text'
+    });
+    console.log('Employee ICS Report fetched successfully', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching Employee ICS Report:', error);
+    throw error;
+  }
+};

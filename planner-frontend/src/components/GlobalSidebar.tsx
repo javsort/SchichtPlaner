@@ -1,8 +1,9 @@
+// src/components/GlobalSidebar.tsx
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
-import { FiLogOut } from "react-icons/fi"; // Import the logout icon
+import { FiLogOut } from "react-icons/fi";
 import "./GlobalSidebar.css";
 
 interface GlobalSidebarProps {
@@ -24,7 +25,8 @@ const navItems: NavItem[] = [
   { labelKey: "shiftAvailability", path: "/shift-availability", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
   { labelKey: "Calendar", path: "/shift-view", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
   { labelKey: "shiftSwap", path: "/shift-swap", roles: ["Admin", "Shift-Supervisor", "Employee", "Tester", "Technician"] },
-  { labelKey: "Employee Report", path: "/employee-report", roles: ["Admin", "Shift-Supervisor", "Employee"] },
+  { labelKey: "employeeReport", path: "/employee-report", roles: ["Admin", "Shift-Supervisor", "Employee"] },
+  { labelKey: "employeeICS", path: "/employee-ics", roles: ["Admin", "Shift-Supervisor", "Employee"] },
 ];
 
 const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
@@ -37,9 +39,8 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Handle logout by clearing localStorage (or call your AuthContext logout function)
   const handleLogout = () => {
-    localStorage.removeItem("user"); // Or call your logout function
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("lang");
     localStorage.removeItem("userId");
@@ -47,7 +48,6 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Filter items based on user role
   const filteredNavItems = navItems.filter(
     (item) => user && item.roles.includes(user.role)
   );
@@ -64,7 +64,6 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
           </li>
         ))}
       </ul>
-      {/* Logout button placed at the bottom */}
       <div className="logout-container">
         <button className="logout-btn" onClick={handleLogout}>
           <span>
