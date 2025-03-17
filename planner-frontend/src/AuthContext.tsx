@@ -11,6 +11,7 @@ import React, {
 export interface AuthUser {
   email: string;
   role: string;
+  permissions: string;
 }
 
 // Define the context type.
@@ -30,14 +31,20 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const savedUser = localStorage.getItem("user");
-    return savedUser ? (JSON.parse(savedUser) as AuthUser) : null;
+    const savedPermissions = localStorage.getItem("permissions");
+
+    return savedUser
+      ? { ...(JSON.parse(savedUser) as AuthUser), permissions: savedPermissions ? JSON.parse(savedPermissions) : [] }
+      : null;
   });
 
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("permissions", JSON.stringify(user.permissions));
     } else {
       localStorage.removeItem("user");
+      localStorage.removeItem("permissions");
     }
   }, [user]);
 

@@ -14,6 +14,7 @@ import MyShifts from "./pages/MyShifts.tsx";
 
 // Protected UI Pages (Admin, Shift-Supervisor, etc.)
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
+import RoleManagement from "./pages/admin/RoleManagement.tsx";
 import ShiftApprovalCalendar from "./pages/admin/ShiftApprovalCalendar.tsx";
 import ShiftSwapAdmin from "./pages/admin/ShiftSwapAdmin.tsx";
 import CreateShift from "./pages/admin/ShiftCreationForm.tsx";
@@ -64,25 +65,53 @@ const App: React.FC = () => {
           <Route path="/not-authorized" element={<NotAuthorized />} />
           <Route path="/my-shifts" element={<MyShifts />} />
 
-          <Route element={<PrivateRoute allowedRoles={[
-              "Admin",
-              "Shift-Supervisor",
-              "Technician",
-              "Tester",
-              "Incident-Manager",
-              "Extra Role",
-            ]} />}>
+          {/* Protected Routes */}
+          <Route element={<PrivateRoute requiredPermissions={["EMPLOYEE_MANAGEMENT"]} />}>
             <Route element={<MainLayout />}>
               <Route path="employee-management" element={<EmployeeManagement />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["ROLE_MANAGEMENT"]} />}>
+            <Route element={<MainLayout />}>
+              <Route path="role-management" element={<RoleManagement />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["PROPOSAL_APPROVAL"]} />}>
+            <Route element={<MainLayout />}>
               <Route path="shift-approval" element={<ShiftApprovalCalendar />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["SWAP_APPROVAL"]} />}>
+            <Route element={<MainLayout />}>
               <Route path="shift-swap-admin" element={<ShiftSwapAdmin />} />
-              <Route path="create-shift" element={<CreateShift />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["SHIFT_MANAGEMENT"]} />}>
+            <Route element={<MainLayout />}>
               <Route path="shift-management" element={<ShiftManagement />} />
-              <Route path="shifts" element={<Shifts />} />
+              <Route path="create-shift" element={<CreateShift />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["SHIFT_PROPOSAL"]} />}>
+            <Route element={<MainLayout />}>
               <Route path="shift-availability" element={<ShiftAvailability />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["CALENDAR_VIEW"]} />}>
+            <Route element={<MainLayout />}>
               <Route path="shift-view" element={<CompanyShiftCalendar />} />
+            </Route>
+          </Route>
+
+          <Route element={<PrivateRoute requiredPermissions={["SWAP_PROPOSAL"]} />}>
+            <Route element={<MainLayout />}>
               <Route path="shift-swap" element={<ShiftSwapRequests />} />
-              
             </Route>
           </Route>
 

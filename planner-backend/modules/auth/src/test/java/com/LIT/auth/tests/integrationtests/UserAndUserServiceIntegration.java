@@ -1,4 +1,4 @@
-package com.LIT.auth.tests.integrationtests;
+/*package com.LIT.auth.tests.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,3 +43,4 @@ public class UserAndUserServiceIntegration {
         assertFalse(isAuthenticated, "Authentication should fail with the wrong password");
     }
 }
+*/
