@@ -20,7 +20,6 @@ export interface Shift {
   title: string;
   start: Date;
   end: Date;
-  assignedEmployees: number[];
   employeeId?: number | null;
   shiftOwner?: string;
   role?: string;
@@ -84,8 +83,7 @@ const ShiftSwapAdmin: React.FC = () => {
         const role = shift.shiftOwnerRole || t("unassigned");
         const start = shift.startTime ? new Date(shift.startTime) : new Date();
         const end = shift.endTime ? new Date(shift.endTime) : new Date();
-        const assignedEmployees = shift.assignedEmployees || [];
-        return { id, title, employeeId, shiftOwner, role, start, end, assignedEmployees };
+        return { id, title, employeeId, shiftOwner, role, start, end };
       });
       setShifts(mapped);
     } catch (error) {
@@ -118,14 +116,27 @@ const ShiftSwapAdmin: React.FC = () => {
     if (req.ownShift && req.ownShift.start && req.ownShift.end) {
       return req.ownShift;
     }
+  
+    // Find the shift from the loaded shifts
+    const matchedShift = shifts.find(shift => shift.id === req.currentShiftId);
+  
+    if (matchedShift) {
+      return matchedShift;
+    }
+  
+    // Fallback shift if none is found
     return {
       id: req.currentShiftId || 0,
       title: req.proposedTitle || t("unnamedShift"),
       start: req.proposedStartTime ? new Date(req.proposedStartTime) : new Date(),
       end: req.proposedEndTime ? new Date(req.proposedEndTime) : new Date(),
-      assignedEmployees: req.targetShift?.assignedEmployees || []
+      employeeId: req.employeeId || null,
+      shiftOwner: t("unassigned"),
+      role: t("unassigned"),
     };
   };
+  
+  
 
   // Helper: Look up employee name by ID.
   const getEmployeeName = (id: number): string => {
@@ -147,24 +158,59 @@ const ShiftSwapAdmin: React.FC = () => {
 
   // Approve and reject handlers.
   const handleApprove = async (requestId: number) => {
-    const swapRequest = swapRequests.find(r => r.id === requestId);
-    if (!swapRequest?.targetEmployee) {
-      alert(t("selectCandidatePrompt") || "Please select a candidate for swap.");
-      return;
-    }
-    console.log(
-      "Approving swap for proposal",
-      requestId,
-      "with target employee id",
-      swapRequest.targetEmployee.id.toString()
-    );
     try {
-      await approveSwapProposal(requestId.toString(), swapRequest.targetEmployee.id.toString());
-      await loadProposals();
-      showNotification(t("swapApproved") || "Swap request approved.", "success");
-    } catch (error) {
-      console.error("Error in handleApprove:", error);
-      showNotification(t("errorApprovingSwap") || "Error approving swap.", "error");
+      const swapRequest = swapRequests.find(r => r.id === requestId);
+      
+      if (!swapRequest) {
+        console.error(`Could not find swap request with ID ${requestId}`);
+        showNotification(t("errorApprovingSwap") || "Error: Swap request not found.", "error");
+        return;
+      }
+      
+      if (!swapRequest.targetEmployee) {
+        console.warn(`No target employee selected for swap request ${requestId}`);
+        showNotification(t("selectCandidatePrompt") || "Please select a candidate for swap.", "error");
+        return;
+      }
+      
+      console.log("Approving swap for proposal", requestId);
+      console.log("Target employee:", swapRequest.targetEmployee);
+      console.log("Own shift details:", getOwnShift(swapRequest));
+      
+      try {
+        // First, try to validate the target employee exists
+        const employeeExists = employees.some(emp => emp.id === swapRequest.targetEmployee!.id);
+        if (!employeeExists) {
+          console.error(`Target employee with ID ${swapRequest.targetEmployee.id} not found in available employees list`);
+          showNotification(t("errorApprovingSwap") || "Error: Target employee not found.", "error");
+          return;
+        }
+        
+        // Now call the API to approve the swap
+        await approveSwapProposal(
+          requestId.toString(), 
+          swapRequest.targetEmployee.id.toString()
+        );
+        
+        // If successful, reload proposals
+        await loadProposals();
+        showNotification(t("swapApproved") || "Swap request approved.", "success");
+      } catch (error: any) {
+        // Enhanced error reporting
+        console.error("Error in handleApprove:", error);
+        if (error.response) {
+          console.error("Response data:", error.response.data);
+          console.error("Response status:", error.response.status);
+        }
+        showNotification(
+          t("errorApprovingSwap") || 
+          `Error approving swap: ${error.response?.data?.message || error.message || "Unknown error"}`,
+          "error"
+        );
+      }
+    } catch (outerError) {
+      console.error("Unexpected error in handleApprove:", outerError);
+      showNotification(t("errorApprovingSwap") || "Unexpected error approving swap.", "error");
     }
   };
 
@@ -182,24 +228,21 @@ const ShiftSwapAdmin: React.FC = () => {
 
   // Updated candidate list builder:
   const buildCandidateList = (req: SwapRequest): number[] => {
-    let candidateIds: number[] = [];
-    if (req.targetShift && req.targetShift.assignedEmployees && req.targetShift.assignedEmployees.length > 0) {
-      candidateIds = req.targetShift.assignedEmployees;
-    } else if (typeof req.proposedTitle === "string") {
-      const targetShift = shifts.find(
-        (shift) => shift.title.toLowerCase() === req.proposedTitle!.toLowerCase()
-      );
-      if (targetShift) {
-        candidateIds = (targetShift.assignedEmployees && targetShift.assignedEmployees.length > 0)
-          ? targetShift.assignedEmployees
-          : [];
-        if (candidateIds.length === 0 && targetShift.employeeId) {
-          candidateIds = [targetShift.employeeId];
-        }
+    const candidateIds: number[] = [];
+  
+    const matchedShifts = shifts.filter(
+      shift => shift.title.trim().toLowerCase() === req.proposedTitle?.trim().toLowerCase()
+    );
+  
+    matchedShifts.forEach(shift => {
+      if (shift.employeeId && shift.employeeId !== req.employeeId) {
+        candidateIds.push(shift.employeeId);
       }
-    }
+    });
+  
     return candidateIds;
   };
+   
 
   // Define messages for the calendar toolbar.
   const messages = {

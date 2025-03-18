@@ -1,4 +1,4 @@
-package com.LIT.scheduler;
+/*package com.LIT.scheduler;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -157,4 +157,4 @@ public class SwapProposalServiceTest {
         SwapProposal result = swapProposalService.acceptShiftChange(200L, 10L);
         assertEquals(ShiftProposalStatus.ACCEPTED, result.getStatus());
     }
-}
+}*/

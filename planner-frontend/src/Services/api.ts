@@ -489,22 +489,36 @@ export const requestSwapProposal = async (proposal: any) => {
 };
 
 export const approveSwapProposal = async (proposalId: string, swapEmployeeId: string) => {
-  console.log('Approving shiftSwapProposal with ID:', proposalId);
+  console.log('Approving swap proposal with ID:', proposalId);
+  console.log('Target employee ID:', swapEmployeeId);
+  
+  // Ensure IDs are properly formatted
+  if (!proposalId || !swapEmployeeId) {
+    throw new Error('Missing required parameters: proposalId or swapEmployeeId');
+  }
+  
+  const token = localStorage.getItem('token') || '';
+  
   try {
     const response = await axios.put(
       `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/accept-change/${swapEmployeeId}`,
-      {},
+      {}, // Empty body as per the controller definition
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": localStorage.getItem("token") || "",
+          "Authorization": token,
         },
       }
     );
+    
     console.log("Swap proposal approved successfully", response.data);
     return response.data;
-  } catch (error) {
-    console.error("Error approving swap proposal", error);
+  } catch (error: any) {
+    console.error("Error approving swap proposal:", error);
+    if (error.response) {
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    }
     throw error;
   }
 };
