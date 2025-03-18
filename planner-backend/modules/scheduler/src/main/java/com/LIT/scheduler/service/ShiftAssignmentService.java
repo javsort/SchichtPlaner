@@ -83,7 +83,7 @@ public class ShiftAssignmentService {
     }
 
     private String getEmployeeEmail(Long employeeId) {
-        return "eddie.pekaric@hotmail.com";
+        return "pekaric.edi1@gmail.com";
         //return userService.getUserById(employeeId)
         //                  .map(User::getEmail)
         //                  .orElse("eddie.pekaric@hotmail.com");

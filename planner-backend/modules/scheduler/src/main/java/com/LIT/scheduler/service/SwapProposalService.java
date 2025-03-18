@@ -24,6 +24,7 @@ public class SwapProposalService {
     private final ShiftRepository shiftRepository;
     private final NotificationService notificationService;
     private final String logHeader = "[ShiftProposalService] - ";
+    
 
     @Autowired
     public SwapProposalService(SwapProposalRepository proposalRepository,
