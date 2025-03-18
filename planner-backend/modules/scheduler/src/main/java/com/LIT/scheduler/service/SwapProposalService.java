@@ -217,7 +217,7 @@ public class SwapProposalService {
     }
 
     private String getEmployeeEmail(Long employeeId) {
-        return "eddie.pekaric@hotmail.com"; // Hardcoded as all of the mails are not real mails
+        return "pekaric.edi1@gmail.com"; // Hardcoded as all of the mails are not real mails
         //return userService.getUserById(employeeId)
         //                  .map(User::getEmail)
         //                  .orElse("eddie.pekaric@hotmail.com");
