@@ -32,6 +32,16 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     if (email && password) {
+
+      // this is a new user, send to the register page
+      if (password === "password") {
+        console.log("New user detected, sending to register page...");
+        navigate("/register", { 
+          state: { email: email, tempPassword: password }
+        });
+        return;
+      }
+
       console.log('Logging in...', { email, password });
 
       try {
