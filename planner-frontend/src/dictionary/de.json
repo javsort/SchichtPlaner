@@ -187,7 +187,28 @@
   "confirmDelete": "Möchten Sie diese Rolle wirklich löschen?",
   "fillRequiredFields": "Bitte alle Pflichtfelder ausfüllen.",
   "rolePlaceholder": "Rollenname eingeben",
-  "roleUpdated": "Rolle erfolgreich aktualisiert!"
+  "roleUpdated": "Rolle erfolgreich aktualisiert!",
+  "Select Employee": "Mitarbeiter auswählen",
+  "Select an Employee": "Wählen Sie einen Mitarbeiter aus",
+  "id": "Benutzer-ID",
+  "Employee Id": "Mitarbeiter-ID",
+  "noEmployeesFound": "Keine Mitarbeiter gefunden",
+  "action": "Aktion",
+  "select role": "Rolle auswählen",
+  "monthLabel": "Monat:",
+  "yearLabel": "Jahr:",
+  "January": "Januar",
+  "February": "Februar",
+  "March": "März",
+  "April": "April",
+  "May": "Mai",
+  "June": "Juni",
+  "July": "Juli",
+  "August": "August",
+  "September": "September",
+  "October": "Oktober",
+  "November": "November",
+  "December": "Dezember"
   
   }
   

@@ -10,7 +10,7 @@
 
 /* Heading Styles */
 .shift-swap-admin-container h2 {
-  margin-top: 0;      /* Remove default top margin */
+  margin-top: 0;       /* Remove default top margin */
   margin-bottom: 20px; /* Slight space below heading */
   text-align: left;
   color: #2c3e50;
@@ -20,52 +20,43 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Keeps columns aligned */
+  /* Let columns size based on content/heading */
+  table-layout: auto; 
   margin-top: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
   overflow: hidden;
 }
 
+/* Optional: allow line wrapping inside cells */
 .table thead th,
 .table tbody td {
   border: 1px solid var(--card-border, #ddd);
   padding: 12px;
   text-align: left;
   vertical-align: top;
+  /* Enable multi-line wrapping if needed */
+  white-space: normal;  
+  word-wrap: break-word;
 }
 
-/* Example column widths (optional) */
+/* Remove fixed nth-child widths to let columns size naturally
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1) {
   width: 60px;
 }
-
 .table thead th:nth-child(2),
 .table tbody td:nth-child(2) {
   width: 120px;
 }
-
-.table thead th:nth-child(3),
-.table tbody td:nth-child(3) {
-  width: 150px;
-}
-
-.table thead th:nth-child(4),
-.table tbody td:nth-child(4) {
-  width: 120px;
-}
-
-.table thead th:nth-child(5),
-.table tbody td:nth-child(5) {
-  width: 150px;
-}
+... etc.
+*/
 
 /* CALENDAR CONTAINER */
 .calendar-container {
-  width: 100%;           /* Fill entire page width */
-  max-width: none;       /* Remove any max-width */
-  margin: 20px 0;        /* Vertical spacing */
+  width: 100%;
+  max-width: none;
+  margin: 20px 0;
   background-color: #fff;
   padding: 20px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -73,7 +64,7 @@
 
 .calendar-container .rbc-calendar {
   background-color: #fff;
-  height: 600px;         /* Adjust as needed */
+  height: 600px; /* Adjust as needed */
 }
 
 /* ACTION BUTTONS */
@@ -97,7 +88,7 @@
 .notification-toast {
   position: fixed;
   top: 20px;
-  right: -350px;  /* Start off-screen */
+  right: -350px; /* Start off-screen */
   width: 300px;
   padding: 15px 20px;
   border-radius: 4px;

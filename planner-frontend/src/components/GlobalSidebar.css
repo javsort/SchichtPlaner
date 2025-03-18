@@ -1,8 +1,9 @@
 .global-sidebar {
   position: fixed;
   top: 0;
-  left: -220px;
-  width: 220px;
+  left: -20vw;             /* Slide off-screen to the left (20% of viewport) */
+  width: 20vw;             /* 20% of viewport width */
+  max-width: 280px;        /* Cap the width on large screens */
   height: 100vh;
   background-color: #1b76a4;
   color: #ecf0f1;
@@ -15,7 +16,7 @@
 }
 
 .global-sidebar.open {
-  left: 0;
+  left: 0; /* Slide in */
 }
 
 .global-sidebar h3 {
@@ -67,4 +68,21 @@
 
 .logout-btn:hover {
   background-color: #6c94bc;
+}
+
+/* Flip the logout arrow to point outward */
+.logout-btn svg {
+  transform: scaleX(-1);
+  margin-right: 8px;
+}
+
+/* Example media query for smaller screens */
+@media (max-width: 768px) {
+  .global-sidebar {
+    width: 60vw;       /* or 70vw, etc. */
+    left: -60vw;
+  }
+  .global-sidebar.open {
+    left: 0;
+  }
 }
