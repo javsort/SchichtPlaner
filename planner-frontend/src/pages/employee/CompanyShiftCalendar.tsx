@@ -1,10 +1,11 @@
+// src/pages/employee/CompanyShiftCalendar.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CompanyShiftCalendar.css";
-import GlobalSidebar from "../../components/GlobalSidebar.tsx";
-import { fetchShifts } from "../../Services/api.ts";
+// Removed unused GlobalSidebar import
+import { fetchShifts, getAllUsers } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
 
 const localizer = momentLocalizer(moment);
@@ -17,6 +18,11 @@ interface Shift {
   assignedEmployees?: number[];
 }
 
+interface Employee {
+  id: number;
+  name: string;
+}
+
 interface CompanyShiftCalendarProps {
   currentUser?: { id: number; name: string };
 }
@@ -27,25 +33,47 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Removed sidebarOpen state as it's not used
   const [shifts, setShifts] = useState<Shift[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [view, setView] = useState(Views.WEEK);
   const [calendarFilter, setCalendarFilter] = useState("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadShifts = async () => {
-      const fetchedShifts = await fetchShifts();
-      const formattedShifts = fetchedShifts.map((shift: any) => ({
-        id: shift.id,
-        title: shift.title,
-        start: new Date(shift.startTime),
-        end: new Date(shift.endTime),
-        assignedEmployees: shift.assignedEmployees || [],
-      }));
-      setShifts(formattedShifts);
+      try {
+        const fetchedShifts = await fetchShifts();
+        const formattedShifts = fetchedShifts.map((shift: any) => ({
+          id: shift.id,
+          title: shift.title,
+          start: new Date(shift.startTime),
+          end: new Date(shift.endTime),
+          assignedEmployees: shift.assignedEmployees || [],
+        }));
+        setShifts(formattedShifts);
+      } catch (error) {
+        console.error("Error loading shifts:", error);
+      }
     };
     loadShifts();
+  }, []);
+
+  // Load employees from backend so that we can map assigned employee IDs to names
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        const fetchedUsers = await getAllUsers();
+        const employeeList = fetchedUsers.map((user: any) => ({
+          id: user.id,
+          name: user.username,
+        }));
+        setEmployees(employeeList);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    };
+    loadEmployees();
   }, []);
 
   const handleImportClick = () => {
@@ -76,7 +104,9 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     });
     return {
       ...shift,
-      title: `${shift.title} (${assignedNames.length ? assignedNames.join(", ") : t("unassigned") || "Unassigned"})`,
+      title: `${shift.title} (${
+        assignedNames.length ? assignedNames.join(", ") : t("unassigned") || "Unassigned"
+      })`,
     };
   });
 

@@ -10,7 +10,6 @@ import "./pages/general/global.css";
 import Login from "./pages/general/Login.tsx";
 import Register from "./pages/general/Register.tsx";
 import NotAuthorized from "./pages/general/NotAuthorized.tsx";
-import MyShifts from "./pages/MyShifts.tsx";
 
 // Protected UI Pages (Admin, Shift-Supervisor, etc.)
 import EmployeeManagement from "./pages/admin/EmployeeManagement.tsx";
@@ -21,12 +20,9 @@ import CreateShift from "./pages/admin/ShiftCreationForm.tsx";
 import ShiftManagement from "./pages/admin/ShiftManagement.tsx";
 
 // Employee Pages
-import Shifts from "./pages/employee/Shifts.tsx";
 import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
-
 import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
-
 
 // Context & Private Route
 import { AuthProvider } from "./AuthContext.tsx";
@@ -45,7 +41,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const storedLang = localStorage.getItem("lang") || "de";
     i18n.changeLanguage(storedLang).then(() => setLoading(false));
-  }, []);
+  }, [i18n]); // Added i18n to dependency array
 
   // Only render the app once the language has been loaded
   if (loading) return null;
@@ -63,8 +59,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/not-authorized" element={<NotAuthorized />} />
-          <Route path="/my-shifts" element={<MyShifts />} />
-
+     
           {/* Protected Routes */}
           <Route element={<PrivateRoute requiredPermissions={["EMPLOYEE_MANAGEMENT"]} />}>
             <Route element={<MainLayout />}>

@@ -4,7 +4,7 @@ import axios from 'axios';
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 // Test logicGate
-export const testLogicGate = async (): Promise<void> => {
+export const testLogicGate = async (): Promise<any> => {
   console.log('Testing logicGate API Endpoint... URL:', `${baseUrl}/api/hello`);
   try {
     const response = await axios.get(`${baseUrl}/api/hello`, {
@@ -21,7 +21,7 @@ export const testLogicGate = async (): Promise<void> => {
 };
 
 // Test scheduler
-export const testScheduler = async (): Promise<void> => {
+export const testScheduler = async (): Promise<any> => {
   console.log('Testing scheduler API Endpoint... URL:', `${baseUrl}/api/scheduler/assignments/test-jwt`);
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/assignments/test-jwt`, {
@@ -38,7 +38,7 @@ export const testScheduler = async (): Promise<void> => {
 };
 
 // Test auth
-export const testAuth = async (): Promise<void> => {
+export const testAuth = async (): Promise<any> => {
   console.log('Testing auth API Endpoint... URL:', `${baseUrl}/api/auth/test-jwt`);
   try {
     const response = await axios.get(`${baseUrl}/api/auth/test-jwt`, {
@@ -56,7 +56,7 @@ export const testAuth = async (): Promise<void> => {
 
 /*
  * User management stuff
-*/
+ */
 export const login = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${baseUrl}/api/auth/login`, {
@@ -64,7 +64,7 @@ export const login = async (email: string, password: string) => {
       password: password
     });
 
-    const data = await response.data;
+    const data = response.data;
 
     const permissionsArray = data.permissions ? data.permissions.split(",") : [];
 
@@ -79,7 +79,6 @@ export const login = async (email: string, password: string) => {
 
   } catch (error) {
     console.error('Error logging in', error);
-
   }
 };
 
@@ -88,42 +87,35 @@ export const getAllUsers = async () => {
     const response = await axios.get(`${baseUrl}/api/auth/users`, {
       headers: {
         'Content-Type': 'application/json',
-        // Provide a default empty string if no token is found
         'Authorization': localStorage.getItem('token') || ''
       }
     });
-
     console.log('Users fetched successfully!', response.data);
-
     return response.data;
-
   } catch (error) {
-    console.error('Error getting all users', error)
+    console.error('Error getting all users', error);
   }
-}
+};
 
 export const getAllRoles = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/auth/roles`, {
       headers: {
         'Content-Type': 'application/json',
-        // Provide a default empty string if no token is found
         'Authorization': localStorage.getItem('token') || ''
       }
     });
-
     console.log('Roles fetched successfully!: ', response.data);
-
     return response.data;
-
   } catch (error) {
-    console.error('Error retrieving roles: ', error)
+    console.error('Error retrieving roles: ', error);
   }
-}
+};
 
+// Updated createUser: Removed the unused "response" variable
 export const createUser = async (user) => {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${baseUrl}/api/auth/users`, 
       user,
       {
@@ -132,16 +124,17 @@ export const createUser = async (user) => {
           'Authorization': localStorage.getItem('token') || ''
         }
       }
-    )
-
+    );
+    console.log('User created successfully');
   } catch (error) {
-    console.error('Error creating user: ', error)
+    console.error('Error creating user: ', error);
   }
-}
+};
 
+// Updated updateUser: Removed the unused "response" variable
 export const updateUser = async (user) => {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${baseUrl}/api/auth/users/update`, 
       user,
       {
@@ -150,16 +143,17 @@ export const updateUser = async (user) => {
           'Authorization': localStorage.getItem('token') || ''
         }
       }
-    )
-
+    );
+    console.log('User updated successfully');
   } catch (error) {
-    console.error('Error creating user: ', error)
+    console.error('Error updating user: ', error);
   }
-}
+};
 
+// Updated deleteUser: Removed the unused "response" variable
 export const deleteUser = async (userId) => {
   try {
-    const response = await axios.delete(
+    await axios.delete(
       `${baseUrl}/api/auth/users/${userId}`,
       {
         headers: {
@@ -167,39 +161,35 @@ export const deleteUser = async (userId) => {
           'Authorization': localStorage.getItem('token') || ''
         }
       }
-    )
-
+    );
+    console.log('User deleted successfully');
   } catch (error) {
-    console.error('Error creating user: ', error)
+    console.error('Error deleting user: ', error);
   }
-}
+};
 
 /*
  * Shift stuff
-*/
+ */
 export const fetchShifts = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shifts`, {
       headers: {
         'Content-Type': 'application/json',
-        // Provide a default empty string if no token is found
         'Authorization': localStorage.getItem('token') || ''
       }
     });
-
     console.log('Shifts fetched successfully', response.data);
-
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
   }
-}
+};
 
 /*
  * Shift proposal stuff
-*/
+ */
 export const proposeShift = async (
   employeeId: number,
   proposedTitle: string,
@@ -214,8 +204,7 @@ export const proposeShift = async (
       proposedStartTime: proposedStartTime,
       proposedEndTime: proposedEndTime,
       status: status
-    }
-
+    };
     const response = await axios.post(
       `${baseUrl}/api/scheduler/shift-proposals/create`,
       proposal,
@@ -239,9 +228,7 @@ export const proposeShift = async (
 };
 
 export const fetchUserProposalShifts = async (empId) => {
-
   console.log('Fetching shifts for user: ', empId);
-
   try {
     const response = await axios.get(`${baseUrl}/api/scheduler/shift-proposals/employee/${empId}`, {
       headers: {
@@ -251,17 +238,14 @@ export const fetchUserProposalShifts = async (empId) => {
     });
     console.log('Shifts fetched successfully for user: ', empId, "Resp: ", response.data);
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
   }
-}
+};
 
 export const updateShiftProposal = async (propId, empId, proposal) => {
-
   console.log('Updating proposal shift for user: ', empId);
-
   try {
     const response = await axios.put(`${baseUrl}/api/scheduler/shift-proposals/${propId}/update`, 
       proposal,
@@ -270,21 +254,18 @@ export const updateShiftProposal = async (propId, empId, proposal) => {
           'Content-Type': 'application/json',
           'Authorization': localStorage.getItem('token') || ''
         }
-    });
-
+      }
+    );
     console.log('Shift proposal updated successfully for user: ', empId, "Resp: ", response.data);
     return response.data;
-    
   } catch (error) {
     console.error('Error with the request', error);
     return [];
   }
-}
+};
 
 export const deleteShiftProposal = async (propId, empId) => {
-
   console.log('Cancelling proposal shift for user: ', empId);
-
   try {
     const response = await axios.delete(`${baseUrl}/api/scheduler/shift-proposals/${propId}/cancel`, {
       headers: {
@@ -292,15 +273,13 @@ export const deleteShiftProposal = async (propId, empId) => {
         'Authorization': localStorage.getItem('token') || ''
       }
     });
-
     console.log('Shifts proposal deleted successfully for user: ', empId, "Resp: ", response.data);
     return response.data;
-    
   } catch (error) {
     console.error('Error with the request', error);
     return [];
   }
-}
+};
 
 export const fetchProposalShifts = async () => {
   try {
@@ -365,9 +344,7 @@ export const rejectShiftProposal = async (shiftId: string) => {
 };
 
 export const supervisorCreateShift = async (shift) => {
-
   console.log('Creating shift:', shift);
-  
   const shiftToCreate = {
     shiftOwnerId: shift.employeeId || null,
     title: shift.title,
@@ -376,7 +353,6 @@ export const supervisorCreateShift = async (shift) => {
     startTime: new Date(shift.start).toISOString(),
     endTime: new Date(shift.end).toISOString(),
   };
-
   try {
     const response = await axios.post(
       `${baseUrl}/api/scheduler/shifts/create`,
@@ -393,11 +369,9 @@ export const supervisorCreateShift = async (shift) => {
   } catch (error) {
     console.error('Error creating shift', error);
   }
-
 };
 
 export const supervisorUpdateShift = async (shiftId, shift) => {
-
   const shiftToUpdate = {
     shiftOwnerId: shift.employeeId || null,
     title: shift.title,
@@ -406,13 +380,9 @@ export const supervisorUpdateShift = async (shiftId, shift) => {
     startTime: new Date(shift.start).toISOString(),
     endTime: new Date(shift.end).toISOString(),
   };
-
   console.log('Updating shift with ID:', shiftId);
-  
   const token = localStorage.getItem('token') || '';
-  
   console.log('Updating shift with token:', token);
-  
   try {
     const response = await axios.put(
       `${baseUrl}/api/scheduler/shifts/${shiftId}`,
@@ -425,25 +395,17 @@ export const supervisorUpdateShift = async (shiftId, shift) => {
       }
     );
     console.log('Shift updated successfully', response.data);
-
     return response.data;
-  
   } catch (error: any) {
     console.error("Error updating shift:", error.response ? error.response.data : error);
     throw error;
-
   }
-
 };
 
 export const supervisorDeleteShift = async (shiftId) => {
-
   console.log('Deleting shift with ID:', shiftId);
-  
   const token = localStorage.getItem('token') || '';
-  
   console.log('Deleting shift with token:', token);
-  
   try {
     const response = await axios.delete(
       `${baseUrl}/api/scheduler/shifts/${shiftId}`,
@@ -455,13 +417,10 @@ export const supervisorDeleteShift = async (shiftId) => {
       }
     );
     console.log('Shift deleted successfully', response.data);
-
     return response.data;
-  
   } catch (error: any) {
     console.error("Error deleting shift:", error.response ? error.response.data : error);
     throw error;
-
   }
 };
 
@@ -477,13 +436,10 @@ export const getRoles = async () => {
       }
     });
     console.log('Roles fetched successfully', response.data);
-
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
-
   }
 };
 
@@ -496,13 +452,10 @@ export const getRolePermissions = async (roleId) => {
       }
     });
     console.log('Role permissions fetched successfully', response.data);
-
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
-
   }
 };
 
@@ -518,14 +471,11 @@ export const updateRole = async (roleId, permissions) => {
         }
       }
     );
-
     console.log('Role updated successfully', response.data);
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
-
   }
 };
 
@@ -541,14 +491,11 @@ export const createRole = async (role) => {
         }
       }
     );
-
     console.log('Role created successfully', response.data);
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
-
   }
 };
 
@@ -563,13 +510,10 @@ export const deleteRole = async (roleId) => {
         }
       }
     );
-
     console.log('Role deleted successfully', response.data);
     return response.data;
-
   } catch (error) {
     console.error('Error with the request', error);
     return [];
-
   }
 };

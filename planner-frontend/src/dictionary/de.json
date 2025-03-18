@@ -130,8 +130,68 @@
     "Requests": "Anfragen",
     "logout": "Abmelden",
     "myShiftProposals": "Meine Schichtvorschläge",
-  "noShiftProposalsYet": "Keine Schichtvorschläge vorhanden."
-
-
+  "noShiftProposalsYet": "Keine Schichtvorschläge vorhanden.",
+  
+    "roleManagement": "Rollenverwaltung",
+    "selectRole": "Rolle auswählen",
+    "createNewRole": "Neue Rolle erstellen",
+    "roleName": "Rollenname",
+    "rolePlaceholder": "Rollenname eingeben",
+    "permissions": "Berechtigungen",
+    "permission": "Berechtigung",
+    "description": "Beschreibung",
+    "enabled": "Aktiviert",
+    "save": "Änderungen speichern",
+    "delete": "Rolle löschen",
+    "confirmDelete": "Sind Sie sicher, dass Sie diese Rolle löschen möchten?",
+    "roleCreated": "Rolle erfolgreich erstellt!",
+    "roleUpdated": "Rolle erfolgreich aktualisiert!",
+    "roleDeleted": "Rolle erfolgreich gelöscht!",
+  
+    "ROLE_MANAGEMENT": "Rollen und Berechtigungen verwalten",
+    "EMPLOYEE_MANAGEMENT": "Mitarbeiterdetails und Zuweisungen verwalten",
+    "EMPLOYEE_DELETE": "Mitarbeiter aus dem System löschen",
+    "SHIFT_MANAGEMENT": "Schichten und Zeitpläne verwalten",
+    "PROPOSAL_APPROVAL": "Schichtvorschläge genehmigen oder ablehnen",
+    "SWAP_APPROVAL": "Schichttauschanfragen genehmigen oder ablehnen",
+    "SHIFT_PROPOSAL": "Schichttausche vorschlagen",
+    "SWAP_PROPOSAL": "Schichttausche anfordern",
+    "CALENDAR_VIEW": "Schichtkalender anzeigen",
+    "ROLE_MANAGEMENT": "Rollenverwaltung",
+  "ROLE_MANAGEMENT_DESC": "Rollen und Berechtigungen verwalten",
+  "EMPLOYEE_MANAGEMENT": "Mitarbeiterverwaltung",
+  "EMPLOYEE_MANAGEMENT_DESC": "Mitarbeiterdetails und Zuweisungen verwalten",
+  "EMPLOYEE_DELETE": "Mitarbeiter löschen",
+  "EMPLOYEE_DELETE_DESC": "Mitarbeiter aus dem System löschen",
+  "SHIFT_MANAGEMENT": "Schichtverwaltung",
+  "SHIFT_MANAGEMENT_DESC": "Schichten und Zeitpläne verwalten",
+  "PROPOSAL_APPROVAL": "Vorschlagsgenehmigung",
+  "PROPOSAL_APPROVAL_DESC": "Schichtvorschläge genehmigen oder ablehnen",
+  "SWAP_APPROVAL": "Schichttauschanfragen genehmigen",
+  "SWAP_APPROVAL_DESC": "Schichttauschanfragen genehmigen oder ablehnen",
+  "SHIFT_PROPOSAL": "Schichttausch vorschlagen",
+  "SHIFT_PROPOSAL_DESC": "Schichttausche vorschlagen",
+  "SWAP_PROPOSAL": "Schichttausch anfordern",
+  "SWAP_PROPOSAL_DESC": "Schichttausche anfordern",
+  "CALENDAR_VIEW": "Kalenderansicht",
+  "CALENDAR_VIEW_DESC": "Schichtkalender anzeigen",
+  "roleName": "Rollenname",
+  "selectRole": "Rolle auswählen",
+  "createNewRole": "Neue Rolle erstellen",
+  "delete": "Löschen",
+  "save": "Speichern",
+  "permissions": "Berechtigungen",
+  "permission": "Berechtigung",
+  "description": "Beschreibung",
+  "enabled": "Aktiviert",
+  "confirmDelete": "Möchten Sie diese Rolle wirklich löschen?",
+  "fillRequiredFields": "Bitte alle Pflichtfelder ausfüllen.",
+  "rolePlaceholder": "Rollenname eingeben",
+  "roleUpdated": "Rolle erfolgreich aktualisiert!"
+  
   }
+  
+
+
+  
   

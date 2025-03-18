@@ -1,5 +1,5 @@
 // src/pages/ShiftManagement.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/de";
@@ -16,17 +16,18 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const [shifts, setShifts] = useState([]);
   const [employees, setEmployees] = useState([]);
 
-  interface Shift {
-    id: number;
-    title: string;
-    employeeId: number | null;
-    shiftOwner: string;
-    role: string;
-    start: Date;
-    end: Date;
-  };
+  // Although this file is named .jsx, we include a type-like comment for Shift for clarity.
+  // interface Shift {
+  //   id: number;
+  //   title: string;
+  //   employeeId: number | null;
+  //   shiftOwner: string;
+  //   role: string;
+  //   start: Date;
+  //   end: Date;
+  // };
 
-  const mapShifts = (shifts): Shift[] => {
+  const mapShifts = (shifts) => {
     return shifts.map((shift) => ({
       id: shift.id,
       title: shift.title || t("unnamedShift"),
@@ -37,54 +38,49 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       end: new Date(shift.endTime),
     }));
   };
-  
-  const loadShifts = async () => {
+
+  // Wrap loadShifts in useCallback so that it can be safely used in useEffect
+  const loadShifts = useCallback(async () => {
     try {
       const fetchedShifts = await fetchShifts();
       if (!Array.isArray(fetchedShifts)) {
         console.error("Invalid API response:", fetchedShifts);
         return;
       }
-
       const formattedShifts = mapShifts(fetchedShifts);
-
       setShifts(formattedShifts);
-
     } catch (error) {
       console.error("Error fetching shifts:", error);
     }
-  };
+  }, [t]);
 
-  const loadEmployees = async () => {
+  // Similarly, wrap loadEmployees in useCallback
+  const loadEmployees = useCallback(async () => {
     try {
       const users = await getAllUsers();
       if (!Array.isArray(users)) {
         console.error("Invalid API response:", users);
         return;
       }
-
-      // Extract usernames for employees
       const employeeList = users.map(user => ({
         id: user.id,
         name: user.username,
         role: user.roles[0]?.name || t("unassigned") || "Unassigned"
       }));
-
       setEmployees(employeeList);
-
     } catch (error) {
       console.error("Error fetching employees:", error);
     }
-  }
+  }, [t]);
 
-  // Load shifts from the backend
+  // Load shifts and employees when the component mounts
   useEffect(() => {
     loadShifts();
     loadEmployees();
-  }, []);
+  }, [loadShifts, loadEmployees]);
 
   const [view, setView] = useState(Views.WEEK);
-  const [newShift, setNewShift] = useState<Shift>({
+  const [newShift, setNewShift] = useState({
     id: 0,
     title: "",
     employeeId: null,
@@ -96,7 +92,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingShiftId, setEditingShiftId] = useState(null);
 
-  const calendarEvents = shifts.map((shift: Shift) => ({
+  const calendarEvents = shifts.map((shift) => ({
     id: shift.id,
     title: `${shift.title} (${shift.shiftOwner})`,
     shiftOwner: shift.shiftOwner,
@@ -111,10 +107,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     let backgroundColor = "#3174ad";
     /*if (event.role.includes("Supervisor")) backgroundColor = "#2980b9";
     else if (event.role.includes("Technician")) backgroundColor = "#27ae60";*/
-
     return { style: { backgroundColor, borderRadius: "5px", color: "white" } };
   };
-
 
   const handleAddOrUpdateShift = async (e) => {
     e.preventDefault();
@@ -124,11 +118,9 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     }
 
     const startDate = new Date(newShift.start);
-    startDate.setDate(startDate.getDate());
     const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
 
     const endDate = new Date(newShift.end);
-    endDate.setDate(endDate.getDate());
     const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
 
     console.log(`Before offset: Start: ${startDate}, End: ${endDate}`);
@@ -138,30 +130,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       alert(t("endTimeAfterStart") || "End time must be after start time.");
       return;
     }
-    
-    // Fix pls
-    /* Check for conflicts
-    let conflictFound = false;
-    assignedEmployees.forEach((empId) => {
-      shifts.forEach((existingShift) => {
-        if (isEditing && existingShift.id === editingShiftId) return;
-        if (existingShift.assignedEmployees.includes(empId)) {
-          if (start < existingShift.end && existingShift.start < end) {
-            conflictFound = true;
-            alert(
-              t("conflictFound", {
-                empName: empId,
-                existingTitle: existingShift.title,
-              }) ||
-                `Conflict: Employee ${empId} already has an overlapping shift "${existingShift.title}".`
-            );
-          }
-        }
-      });
-    });
-    if (conflictFound) return; */
 
-    // If no conflicts, proceed to add or update
     if (startDate.toDateString() !== endDate.toDateString()) {
       alert(t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day.");
       return;
@@ -177,10 +146,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           employeeId: newShift.employeeId || null,
           shiftOwner: newShift.shiftOwner,
         });
-
         setIsEditing(false);
         setEditingShiftId(null);
-        
       } else {
         await supervisorCreateShift({
           title: newShift.title,
@@ -191,26 +158,30 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           shiftOwner: newShift.shiftOwner,
         });
       }
-
-      setNewShift({ id: 0, shiftOwner: "", title: "", start: new Date(), end: new Date(), role: "" , employeeId: null});
+      setNewShift({
+        id: 0,
+        shiftOwner: "",
+        title: "",
+        start: new Date(),
+        end: new Date(),
+        role: "",
+        employeeId: null
+      });
       await loadShifts();
     } catch (error) {
       console.error("Error adding/updating shift:", error);
     }
   };
-  
 
   const handleEditShift = (shift) => {
-    
     setNewShift({
       title: shift.title,
       start: moment(shift.start).format("YYYY-MM-DDTHH:mm"),
       end: moment(shift.end).format("YYYY-MM-DDTHH:mm"),
       role: shift.role,
-      employeeId: shift.employeeId ,
+      employeeId: shift.employeeId,
       shiftOwner: shift.shiftOwner,
     });
-
     setIsEditing(true);
     setEditingShiftId(shift.id);
   };
@@ -222,13 +193,12 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       )
     ) {
       try {
-        await supervisorDeleteShift(shiftId); 
+        await supervisorDeleteShift(shiftId);
         await loadShifts();
       } catch (error) {
         console.error("Error deleting shift:", error);
       }
     }
-
     loadShifts();
   };
 
@@ -245,7 +215,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
   const handleEmployeeChange = (e) => {
     const selectedEmployee = employees.find(emp => emp.id === parseInt(e.target.value, 10));
-  
     if (selectedEmployee) {
       setNewShift({
         ...newShift,
@@ -257,7 +226,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       setNewShift({
         ...newShift,
         employeeId: null,
-        shiftOwner: "", // Reset if no employee selected
+        shiftOwner: "",
         role: "Unassigned",
       });
     }
@@ -265,11 +234,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
   return (
     <div className="shift-management">
-      {/* Heading aligned left via CSS class */}
       <h2 className="page-header">{t("shiftManagement") || "Shift Management"}</h2>
-
       <div className="shift-management-top">
-        {/* Shift Creation / Edit Form */}
         <div className="shift-creation">
           <h3>
             {isEditing
@@ -279,25 +245,25 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           <form onSubmit={handleAddOrUpdateShift}>
             {!isEditing && (
               <>
-              <label>{t("selectEmployee") || "Select Employee"}:</label>
-              <select
-                value={newShift.employeeId || ""} // Ensure it selects the correct employee ID
-                onChange={handleEmployeeChange}
-                required
-              >
-                <option value="">{t("employee") || "Select Employee"}</option>
-                {employees.map((employee) => (
-                  <option key={employee.id} value={employee.id}>
-                    {employee.name}
-                  </option>
-                ))}
-              </select>
+                <label>{t("selectEmployee") || "Select Employee"}:</label>
+                <select
+                  value={newShift.employeeId || ""}
+                  onChange={handleEmployeeChange}
+                  required
+                >
+                  <option value="">{t("employee") || "Select Employee"}</option>
+                  {employees.map((employee) => (
+                    <option key={employee.id} value={employee.id}>
+                      {employee.name}
+                    </option>
+                  ))}
+                </select>
               </>
             )}
             {isEditing && (
               <>
-              <label>{t("employeeAssigned") || "Employee Assigned"}:</label>
-              <div className="employee-display">{newShift.shiftOwner}</div>
+                <label>{t("employeeAssigned") || "Employee Assigned"}:</label>
+                <div className="employee-display">{newShift.shiftOwner}</div>
               </>
             )}
             <div className="form-row">
@@ -306,19 +272,22 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 <input
                   type="text"
                   value={newShift.title}
-                  onChange={(e) => setNewShift({ ...newShift, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, title: e.target.value })
+                  }
                   required
                 />
               </div>
             </div>
-
             <div className="form-row">
               <div className="form-group">
                 <label>{t("startDateTime") || "Start Date & Time"}:</label>
                 <input
                   type="datetime-local"
                   value={newShift.start}
-                  onChange={(e) => setNewShift({ ...newShift, start: e.target.value })}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, start: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -327,21 +296,19 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 <input
                   type="datetime-local"
                   value={newShift.end}
-                  onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, end: e.target.value })
+                  }
                   required
                 />
               </div>
             </div>
-
             <div className="form-row">
               <div className="form-group">
-                <label>
-                  {t("role") || "Role"}:
-                </label>
+                <label>{t("role") || "Role"}:</label>
                 <div className="role-display">{newShift.role}</div>
               </div>
             </div>
-
             <div className="form-actions">
               <button type="submit">
                 {isEditing ? t("updateShift") || "Update Shift" : t("addShift") || "Add Shift"}
@@ -357,7 +324,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                       start: new Date(),
                       end: new Date(),
                       shiftOwner: "",
-                      role : "",
+                      role: "",
                       employeeId: null,
                     });
                   }}
@@ -368,8 +335,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             </div>
           </form>
         </div>
-
-        {/* Calendar Card */}
         <div className="calendar-card">
           <h3>{t("calendar") || "Calendar"}</h3>
           <Calendar
@@ -387,8 +352,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           />
         </div>
       </div>
-
-      {/* Shift Overview Table */}
       <div className="shift-overview">
         <h3>{t("shiftOverview") || "Shift Overview"}</h3>
         <table>
@@ -404,9 +367,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           <tbody>
             {shifts.map((shift) => (
               <tr key={shift.id}>
-                <td>
-                  {shift.shiftOwner || t("unassigned") || "Unassigned"}
-                </td>
+                <td>{shift.shiftOwner || t("unassigned") || "Unassigned"}</td>
                 <td>{moment(shift.start).format("YYYY-MM-DD")}</td>
                 <td>
                   {moment(shift.start).format("hh:mm A")} -{" "}

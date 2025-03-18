@@ -131,7 +131,33 @@
     "calendar": "Calendar", 
     "logout": "Logout",
     "myShiftProposals": "My Shift Proposals",
-  "noShiftProposalsYet": "No shift proposals yet."
+  "noShiftProposalsYet": "No shift proposals yet.",
+  "roleManagement": "Role Management",
+  "selectRole": "Select Role",
+  "createNewRole": "Create New Role",
+  "roleName": "Role Name",
+  "rolePlaceholder": "Enter role name",
+  "permissions": "Permissions",
+  "permission": "Permission",
+  "description": "Description",
+  "enabled": "Enabled",
+  "save": "Save Changes",
+  "delete": "Delete Role",
+  "confirmDelete": "Are you sure you want to delete this role?",
+  "roleCreated": "Role created successfully!",
+  "roleUpdated": "Role updated successfully!",
+  "roleDeleted": "Role deleted successfully!",
+  
+  "ROLE_MANAGEMENT": "Manage roles and permissions",
+  "EMPLOYEE_MANAGEMENT": "Manage employee details and assignments",
+  "EMPLOYEE_DELETE": "Delete employees from the system",
+  "SHIFT_MANAGEMENT": "Manage shifts and schedules",
+  "PROPOSAL_APPROVAL": "Approve or reject shift proposals",
+  "SWAP_APPROVAL": "Approve or reject shift swap requests",
+  "SHIFT_PROPOSAL": "Propose shift swaps",
+  "SWAP_PROPOSAL": "Request shift swaps",
+  "CALENDAR_VIEW": "View shift calendar"
+  
 
 
   }

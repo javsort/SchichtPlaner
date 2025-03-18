@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getRoles,
   updateRole,
@@ -7,27 +8,29 @@ import {
 } from "../../Services/api.ts";
 import "./RoleManagement.css";
 
-const PERMISSION_DESCRIPTIONS: { [key: string]: string } = {
-  ROLE_MANAGEMENT: "Manage roles and permissions.",
-  EMPLOYEE_MANAGEMENT: "Manage employee details and assignments.",
-  EMPLOYEE_DELETE: "Delete employees from the system.",
-  SHIFT_MANAGEMENT: "Manage shifts and schedules.",
-  PROPOSAL_APPROVAL: "Approve or reject shift proposals.",
-  SWAP_APPROVAL: "Approve or reject shift swap requests.",
-  SHIFT_PROPOSAL: "Propose shift swaps.",
-  SWAP_PROPOSAL: "Request shift swaps.",
-  CALENDAR_VIEW: "View shift calendar.",
-};
-
-const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS);
-
 const RoleManagement: React.FC = () => {
+  const { t } = useTranslation();
+
+  // Translated Permission Descriptions (INSIDE COMPONENT)
+  const PERMISSION_DESCRIPTIONS: { [key: string]: string } = {
+    ROLE_MANAGEMENT: t("ROLE_MANAGEMENT_DESC", "Manage roles and permissions."),
+    EMPLOYEE_MANAGEMENT: t("EMPLOYEE_MANAGEMENT_DESC", "Manage employee details and assignments."),
+    EMPLOYEE_DELETE: t("EMPLOYEE_DELETE_DESC", "Delete employees from the system."),
+    SHIFT_MANAGEMENT: t("SHIFT_MANAGEMENT_DESC", "Manage shifts and schedules."),
+    PROPOSAL_APPROVAL: t("PROPOSAL_APPROVAL_DESC", "Approve or reject shift proposals."),
+    SWAP_APPROVAL: t("SWAP_APPROVAL_DESC", "Approve or reject shift swap requests."),
+    SHIFT_PROPOSAL: t("SHIFT_PROPOSAL_DESC", "Propose shift swaps."),
+    SWAP_PROPOSAL: t("SWAP_PROPOSAL_DESC", "Request shift swaps."),
+    CALENDAR_VIEW: t("CALENDAR_VIEW_DESC", "View shift calendar."),
+  };
+
+  const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS); // no unused warning now
+
   const [roles, setRoles] = useState<{ id: number; name: string; permissions: string[] }[]>([]);
   const [selectedRole, setSelectedRole] = useState<number | null>(null);
   const [roleName, setRoleName] = useState("");
   const [permissions, setPermissions] = useState<string[]>([]);
 
-  // Fetch all roles on component mount
   useEffect(() => {
     fetchRoles();
   }, []);
@@ -37,7 +40,6 @@ const RoleManagement: React.FC = () => {
     setRoles(rolesData);
   };
 
-  // Handle role selection OR start new role creation
   const handleRoleChange = (roleId: string) => {
     if (roleId === "new") {
       setSelectedRole(null);
@@ -52,7 +54,6 @@ const RoleManagement: React.FC = () => {
     }
   };
 
-  // Handle permission toggle
   const togglePermission = (permission: string) => {
     setPermissions((prevPermissions) =>
       prevPermissions.includes(permission)
@@ -61,27 +62,26 @@ const RoleManagement: React.FC = () => {
     );
   };
 
-  // Update role permissions
   const handleUpdatePermissions = async () => {
     if (selectedRole === null) return;
     await updateRole(selectedRole, permissions);
-    alert("Permissions updated successfully!");
+    alert(t("roleUpdated", "Permissions updated successfully!"));
     fetchRoles();
   };
 
-  // Create a new role
   const handleCreateRole = async () => {
-    if (!roleName.trim()) return alert("Enter a valid role name.");
+    if (!roleName.trim()) return alert(t("fillRequiredFields", "Please fill out all required fields."));
     await createRole({ name: roleName, permissions });
+    alert(t("roleCreated", "Role created successfully!"));
     setRoleName("");
     setPermissions([]);
     fetchRoles();
   };
 
-  // Delete selected role
   const handleDeleteRole = async () => {
-    if (!selectedRole || !window.confirm("Are you sure you want to delete this role?")) return;
+    if (!selectedRole || !window.confirm(t("confirmDelete", "Are you sure you want to delete this role?"))) return;
     await deleteRole(selectedRole);
+    alert(t("roleDeleted", "Role deleted successfully!"));
     fetchRoles();
     setSelectedRole(null);
     setRoleName("");
@@ -90,13 +90,12 @@ const RoleManagement: React.FC = () => {
 
   return (
     <div className="role-management-container">
-      <h2>Role Management</h2>
+      <h2>{t("roleManagement", "Role Management")}</h2>
 
-      {/* Role Selection or Create New */}
       <div className="role-selection">
-        <label>Select Role:</label>
+        <label>{t("selectRole", "Select Role")}:</label>
         <select onChange={(e) => handleRoleChange(e.target.value)} value={selectedRole ?? "new"}>
-          <option value="new">-- Create New Role --</option>
+          <option value="new">{t("createNewRole", "-- Create New Role --")}</option>
           {roles.map((role) => (
             <option key={role.id} value={role.id}>
               {role.name}
@@ -105,31 +104,29 @@ const RoleManagement: React.FC = () => {
         </select>
         {selectedRole && (
           <button className="delete-btn" onClick={handleDeleteRole}>
-            Delete Role
+            {t("delete", "Delete Role")}
           </button>
         )}
       </div>
 
-      {/* Role Name Input */}
       <div className="role-name-container">
-        <label>Role Name:</label>
+        <label>{t("roleName", "Role Name")}:</label>
         <input
           type="text"
-          placeholder="Enter role name"
+          placeholder={t("rolePlaceholder", "Enter role name")}
           value={roleName}
           onChange={(e) => setRoleName(e.target.value)}
         />
       </div>
 
-      {/* Permissions Table */}
       <div className="permissions-container">
-        <h3>Permissions</h3>
+        <h3>{t("permissions", "Permissions")}</h3>
         <table className="permissions-table">
           <thead>
             <tr>
-              <th>Permission</th>
-              <th>Description</th>
-              <th>Enabled</th>
+              <th>{t("permission", "Permission")}</th>
+              <th>{t("description", "Description")}</th>
+              <th>{t("enabled", "Enabled")}</th>
             </tr>
           </thead>
           <tbody>
@@ -149,15 +146,15 @@ const RoleManagement: React.FC = () => {
           </tbody>
         </table>
         <div className="button-container">
-        {selectedRole === null ? (
+          {selectedRole === null ? (
             <button className="create-btn" onClick={handleCreateRole}>
-            Create Role
+              {t("createNewRole", "Create Role")}
             </button>
-        ) : (
+          ) : (
             <button className="save-btn" onClick={handleUpdatePermissions}>
-            Save Changes
+              {t("save", "Save Changes")}
             </button>
-        )}
+          )}
         </div>
       </div>
     </div>

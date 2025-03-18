@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
-import { FiLogOut } from "react-icons/fi"; // Import the logout icon
+import { FiLogOut } from "react-icons/fi"; // ✅ Corrected icon import
 import "./GlobalSidebar.css";
 
 interface GlobalSidebarProps {
@@ -17,8 +17,8 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { labelKey: "employeeManagement", path: "/employee-management", permission: "EMPLOYEE_MANAGEMENT" },
   { labelKey: "roleManagement", path: "/role-management", permission: "ROLE_MANAGEMENT" },
+  { labelKey: "employeeManagement", path: "/employee-management", permission: "EMPLOYEE_MANAGEMENT" },
   { labelKey: "shiftApproval", path: "/shift-approval", permission: "PROPOSAL_APPROVAL" },
   { labelKey: "Requests", path: "/shift-swap-admin", permission: "SWAP_APPROVAL" },
   { labelKey: "shiftManagement", path: "/shift-management", permission: "SHIFT_MANAGEMENT" },
@@ -37,9 +37,8 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Handle logout by clearing localStorage (or call your AuthContext logout function)
   const handleLogout = () => {
-    localStorage.removeItem("user"); // Or call your logout function
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("lang");
     localStorage.removeItem("userId");
@@ -47,7 +46,6 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Filter items based on user role
   const filteredNavItems = navItems.filter(
     (item) => user && user.permissions?.includes(item.permission)
   );
@@ -64,11 +62,10 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
           </li>
         ))}
       </ul>
-      {/* Logout button placed at the bottom */}
       <div className="logout-container">
         <button className="logout-btn" onClick={handleLogout}>
           <span>
-            <FiLogOut style={{ marginRight: "8px" }} />
+            <FiLogOut style={{ marginRight: "8px" }} /> {/* ✅ Corrected Icon */}
           </span>
           {typeof t("logout") === "string" ? t("logout") : "Logout"}
         </button>

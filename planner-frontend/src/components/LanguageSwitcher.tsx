@@ -1,5 +1,5 @@
 // src/components/LanguageSwitcher.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 const LanguageSwitcher: React.FC = () => {
@@ -12,7 +12,7 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <select value={i18n.language} onChange={handleChange} margin-right="50px">
+    <select value={i18n.language} onChange={handleChange} style={{ marginRight: "50px" }}>
       <option value="en">English</option>
       <option value="de">Deutsch</option>
     </select>

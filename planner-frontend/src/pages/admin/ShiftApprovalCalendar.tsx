@@ -1,5 +1,5 @@
 // src/pages/ShiftApprovalCalendar.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/de";
@@ -28,7 +28,7 @@ const ShiftApprovalCalendar = () => {
   const [view, setView] = useState(Views.WEEK);
 
   // Function to fetch all shifts (approved + proposed)
-  const getAllShifts = async () => {
+  const getAllShifts = useCallback(async () => {
     setLoadingShifts(true);
     try {
       const fetchedShifts = await fetchShifts();
@@ -49,9 +49,9 @@ const ShiftApprovalCalendar = () => {
       console.error(t("errorFetchingShifts") || "Error fetching shifts:", error);
     }
     setLoadingShifts(false);
-  };
+  }, [t]);
 
-  const getPendingShifts = async () => {
+  const getPendingShifts = useCallback(async () => {
     setLoadingPending(true);
     try {
       const fetchedPendingShifts = await fetchProposalShifts();
@@ -74,13 +74,13 @@ const ShiftApprovalCalendar = () => {
       console.error(t("errorFetchingPending") || "Error fetching pending shifts:", error);
     }
     setLoadingPending(false);
-  };
+  }, [t]);
 
   // Fetch all shifts and pending shifts on component mount
   useEffect(() => {
     getAllShifts();
     getPendingShifts();
-  }, []);
+  }, [getAllShifts, getPendingShifts]);
 
   const handleApprove = async (id) => {
     try {
@@ -99,12 +99,10 @@ const ShiftApprovalCalendar = () => {
       getAllShifts();
       getPendingShifts();
       alert(t("shiftProposalRejected") || "Shift rejected successfully.");
-
     } catch (error) {
       console.error(`${t("errorRejectingShift") || "Error rejecting shift"} ${id}:`, error);
       alert(t("failedReject") || "Failed to reject shift. Please try again.");
     }
-
   };
 
   const calendarEvents = shifts.map((shift) => ({
@@ -131,12 +129,6 @@ const ShiftApprovalCalendar = () => {
       }
     };
   };
-
-  useEffect(() => {
-    getAllShifts();
-    getPendingShifts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const messages = {
     today: t("calendarToday"),
