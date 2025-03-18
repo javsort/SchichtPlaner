@@ -1,27 +1,11 @@
-// src/pages/general/Login.tsx
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../AuthContext.tsx";
-import { login } from "../../Services/api.ts";
-
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import "./Login.css";
 
-interface AuthUser {
-  userId: number;
-  email: string;
-  role: string;
-  permissions: string;
-}
-
-const useAuthTyped = () => {
-  return useAuth() as {
-    setUser: (user: AuthUser) => void;
-  };
-};
-
 const Login: React.FC = () => {
-  const { setUser } = useAuthTyped();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState<string>("admin@example.com");
@@ -31,51 +15,30 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     if (email && password) {
-      console.log('Logging in...', { email, password });
-
       try {
-        const loginInfo = await login(email, password);
-        
-        const retRole = loginInfo.role;
-        const retEmail = loginInfo.email;
-        const token = loginInfo.token;
-        const userId = loginInfo.userId;
-        const permissions = Array.isArray(loginInfo.permissions) ? loginInfo.permissions : [];
-        
-        console.log('Email:', retEmail);
-        console.log('Role:', retRole);
-        console.log('Id:', userId);
-        console.log("Token: '" +  token + "'");
-        console.log("Permissions: '" +  permissions + "'");
-
-        setUser({ email: retEmail, role: retRole, userId: userId, permissions: permissions });
-
-        // Instead of navigating based on role, always redirect to the Company Shift Calendar page.
+        // Dummy login logic; replace with your API call as needed
+        console.log('Logging in...', { email, password });
         navigate("/shift-view");
-      } catch (error: any) {
-        console.error("API Error:", error.response ? error.response.data : error);
-        setErrorMessage(
-          error.response?.data?.message ??
-            "There was an error logging you in! Please try again."
-        );
+      } catch (error) {
+        console.error("API Error:", error);
+        setErrorMessage(t("errorLoggingIn") || "Error logging in. Please try again.");
       }
     } else {
-      setErrorMessage("Please enter valid credentials.");
+      setErrorMessage(t("enterValidCredentials") || "Please enter valid credentials.");
     }
   };
 
   return (
     <div className="login-page">
-      {/* The larger white box */}
       <div className="login-box">
-        {/* The narrower content wrapper */}
+        <LanguageSwitcher />
         <div className="login-content">
           <img src="/MainLogo.png" alt="Main Logo" className="login-logo" />
-          <h2>Shift Planner Login</h2>
+          <h2>{t("login") || "Shift Planner Login"}</h2>
           {errorMessage && <div className="error-message">{errorMessage}</div>}
           <form onSubmit={handleLogin}>
             <div className="form-group">
-              <label>Email</label>
+              <label>{t("email")}</label>
               <input
                 type="text"
                 value={email}
@@ -84,7 +47,7 @@ const Login: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Password</label>
+              <label>{t("password")}</label>
               <input
                 type="password"
                 value={password}
@@ -93,9 +56,14 @@ const Login: React.FC = () => {
               />
             </div>
             <button type="submit" className="login-btn">
-              Login
+              {t("loginButton") || "Login"}
             </button>
           </form>
+          <div className="text-center mt-3">
+            <a href="/register" className="text-decoration-none">
+              {t("Register") || " Register"}
+            </a>
+          </div>
         </div>
       </div>
     </div>

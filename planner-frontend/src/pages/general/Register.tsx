@@ -1,98 +1,110 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles.css'; // Optional: Custom styles
+import "./Login.css"; // Reusing the login CSS for consistent styling
 
-function RegisterPage() {
+const Register: React.FC = () => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('Technician');
-  const navigate = useNavigate(); // Initialize the navigation hook
+  const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === confirmPassword) {
-      // Proceed with registration logic (e.g., API call)
-      alert('Account registered successfully!');
-      
-      // Redirect based on role
-      if (role === 'Administrator') {
-        navigate('/admin-dashboard'); // Redirect to the admin dashboard if the role is Administrator
+      // Dummy registration logic; replace with your API call as needed
+      alert(t("accountRegistered"));
+      if (role === "Administrator") {
+        navigate('/admin-dashboard');
       } else {
-        // Redirect to the default page (you can adjust this to fit your needs)
-        alert('You are registered as a ' + role);
+        alert(t("registeredAs") + " " + role);
         // Optionally, navigate to a user-specific page
       }
     } else {
-      alert('Passwords do not match.');
+      alert(t("passwordsNotMatch"));
     }
   };
 
   return (
-    <div className="register-container d-flex justify-content-center align-items-center">
-      <div className="register-card p-4 shadow-lg rounded">
-        <h2 className="text-center">Register for Shift Planner</h2>
-        <form onSubmit={handleRegister}>
-          <div className="form-group mb-3">
-            <label>Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="form-control"
-              required
-            />
+    <div className="login-page">
+      <div className="login-box">
+        <LanguageSwitcher />
+        <div className="login-content">
+          <img src="/MainLogo.png" alt="Main Logo" className="login-logo" />
+          <h2 className="text-center">{t("registerTitle")}</h2>
+          <form onSubmit={handleRegister}>
+            <div className="form-group mb-3">
+              <label>{t("username")}</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label>{t("email")}</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label>{t("password")}</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label>{t("confirmPassword")}</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label>{t("role")}</label>
+              <select 
+                value={role} 
+                onChange={(e) => setRole(e.target.value)} 
+                className="form-select"
+              >
+                <option value="Technician">{t("technician")}</option>
+                <option value="Tester">{t("tester")}</option>
+                <option value="Incident-Manager">{t("incidentManager")}</option>
+                <option value="Shift-Supervisor">{t("shiftSupervisor")}</option>
+                <option value="Administrator">{t("administrator")}</option>
+              </select>
+            </div>
+            <button type="submit" className="login-btn">
+              {t("registerButton")}
+            </button>
+          </form>
+          <div className="text-center mt-3">
+            <a href="/login" className="text-decoration-none">
+              {t("alreadyHaveAccount")}
+            </a>
           </div>
-          <div className="form-group mb-3">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="form-group mb-3">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="form-group mb-3">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="form-group mb-3">
-            <label>Role</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)} className="form-select">
-              <option value="Technician">Technician</option>
-              <option value="Tester">Tester</option>
-              <option value="Incident-Manager">Incident Manager</option>
-              <option value="Shift-Supervisor">Shift Supervisor</option>
-              <option value="Administrator">Administrator</option>
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary w-100">Register</button>
-        </form>
-        <div className="text-center mt-3">
-          <a href="/login" className="text-decoration-none">Already have an account? Login</a>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default RegisterPage;
+export default Register;

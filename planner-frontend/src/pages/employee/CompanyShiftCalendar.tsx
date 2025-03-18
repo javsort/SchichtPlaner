@@ -1,10 +1,8 @@
-// src/pages/employee/CompanyShiftCalendar.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CompanyShiftCalendar.css";
-// Removed unused GlobalSidebar import
 import { fetchShifts, getAllUsers } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
 
@@ -33,7 +31,7 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
 
-  // Removed sidebarOpen state as it's not used
+  // State for shifts and employees
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [view, setView] = useState(Views.WEEK);
@@ -59,7 +57,6 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     loadShifts();
   }, []);
 
-  // Load employees from backend so that we can map assigned employee IDs to names
   useEffect(() => {
     const loadEmployees = async () => {
       try {

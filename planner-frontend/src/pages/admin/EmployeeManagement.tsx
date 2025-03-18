@@ -36,7 +36,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
 
-  // Removed allowDelete state as it's not used.
   // Set up React Hook Form
   const {
     register,
@@ -55,16 +54,16 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   const fetchEmployees = async () => {
     try {
-      const employees = await getAllUsers();
+      const employeesResponse = await getAllUsers();
 
-      if (!employees || !Array.isArray(employees)) {
-        console.error("Error: Received invalid employee data", employees);
+      if (!employeesResponse || !Array.isArray(employeesResponse)) {
+        console.error("Error: Received invalid employee data", employeesResponse);
         setEmployees([]); // Set an empty array to prevent errors
         return;
       }    
 
       // Format the employee data for display
-      const formattedEmployees = employees.map((emp: any) => ({
+      const formattedEmployees = employeesResponse.map((emp: any) => ({
         id: emp.id,
         name: emp.username,
         address: emp.address,
@@ -84,7 +83,14 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   const fetchRoles = async () => {
     try {
       const rolesData = await getAllRoles();
-      setRoles(rolesData);
+      console.log("Roles API response:", rolesData);
+      // Ensure rolesData is an array before setting state
+      if (Array.isArray(rolesData)) {
+        setRoles(rolesData);
+      } else {
+        console.error("Expected rolesData to be an array, got:", rolesData);
+        setRoles([]);
+      }
     } catch (error) {
       console.error("Error fetching roles:", error);
       setRoles([]);
@@ -284,8 +290,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           >
             {/* Default 'Select Role' option */}
             <option value="">{t("select role") || "Select role"}</option>
-            {/* Map over roles from the backend */}
-            {roles.map((role) => (
+            {/* Safely map over roles */}
+            {roles?.map((role) => (
               <option key={role.id} value={role.name}>
                 {t(
                   roleTranslationMap[role.name.replace("-", " ")] ||

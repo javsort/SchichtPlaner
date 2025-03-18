@@ -49,7 +49,7 @@ interface MyProposal {
 }
 
 const ShiftAvailability: React.FC = () => {
-  const { t } = useTranslation();  // Make sure this matches your namespace setup
+  const { t } = useTranslation();
   const today = new Date();
 
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
@@ -171,6 +171,7 @@ const ShiftAvailability: React.FC = () => {
     const status = "PROPOSED";
     let hasAtLeastOneShift = false;
 
+    // Loop through each date in availability
     for (const dateStr in availability) {
       const { from, to } = availability[dateStr];
       if (from && to) {
@@ -189,6 +190,16 @@ const ShiftAvailability: React.FC = () => {
           ).toISOString();
 
           await proposeShift(employeeId, proposedTitle, start, end, status);
+          
+          // Create new proposal for optimistic update
+          const newProposal: MyProposal = {
+            // Temporary ID - you may want to update this with the real ID from the response.
+            id: Date.now(),
+            date: dateStr,
+            from,
+            to,
+          };
+          setMyProposals((prev) => [...prev, newProposal]);
         } catch (error) {
           console.error("Error saving availability:", error);
           showNotification(
@@ -202,6 +213,7 @@ const ShiftAvailability: React.FC = () => {
 
     if (hasAtLeastOneShift) {
       showNotification(t("availabilitySaved") || "Availability saved!", "success");
+      // Re-fetch to sync with backend (if necessary)
       getMyProposals();
     } else {
       showNotification(t("noShiftsSelected") || "No shifts selected.", "error");
@@ -301,7 +313,6 @@ const ShiftAvailability: React.FC = () => {
             >
               {MONTH_NAMES.map((name, index) => (
                 <option key={index} value={index}>
-                  {/* This is the crucial translation call */}
                   {t(name)}
                 </option>
               ))}
@@ -392,7 +403,7 @@ const ShiftAvailability: React.FC = () => {
                   <th>{t("date") || "Date"}</th>
                   <th>{t("from") || "From"}</th>
                   <th>{t("to") || "To"}</th>
-                  <th></th> {/* Edit/Delete column */}
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -405,7 +416,6 @@ const ShiftAvailability: React.FC = () => {
                   });
 
                   if (editIndex === idx) {
-                    // Editing mode
                     return (
                       <tr key={idx}>
                         <td>{dateFormatted}</td>
@@ -438,7 +448,6 @@ const ShiftAvailability: React.FC = () => {
                       </tr>
                     );
                   } else {
-                    // Normal row
                     return (
                       <tr key={idx}>
                         <td>{dateFormatted}</td>
