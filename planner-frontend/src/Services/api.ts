@@ -86,7 +86,7 @@ export const login = async (email: string, password: string) => {
 export const getUserData = async (email: string, password: string) => {
 
   try {
-    const response = await axios.post(`${baseUrl}/api/auth/user/newcommer`, {
+    const response = await axios.post(`${baseUrl}/api/auth/newcommer`, {
       email: email,
       password: password
     });
@@ -95,7 +95,7 @@ export const getUserData = async (email: string, password: string) => {
 
     console.log('New User meta info fetched successfully!', response.data);
 
-    return response.data;
+    return data;
 
   } catch (error) {
     console.error('Error getting all users', error)

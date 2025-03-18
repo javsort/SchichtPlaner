@@ -39,6 +39,7 @@ const Login: React.FC = () => {
         navigate("/register", { 
           state: { email: email, tempPassword: password }
         });
+        return;
       }
 
       console.log('Logging in...', { email, password });
