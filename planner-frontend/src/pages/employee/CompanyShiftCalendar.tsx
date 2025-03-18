@@ -96,7 +96,7 @@ const CompanyShiftCalendar: React.FC = () => {
 
     return {
       ...shift,
-      title: `${shift.title} (${displayedOwner})`,
+      title: `${shift.title}`,
     };
   });
 

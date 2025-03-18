@@ -9,6 +9,7 @@ import "./Login.css";
 
 interface AuthUser {
   userId: number;
+  username: string;
   email: string;
   role: string;
   permissions: string;
@@ -40,6 +41,7 @@ const Login: React.FC = () => {
         const retEmail = loginInfo.email;
         const token = loginInfo.token;
         const userId = loginInfo.userId;
+        const username = loginInfo.username;
         const permissions = Array.isArray(loginInfo.permissions) ? loginInfo.permissions : [];
         
         console.log('Email:', retEmail);
@@ -47,8 +49,9 @@ const Login: React.FC = () => {
         console.log('Id:', userId);
         console.log("Token: '" +  token + "'");
         console.log("Permissions: '" +  permissions + "'");
+        console.log("Username: '" +  username + "'");
 
-        setUser({ email: retEmail, role: retRole, userId: userId, permissions: permissions });
+        setUser({ email: retEmail, role: retRole, userId: userId, permissions: permissions, username: username });
 
         // Instead of navigating based on role, always redirect to the Company Shift Calendar page.
         navigate("/shift-view");

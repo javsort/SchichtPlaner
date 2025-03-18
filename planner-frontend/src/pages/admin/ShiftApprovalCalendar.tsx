@@ -154,7 +154,7 @@ const ShiftApprovalCalendar: React.FC = () => {
 
   const calendarEvents = shifts.map((shift) => ({
     id: shift.id,
-    title: `${shift.title} (${shift.shiftOwner})`,
+    title: `${shift.title}`,
     start: shift.start,
     end: shift.end,
     role: shift.role,

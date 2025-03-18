@@ -98,7 +98,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
   const calendarEvents = shifts.map((shift: Shift) => ({
     id: shift.id,
-    title: `${shift.title} (${shift.shiftOwner})`,
+    title: `${shift.title}`,
     shiftOwner: shift.shiftOwner,
     start: shift.start,
     end: shift.end,
