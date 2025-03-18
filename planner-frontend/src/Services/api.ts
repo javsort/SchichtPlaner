@@ -75,7 +75,7 @@ export const login = async (email: string, password: string) => {
 
     console.log('Logged in successfully! user:', data.email, 'role:', data.role, 'token:', data.token, 'userId:', data.userId, 'permissions:', permissionsArray);
 
-    return { email: data.email, role: data.role, token: data.token, userId: data.userId, permissions: permissionsArray };
+    return { email: data.email, role: data.role, token: data.token, userId: data.userId, permissions: permissionsArray, username: data.username };
 
   } catch (error) {
     console.error('Error logging in', error);
@@ -369,7 +369,7 @@ export const supervisorCreateShift = async (shift) => {
   console.log('Creating shift:', shift);
   
   const shiftToCreate = {
-    shiftOwnerId: shift.employeeId || null,
+    shiftOwnerId: shift.shiftOwnerId || null,
     title: shift.title,
     shiftOwnerName: shift.shiftOwner || "",
     shiftOwnerRole: shift.role, 

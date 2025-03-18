@@ -166,13 +166,14 @@ const ShiftAvailability: React.FC = () => {
 
     const employeeData = JSON.parse(employee);
     const employeeId = employeeData.userId;
+    const empName = employeeData.username;
     const role = employeeData.role;
     if (!employeeId) {
       showNotification(t("employeeIdNotFound") || "Error: Employee ID not found.", "error");
       return;
     }
-
-    const proposedTitle = `Shift for Employee ${employeeId} (${role})`;
+    
+    const proposedTitle = `Shift for '${empName}' (${role})`;
     const status = "PROPOSED";
 
     let hasAtLeastOneShift = false;
@@ -252,7 +253,16 @@ const ShiftAvailability: React.FC = () => {
       const oldProposal = myProposals[editIndex];
 
     // You’ll need the employee ID:
-    const empId = localStorage.getItem("userId");
+    const loggedemployee = localStorage.getItem("user");
+    if (!loggedemployee) {
+      showNotification("Error: Employee not found.", "error");
+      return;
+    }
+
+    const employeeData = JSON.parse(loggedemployee);
+    const empName = employeeData.username;
+    const empId = employeeData.userId;
+    const role = employeeData.role;
     
     if (!empId) {
       showNotification("Error: Employee not found.", "error");
@@ -269,7 +279,8 @@ const ShiftAvailability: React.FC = () => {
 
     const proposedStartTime = startDate.toISOString();
     const proposedEndTime = endDate.toISOString();
-    const proposedTitle = `Shift for Employee ${empId}`;
+    
+    const proposedTitle = `Shift for '${empName}' (${role})`;
     const status = "PROPOSED";
 
     // Construct the payload the server expects
