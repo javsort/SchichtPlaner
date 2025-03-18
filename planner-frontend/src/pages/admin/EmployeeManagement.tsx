@@ -165,7 +165,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           roles: [{ id: selectedRole.id, name: selectedRole.name }]
         };
     
-        await createUser(newUser);
+        const retUser = await createUser(newUser);
+
+
         
         reset(); // Clear the form after submission
         fetchEmployees(); // Refresh employee list after adding a new user
