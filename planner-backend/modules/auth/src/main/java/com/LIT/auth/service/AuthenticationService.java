@@ -80,7 +80,7 @@ public class AuthenticationService {
 
             User admin = User.builder()
                     .email("admin@example.com")
-                    .username("admin")
+                    .username("Admin Adminson")
                     .password(passwordEncoder.encode("admin123"))
                     .address("1234 Admin St")
                     .phoneNum("123-456-7890")
@@ -89,7 +89,7 @@ public class AuthenticationService {
 
             User shiftSupervisor = User.builder()
                     .email("shiftsupervisor@example.com")
-                    .username("shiftSupervisor")
+                    .username("Shift Supervisor Smith")
                     .password(passwordEncoder.encode("shiftsuper123"))
                     .address("1234 Shift Supervisor St")
                     .phoneNum("123-456-7890")
@@ -98,7 +98,7 @@ public class AuthenticationService {
 
             User technician = User.builder()
                     .email("technician@example.com")
-                    .username("technician")
+                    .username("Technician Mike")
                     .password(passwordEncoder.encode("technician123"))
                     .address("1234 Technician St")
                     .phoneNum("123-456-7890")
@@ -107,7 +107,7 @@ public class AuthenticationService {
             
             User tester = User.builder()
                     .email("tester@example.com")
-                    .username("tester")
+                    .username("Tester Testerson")
                     .password(passwordEncoder.encode("tester123"))
                     .roles(Set.of(testerRole))
                     .address("1234 Tester St")
@@ -116,7 +116,7 @@ public class AuthenticationService {
             
             User incidentManager= User.builder()
                     .email("incidentmanager@example.com")
-                    .username("incidentManager")
+                    .username("Incident Manager Luis")
                     .password(passwordEncoder.encode("incidentmanage123"))
                     .roles(Set.of(incidentManagerRole))
                     .address("1234 Incident Manager St")
@@ -126,7 +126,7 @@ public class AuthenticationService {
             // Trials for Teacher & End-client
             User trialDavid = User.builder()
                     .email("david@example.com")
-                    .username("david")
+                    .username("David Reichelt")
                     .password(passwordEncoder.encode("david123"))
                     .roles(Set.of(adminRole))
                     .address("1234 David St")
@@ -135,7 +135,7 @@ public class AuthenticationService {
 
             User trialTorsten = User.builder()
                     .email("torsten@example.com")
-                    .username("torsten")
+                    .username("Torsten Frost")
                     .password(passwordEncoder.encode("torsten123"))
                     .roles(Set.of(adminRole))
                     .address("1234 Torsten St")

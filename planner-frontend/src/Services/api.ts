@@ -181,6 +181,8 @@ export const createUser = async (user) => {
       }
     )
 
+    return response.data;
+
   } catch (error) {
     console.error('Error creating user: ', error)
   }

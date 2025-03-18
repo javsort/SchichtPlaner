@@ -11,8 +11,8 @@ import { getAllUsers, getAllRoles, createUser, updateUser, deleteUser } from "..
 
 // Define an interface for employee data
 interface Employee {
-  id: number;          // Primary key from DB
-  employeeId?: string; // <-- New field for a custom employee id
+  id: number;
+  employeeId?: string;
   name: string;
   address: string;
   phone: string;
@@ -39,6 +39,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   // State that determines whether delete is allowed (Admin only)
   const [allowDelete, setAllowDelete] = useState(false);
+
+  // For new user popup
+  const [showUserPopup, setShowUserPopup] = useState(false);
+  const [createdEmail, setCreatedEmail] = useState("");
+  const [createdPassword, setCreatedPassword] = useState("");
 
   // Set up React Hook Form
   const {
@@ -165,7 +170,13 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           roles: [{ id: selectedRole.id, name: selectedRole.name }]
         };
     
-        await createUser(newUser);
+        const retUser = await createUser(newUser);
+
+        setCreatedEmail(retUser.email);
+        setCreatedPassword(newUser.password);
+        setShowUserPopup(true);
+
+
         
         reset(); // Clear the form after submission
         fetchEmployees(); // Refresh employee list after adding a new user
@@ -242,6 +253,22 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   return (
     <div className="container">
       <h2>{t("employeeManagement") || "Employee Management"}</h2>
+      {showUserPopup && (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h3>User Created!</h3>
+          <p>Share the following credentials to your employee:</p>
+          <p>
+            Email: '<span className="highlight">{createdEmail}</span>'
+          </p>
+          <p>
+            Password: '<span className="highlight">{createdPassword}</span>'
+          </p>
+          <p>It will be prompted to update its password for the first login</p>
+          <button onClick={() => setShowUserPopup(false)}>Close</button>
+        </div>
+      </div>
+    )}
 
       {/* Employee Entry Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="employee-form">
