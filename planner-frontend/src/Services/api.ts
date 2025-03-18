@@ -369,7 +369,7 @@ export const supervisorCreateShift = async (shift) => {
   console.log('Creating shift:', shift);
   
   const shiftToCreate = {
-    shiftOwnerId: shift.employeeId || null,
+    shiftOwnerId: shift.shiftOwnerId || null,
     title: shift.title,
     shiftOwnerName: shift.shiftOwner || "",
     shiftOwnerRole: shift.role, 

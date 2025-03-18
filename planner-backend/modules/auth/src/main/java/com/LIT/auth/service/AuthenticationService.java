@@ -170,6 +170,7 @@ public class AuthenticationService {
         //get the first one (this is assuming each user has AT LEAST one)
         String role = user.getRoles().iterator().next().getName();
         String permissions = String.join(",", user.getRoles().iterator().next().getPermissions());
+        String username = user.getUsername();
 
         log.info(logHeader + "login: User found. Generating token...");
 
@@ -181,6 +182,7 @@ public class AuthenticationService {
         toReturn.put("email", user.getEmail());
         toReturn.put("role", role);
         toReturn.put("userId", user.getId().toString());
+        toReturn.put("username", username);
         toReturn.put("permissions", permissions);
 
         log.info(logHeader + "User " + user.getEmail() + " logged in successfully. Returnig token.");

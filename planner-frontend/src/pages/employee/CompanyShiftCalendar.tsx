@@ -9,42 +9,61 @@ import { useTranslation } from "react-i18next";
 
 const localizer = momentLocalizer(moment);
 
-interface Shift {
-  id: number;
-  title: string;
-  start: Date;
-  end: Date;
-  assignedEmployees?: number[];
-}
-
 interface CompanyShiftCalendarProps {
-  currentUser?: { id: number; name: string };
+  currentUser?: { userId: number; name: string };
 }
 
-const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
-  currentUser = { id: 1, name: "John Doe" },
-}) => {
+const CompanyShiftCalendar: React.FC = () => {
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [shifts, setShifts] = useState<Shift[]>([]);
+  const userIdString = localStorage.getItem("userId");
+  const userId = userIdString ? parseInt(userIdString, 10) : null;
+
+  const [shifts, setShifts] = useState([]);
   const [view, setView] = useState(Views.WEEK);
   const [calendarFilter, setCalendarFilter] = useState("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const loadShifts = async () => {
+  interface Shift {
+    id: number;
+    title: string;
+    shiftOwnerId: number | null;
+    shiftOwner: string;
+    role: string;
+    start: Date;
+    end: Date;
+  };
+  
+  const mapShifts = (apiShifts: any[]): Shift[] => {
+    return apiShifts.map((shift) => ({
+      id: shift.id,
+      title: shift.title || t("unnamedShift"),
+      shiftOwnerId: shift.shiftOwnerId ?? null,
+      shiftOwner: shift.shiftOwnerName || t("unassigned"),
+      role: shift.shiftOwnerRole || t("unassigned"),
+      start: new Date(shift.startTime),
+      end: new Date(shift.endTime),
+    }));
+  };
+
+  const loadShifts = async () => {
+    try {
       const fetchedShifts = await fetchShifts();
-      const formattedShifts = fetchedShifts.map((shift: any) => ({
-        id: shift.id,
-        title: shift.title,
-        start: new Date(shift.startTime),
-        end: new Date(shift.endTime),
-        assignedEmployees: shift.assignedEmployees || [],
-      }));
+      if (!Array.isArray(fetchedShifts)) {
+        console.error("Invalid API response:", fetchedShifts);
+        return;
+      }
+
+      const formattedShifts = mapShifts(fetchedShifts);
+
       setShifts(formattedShifts);
-    };
+    } catch (error) {
+      console.error("Error fetching shifts:", error);
+    }
+  };
+
+  useEffect(() => {
     loadShifts();
   }, []);
 
@@ -62,21 +81,22 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
 
   const filteredShifts = shifts.filter((shift) => {
     if (calendarFilter === "my") {
-      return shift.assignedEmployees?.includes(currentUser.id);
+      console.log("Changing view to show user's shifts", userId);
+      return  userId && shift.shiftOwnerId === userId;
     } else if (calendarFilter === "unoccupied") {
-      return !shift.assignedEmployees || shift.assignedEmployees.length === 0;
+      return shift.shiftOwnerId === null;
     }
     return true;
-  });
+  }); 
 
   const calendarEvents = filteredShifts.map((shift) => {
-    const assignedNames = (shift.assignedEmployees || []).map((id) => {
-      const emp = employees.find((e) => e.id === id);
-      return emp ? emp.name : `Unknown #${id}`;
-    });
+    const displayedOwner = shift.shiftOwner
+      ? shift.shiftOwner || t("assigned") || "Assigned"
+      : t("unassigned") || "Unassigned";
+
     return {
       ...shift,
-      title: `${shift.title} (${assignedNames.length ? assignedNames.join(", ") : t("unassigned") || "Unassigned"})`,
+      title: `${shift.title} (${displayedOwner})`,
     };
   });
 

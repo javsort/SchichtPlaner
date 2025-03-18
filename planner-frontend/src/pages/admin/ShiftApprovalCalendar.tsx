@@ -5,48 +5,103 @@ import moment from "moment";
 import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./ShiftApprovalCalendar.css";
-import { fetchShifts, fetchProposalShifts, approveShiftProposal, rejectShiftProposal } from "../../Services/api.ts";
+
+import {
+  fetchShifts,
+  fetchProposalShifts,
+  approveShiftProposal,
+  rejectShiftProposal
+} from "../../Services/api.ts";
+
 import { useTranslation } from "react-i18next";
 
 const localizer = momentLocalizer(moment);
 
-const ShiftApprovalCalendar = () => {
+interface Shift {
+  id: number;
+  title: string;
+  shiftOwnerId: number | null;
+  shiftOwner: string;
+  role: string;
+  start: Date;
+  end: Date;
+}
+
+interface ProposalShift {
+  id: number;
+  employeeId: number | null;
+  employee: string;
+  role: string;
+  title: string;
+  start: Date;
+  end: Date;
+  status: string;        // "PROPOSED", "ACCEPTED", etc.
+}
+
+const ShiftApprovalCalendar: React.FC = () => {
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
 
-  // State for pending shifts (only proposed shifts)
-  const [pendingRequests, setPendingRequests] = useState([]);
-  
-  // State for all shifts (approved + pending)
-  const [shifts, setShifts] = useState([]);
+  // State for all approved shifts (to be shown on the calendar).
+  const [shifts, setShifts] = useState<Shift[]>([]);
+  const [loadingShifts, setLoadingShifts] = useState(false);
 
-  // Loading states
-  const [loadingShifts, setLoadingShifts] = useState(true);
-  const [loadingPending, setLoadingPending] = useState(true);
-  
+  // State for pending requests (shift proposals).
+  const [pendingRequests, setPendingRequests] = useState<ProposalShift[]>([]);
+  const [loadingPending, setLoadingPending] = useState(false);
+
   // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
 
-  // Function to fetch all shifts (approved + proposed)
-  const getAllShifts = async () => {
+  // Shifts mapper
+  const mapShifts = (apiShifts: any[]): Shift[] => {
+    return apiShifts.map((shift) => ({
+      id: shift.id,
+      title: shift.title || t("unnamedShift"),
+      shiftOwnerId: shift.shiftOwnerId ?? null,
+      shiftOwner: shift.shiftOwnerName || t("unassigned"),
+      role: shift.shiftOwnerRole || t("unassigned"),
+      start: new Date(shift.startTime),
+      end: new Date(shift.endTime),
+    }));
+  };
+
+  // Proposals mapper
+  const mapProposalShifts = (apiProposals: any[]): ProposalShift[] => {
+    return apiProposals
+      .filter(
+        (shift) =>
+          shift.status !== "ACCEPTED" &&
+          shift.status !== "REJECTED" &&
+          shift.status !== "CANCELLED"
+      )
+      .map((shift) => ({
+        id: shift.id,
+        employeeId: shift.employeeId ?? null,
+        employee: shift.employeeName
+          ? `${shift.employeeName}`
+          : t("unknownEmployee") || "Unknown Employee",
+        role: shift.employeeRole,
+        title: shift.proposedTitle || t("unnamedShift") || "Unnamed Shift",
+        start: new Date(shift.proposedStartTime),
+        end: new Date(shift.proposedEndTime),
+        status: shift.status,
+      }));
+  };
+  
+  const loadShifts = async () => {
     setLoadingShifts(true);
     try {
       const fetchedShifts = await fetchShifts();
-      if (fetchedShifts.length > 0) {
-        const formattedShifts = fetchedShifts.map((shift) => ({
-          id: shift.id,
-          employee: shift.employeeId
-            ? `${t("employee")} ${shift.employeeId}`
-            : t("unknownEmployee") || "Unknown Employee",
-          title: shift.title || t("unnamedShift") || "Unnamed Shift",
-          start: new Date(shift.startTime),
-          end: new Date(shift.endTime),
-          status: shift.status
-        }));
-        setShifts(formattedShifts);
+      if (!Array.isArray(fetchedShifts)) {
+        console.error("Invalid API response:", fetchedShifts);
+        setLoadingShifts(false);
+        return;
       }
+      const formattedShifts = mapShifts(fetchedShifts);
+      setShifts(formattedShifts);
     } catch (error) {
-      console.error(t("errorFetchingShifts") || "Error fetching shifts:", error);
+      console.error("Error fetching shifts:", error);
     }
     setLoadingShifts(false);
   };
@@ -55,20 +110,11 @@ const ShiftApprovalCalendar = () => {
     setLoadingPending(true);
     try {
       const fetchedPendingShifts = await fetchProposalShifts();
-      if (fetchedPendingShifts.length > 0) {
-        const formattedPendingShifts = fetchedPendingShifts
-          .filter((shift) => shift.status !== "ACCEPTED" && shift.status !== "REJECTED" && shift.status !== "CANCELLED")
-          .map((shift) => ({
-            id: shift.id,
-            employee: shift.employeeId
-              ? `${t("employee")} ${shift.employeeId}`
-              : t("unknownEmployee") || "Unknown Employee",
-            title: shift.proposedTitle || t("unnamedShift") || "Unnamed Shift",
-            start: new Date(shift.proposedStartTime),
-            end: new Date(shift.proposedEndTime),
-            status: shift.status
-          }));
-        setPendingRequests(formattedPendingShifts);
+      if (Array.isArray(fetchedPendingShifts)) {
+        const formatted = mapProposalShifts(fetchedPendingShifts);
+        setPendingRequests(formatted);
+      } else {
+        console.error("Invalid proposals response:", fetchedPendingShifts);
       }
     } catch (error) {
       console.error(t("errorFetchingPending") || "Error fetching pending shifts:", error);
@@ -76,16 +122,16 @@ const ShiftApprovalCalendar = () => {
     setLoadingPending(false);
   };
 
-  // Fetch all shifts and pending shifts on component mount
   useEffect(() => {
-    getAllShifts();
+    loadShifts();
     getPendingShifts();
   }, []);
 
-  const handleApprove = async (id) => {
+  const handleApprove = async (id: number) => {
     try {
       await approveShiftProposal(id);
-      getAllShifts();
+      // Reload both sets: the newly approved proposal should move to the 'shifts' set
+      loadShifts();
       getPendingShifts();
     } catch (error) {
       console.error(`${t("errorApprovingShift") || "Error approving shift"} ${id}:`, error);
@@ -93,50 +139,40 @@ const ShiftApprovalCalendar = () => {
     }
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id: number) => {
     try {
       await rejectShiftProposal(id);
-      getAllShifts();
+      loadShifts();
       getPendingShifts();
       alert(t("shiftProposalRejected") || "Shift rejected successfully.");
-
     } catch (error) {
       console.error(`${t("errorRejectingShift") || "Error rejecting shift"} ${id}:`, error);
       alert(t("failedReject") || "Failed to reject shift. Please try again.");
     }
-
   };
 
+
   const calendarEvents = shifts.map((shift) => ({
-    ...shift,
-    title: `${shift.title} - ${shift.employee}`
+    id: shift.id,
+    title: `${shift.title} (${shift.shiftOwner})`,
+    start: shift.start,
+    end: shift.end,
+    role: shift.role,
+    shiftOwnerId: shift.shiftOwnerId,
   }));
 
-  const eventStyleGetter = (event) => {
-    let backgroundColor;
-    if (event.status === "APPROVED") {
-      backgroundColor = "#27ae60";
-    } else if (event.status === "PROPOSED") {
-      backgroundColor = "#f39c12";
-    } else {
-      backgroundColor = "#3498db";
-    }
+  const eventStyleGetter = (event: any) => {
+    let backgroundColor = "#3498db";
     return {
       style: {
         backgroundColor,
         borderRadius: "5px",
         opacity: 0.9,
         color: "white",
-        border: "none"
-      }
+        border: "none",
+      },
     };
   };
-
-  useEffect(() => {
-    getAllShifts();
-    getPendingShifts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const messages = {
     today: t("calendarToday"),
@@ -145,19 +181,21 @@ const ShiftApprovalCalendar = () => {
     month: t("month"),
     week: t("week"),
     day: t("day"),
-    agenda: t("agenda")
+    agenda: t("agenda"),
   };
 
   return (
     <div className="shift-approval-layout">
       <div className="shift-approval-content">
         <h2>{t("shiftApproval") || "Shift Approval"}</h2>
+
+        {/* View selector for the big calendar */}
         <div className="view-selector">
           <label htmlFor="calendar-view">{t("calendarView") || "Calendar View:"}</label>
           <select
             id="calendar-view"
             value={view}
-            onChange={(e) => setView(e.target.value)}
+            onChange={(e) => setView(e.target.value as Views)}
           >
             <option value={Views.MONTH}>{t("month") || "Month"}</option>
             <option value={Views.WEEK}>{t("week") || "Week"}</option>
@@ -165,6 +203,8 @@ const ShiftApprovalCalendar = () => {
             <option value={Views.AGENDA}>{t("agenda") || "Agenda"}</option>
           </select>
         </div>
+
+        {/* Show the big calendar for "shifts" */}
         <div className="calendar-container">
           {loadingShifts ? (
             <p>{t("loadingCalendar") || "Loading calendar..."}</p>
@@ -185,6 +225,8 @@ const ShiftApprovalCalendar = () => {
             />
           )}
         </div>
+
+        {/* Table of pending shift requests */}
         <h3>{t("pendingShiftRequests") || "Pending Shift Requests"}</h3>
         {loadingPending ? (
           <p>{t("loadingPending") || "Loading pending requests..."}</p>
@@ -193,7 +235,9 @@ const ShiftApprovalCalendar = () => {
             <thead>
               <tr>
                 <th>{t("shift") || "Shift"}</th>
+                <th>{t("employeeId") || "Employee Id"}</th>
                 <th>{t("employee") || "Employee"}</th>
+                <th>{t("role") || "Role"}</th>
                 <th>{t("date") || "Date"}</th>
                 <th>{t("time") || "Time"}</th>
                 <th>{t("action") || "Action"}</th>
@@ -202,8 +246,10 @@ const ShiftApprovalCalendar = () => {
             <tbody>
               {pendingRequests.map((req) => (
                 <tr key={req.id}>
-                  <td>{req.title || t("unnamedShift")}</td>
+                  <td>{req.title}</td>
+                  <td>{req.employeeId}</td>
                   <td>{req.employee}</td>
+                  <td>{req.role}</td>
                   <td>{moment(req.start).format("YYYY-MM-DD")}</td>
                   <td>
                     {moment(req.start).format("hh:mm A")} -{" "}
@@ -221,7 +267,7 @@ const ShiftApprovalCalendar = () => {
               ))}
               {pendingRequests.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center" }}>
+                  <td colSpan={7} style={{ textAlign: "center" }}>
                     {t("noPendingShiftRequests") || "No pending shift requests."}
                   </td>
                 </tr>
