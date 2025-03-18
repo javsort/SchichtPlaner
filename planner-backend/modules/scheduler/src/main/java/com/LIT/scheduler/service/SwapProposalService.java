@@ -141,6 +141,12 @@ public class SwapProposalService {
             proposal.setStatus(ShiftProposalStatus.ACCEPTED);
             SwapProposal savedProposal = proposalRepository.save(proposal);
             log.info(logHeader + "Swap completed successfully");
+
+            notificationService.sendEmail(
+            getEmployeeEmail(proposal.getEmployeeId()),
+            "Shift Swap Accepted",
+            "Your shift swap request has been accepted, check your calendar"
+            );
             
             return savedProposal;
         } catch (Exception e) {
