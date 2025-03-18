@@ -190,27 +190,66 @@ public class AuthenticationService {
         return toReturn;
     }
 
-    public void register(RegisterRequest registerRequest) {
-        log.info(logHeader + "register: Registering user with email: " + registerRequest.getEmail());
+    public Map<String, String> getForNewCommer(LoginRequest loginRequest) {
+        log.info(logHeader + "getForNewCommer: New user first login detected. Need to finalize registration.");
 
-        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            log.error(logHeader + "register: User already exists");
-            throw new UserAlreadyExistsException("User already exists!");
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
+        if(userOptional.isEmpty()) {
+                log.error(logHeader + "login: User not found");
         }
-        Role employeeRole = roleRepository.findByName("Employee")
-                .orElseThrow(() -> new RuntimeException("Default role not found"));
 
-        log.info(logHeader + "register: User does not exist. Creating new user...");
+        User user = userOptional.get();
 
-        User newUser = User.builder()
-                .email(registerRequest.getEmail())
-                .username(registerRequest.getUsername())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .roles(Set.of(employeeRole))
-                .build();
+        Map<String, String> toReturn = new HashMap<>();
 
-        log.info(logHeader + "register: Saving user to DB...");
+        toReturn.put("userId", user.getId().toString());
+        toReturn.put("email", user.getEmail());
+        toReturn.put("username", user.getUsername());
+        toReturn.put("role", user.getRoles().iterator().next().getName());
+
+        return toReturn;
+    }
+
+    // Fulfill registration
+    public Map<String, String> register(RegisterRequest registerRequest) {
+        log.info(logHeader + "register: Fulfilling registration  user with email: " + registerRequest.getEmail());
+
+        Optional<User> userOptional = userRepository.findByEmail(registerRequest.getEmail());
+
+        if(userOptional.isEmpty()) {
+                log.error(logHeader + "login: User not found");
+                throw new InvalidCredentialsException("Invalid credentials");
+        }
+        
+        // Update with new password
+        User newUser = userOptional.get();
+        newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+        log.info(logHeader + "register: Saving user to DB with updated password...");
 
         userRepository.save(newUser);
-    }
+
+        // Build metadata to finish the login
+        String role = newUser.getRoles().iterator().next().getName();
+        String permissions = String.join(",", newUser.getRoles().iterator().next().getPermissions());
+        String username = newUser.getUsername();
+
+        log.info(logHeader + "login: newUser found. Generating token...");
+
+        // Generate token
+        String token = "Bearer " + jwtTokenUtil.generateToken(newUser.getEmail(), role, newUser.getId(), newUser.getUsername());
+
+        Map<String, String> toReturn = new HashMap<>();
+        toReturn.put("token", token);
+        toReturn.put("email", newUser.getEmail());
+        toReturn.put("role", role);
+        toReturn.put("userId", newUser.getId().toString());
+        toReturn.put("username", username);
+        toReturn.put("permissions", permissions);
+
+        log.info(logHeader + "newUser " + newUser.getEmail() + " logged in successfully. Returnig token.");
+
+        return toReturn;
+}
 }
