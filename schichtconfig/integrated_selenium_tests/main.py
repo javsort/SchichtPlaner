@@ -12,11 +12,12 @@ def main():
     print("Welcome to the python integration tests")
 
     # Run the tests
-    role_tests.run_tests(FRONT_END_URL)
+    # role_tests.run_tests(FRONT_END_URL)
+
+    user_tests.run_tests(FRONT_END_URL)
 
     # shift_tests.run_tests(FRONT_END_URL)
 
-    # user_tests.run_tests(FRONT_END_URL)
 
 
 if __name__ == '__main__':
