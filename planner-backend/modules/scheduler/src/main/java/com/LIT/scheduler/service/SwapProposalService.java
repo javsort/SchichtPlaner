@@ -23,7 +23,7 @@ public class SwapProposalService {
     private final SwapProposalRepository proposalRepository;
     private final ShiftRepository shiftRepository;
     private final NotificationService notificationService;
-    private final AuthUserService authUserService; // Injected AuthUserService for dynamic email retrieval
+    private final AuthUserService authUserService; // For dynamic email retrieval
 
     private final String logHeader = "[ShiftProposalService] - ";
 
@@ -62,8 +62,9 @@ public class SwapProposalService {
 
         proposalRepository.save(proposal);
 
-        log.info(logHeader + "Employee " + proposal.getEmployeeId() + " has proposed a new shift change request for current shift id " + proposal.getCurrentShiftId() +
-                " to new shift: " + proposal.getProposedTitle() + " from " + proposal.getProposedStartTime() + " to " + proposal.getProposedEndTime());
+        log.info(logHeader + "Employee " + proposal.getEmployeeId() + " has proposed a new shift change request for current shift id "
+                + proposal.getCurrentShiftId() + " to new shift: " + proposal.getProposedTitle() + " from " 
+                + proposal.getProposedStartTime() + " to " + proposal.getProposedEndTime());
 
         return proposal;
     }
@@ -101,7 +102,7 @@ public class SwapProposalService {
             }
             Shift swapEmployeeShift = swapEmployeeShifts.get(0);
             log.info(logHeader + "Using shift: " + swapEmployeeShift.getId());
-            // Capture swap employee's original owner ID before the swap
+            // Capture swap employee's original owner ID for email notification later
             Long swapEmployeeOriginalId = swapEmployeeShift.getShiftOwnerId();
 
             // Step 4: Find or create the requester's shift
@@ -124,7 +125,7 @@ public class SwapProposalService {
 
             // Step 5: Perform swap
             log.info(logHeader + "Swapping owners between shifts");
-            // Save original values for swap (for requester shift)
+            // Save original values for the requester's shift
             Long tempId = requestingUserShift.getShiftOwnerId();
             String tempName = requestingUserShift.getShiftOwnerName();
             String tempRole = requestingUserShift.getShiftOwnerRole();
@@ -148,21 +149,29 @@ public class SwapProposalService {
             SwapProposal savedProposal = proposalRepository.save(proposal);
             log.info(logHeader + "Swap completed successfully");
 
-            // Send email notification to the proposal initiator
+            // Prepare and send email notification to the proposal initiator
+            // After swap, the proposal initiator now gets the swap employee's original shift (i.e. swapEmployeeShift)
+            String initiatorMessage = "Your shift swap request has been accepted. You now have the shift '" 
+                    + swapEmployeeShift.getTitle() + "' scheduled from " 
+                    + swapEmployeeShift.getStartTime() + " to " + swapEmployeeShift.getEndTime() + ".";
             String proposalInitiatorEmail = getEmployeeEmail(proposal.getEmployeeId());
             notificationService.sendEmail(
                     proposalInitiatorEmail,
                     "Shift Swap Accepted",
-                    "Your shift swap request has been accepted, check your calendar"
+                    initiatorMessage
             );
             log.info(logHeader + "Email sent to proposal initiator: " + proposalInitiatorEmail);
 
-            // Send email notification to the swap employee
+            // Prepare and send email notification to the swap employee
+            // After swap, the swap employee now gets the requester's original shift (i.e. requestingUserShift)
+            String swapEmployeeMessage = "Your shift has been swapped. You now have the shift '" 
+                    + requestingUserShift.getTitle() + "' scheduled from " 
+                    + requestingUserShift.getStartTime() + " to " + requestingUserShift.getEndTime() + ".";
             String swapEmployeeEmail = getEmployeeEmail(swapEmployeeOriginalId);
             notificationService.sendEmail(
                     swapEmployeeEmail,
                     "Your Shift Has Been Swapped",
-                    "Your shift has been swapped with a colleague. Please review your updated schedule."
+                    swapEmployeeMessage
             );
             log.info(logHeader + "Email sent to swap employee: " + swapEmployeeEmail);
 
