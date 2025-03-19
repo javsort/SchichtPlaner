@@ -74,25 +74,25 @@ public class ShiftService {
         if (optionalShift.isPresent()) {
             log.info(logHeader + "updateShift: Shift found with id: " + id + ". Proceeding to update...");
             Shift existingShift = optionalShift.get();
+            
+            // Update common fields
             existingShift.setTitle(updatedShift.getTitle());
             existingShift.setStartTime(updatedShift.getStartTime());
             existingShift.setEndTime(updatedShift.getEndTime());
-            existingShift.setShiftOwnerId(updatedShift.getShiftOwnerId());
-    
-            // Update owner name and role if employeeId is changed
-            if (!Objects.equals(existingShift.getShiftOwnerId(), updatedShift.getShiftOwnerId())) {
-                if (updatedShift.getShiftOwnerId() != null) {
+            
+            // Only update shiftOwnerId (and related fields) if a non-null value is provided.
+            if (updatedShift.getShiftOwnerId() != null) {
+                if (!Objects.equals(existingShift.getShiftOwnerId(), updatedShift.getShiftOwnerId())) {
+                    existingShift.setShiftOwnerId(updatedShift.getShiftOwnerId());
                     existingShift.setShiftOwnerName(updatedShift.getShiftOwnerName());
                     existingShift.setShiftOwnerRole(updatedShift.getShiftOwnerRole());
-                } else {
-                    existingShift.setShiftOwnerName("Unassigned");
-                    existingShift.setShiftOwnerRole("Unassigned");
                 }
             }
-
+            // Otherwise, keep the existing shiftOwnerId and related fields
+    
             Shift savedShift = shiftRepository.save(existingShift);
             log.info(logHeader + "updateShift: Shift updated successfully");
-
+    
             // Send email notification after updating the shift
             String recipientEmail = getEmployeeEmail(savedShift.getShiftOwnerId());
             String subject = "Shift Updated";
@@ -100,13 +100,14 @@ public class ShiftService {
                              "New schedule: from " + savedShift.getStartTime() + " to " + savedShift.getEndTime() + ".";
             log.debug(logHeader + "updateShift: Sending update email to {}", recipientEmail);
             notificationService.sendEmail(recipientEmail, subject, message);
-            
+    
             return savedShift;
         } else {
             log.error(logHeader + "updateShift: Shift not found with id: " + id);
             throw new RuntimeException("Shift not found with id: " + id);
         }
     }
+    
 
     public void deleteShift(Long id) {
         log.info(logHeader + "deleteShift: Deleting shift with id: " + id);
