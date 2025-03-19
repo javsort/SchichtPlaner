@@ -72,9 +72,8 @@ public class SwapProposalService {
         log.info(logHeader + "Starting swap acceptance: proposalId=" + proposalId + ", swapEmployeeId=" + swapEmployeeId);
 
         try {
-            // Step 1: Try to find the proposal in the database
+            // Step 1: Retrieve the proposal
             Optional<SwapProposal> proposalOpt = proposalRepository.findById(proposalId);
-
             SwapProposal proposal;
             if (proposalOpt.isEmpty()) {
                 log.info(logHeader + "Proposal not found in database, creating from memory representation");
@@ -95,15 +94,17 @@ public class SwapProposalService {
             List<Shift> swapEmployeeShifts = shiftRepository.findByShiftOwnerId(swapEmployeeId);
             log.info(logHeader + "Found " + swapEmployeeShifts.size() + " shifts for swap employee");
 
-            // Step 3: Just use the first shift for simplicity
+            // Step 3: Use the first shift for simplicity
             if (swapEmployeeShifts.isEmpty()) {
                 log.error(logHeader + "No shifts found for swap employee: " + swapEmployeeId);
                 throw new IllegalStateException("No shifts found for swap employee");
             }
             Shift swapEmployeeShift = swapEmployeeShifts.get(0);
             log.info(logHeader + "Using shift: " + swapEmployeeShift.getId());
+            // Capture swap employee's original owner ID before the swap
+            Long swapEmployeeOriginalId = swapEmployeeShift.getShiftOwnerId();
 
-            // Step 4: Find or create requester's shift
+            // Step 4: Find or create the requester's shift
             Optional<Shift> requestingUserShiftOpt = shiftRepository.findById(proposal.getCurrentShiftId());
             Shift requestingUserShift;
             if (requestingUserShiftOpt.isEmpty()) {
@@ -123,22 +124,22 @@ public class SwapProposalService {
 
             // Step 5: Perform swap
             log.info(logHeader + "Swapping owners between shifts");
-
-            // Save original values for swap
+            // Save original values for swap (for requester shift)
             Long tempId = requestingUserShift.getShiftOwnerId();
             String tempName = requestingUserShift.getShiftOwnerName();
             String tempRole = requestingUserShift.getShiftOwnerRole();
 
-            // Update shifts
+            // Update requester's shift with swap employee's info
             requestingUserShift.setShiftOwnerId(swapEmployeeShift.getShiftOwnerId());
             requestingUserShift.setShiftOwnerName(swapEmployeeShift.getShiftOwnerName());
             requestingUserShift.setShiftOwnerRole(swapEmployeeShift.getShiftOwnerRole());
 
+            // Update swap employee's shift with requester's info
             swapEmployeeShift.setShiftOwnerId(tempId);
             swapEmployeeShift.setShiftOwnerName(tempName);
             swapEmployeeShift.setShiftOwnerRole(tempRole);
 
-            // Step 6: Save everything
+            // Step 6: Save updated shifts
             shiftRepository.save(requestingUserShift);
             shiftRepository.save(swapEmployeeShift);
 
@@ -147,11 +148,23 @@ public class SwapProposalService {
             SwapProposal savedProposal = proposalRepository.save(proposal);
             log.info(logHeader + "Swap completed successfully");
 
+            // Send email notification to the proposal initiator
+            String proposalInitiatorEmail = getEmployeeEmail(proposal.getEmployeeId());
             notificationService.sendEmail(
-                    getEmployeeEmail(proposal.getEmployeeId()),
+                    proposalInitiatorEmail,
                     "Shift Swap Accepted",
                     "Your shift swap request has been accepted, check your calendar"
             );
+            log.info(logHeader + "Email sent to proposal initiator: " + proposalInitiatorEmail);
+
+            // Send email notification to the swap employee
+            String swapEmployeeEmail = getEmployeeEmail(swapEmployeeOriginalId);
+            notificationService.sendEmail(
+                    swapEmployeeEmail,
+                    "Your Shift Has Been Swapped",
+                    "Your shift has been swapped with a colleague. Please review your updated schedule."
+            );
+            log.info(logHeader + "Email sent to swap employee: " + swapEmployeeEmail);
 
             return savedProposal;
         } catch (Exception e) {
@@ -188,17 +201,13 @@ public class SwapProposalService {
 
     public List<SwapProposal> getProposalsByEmployee(Long employeeId) {
         log.info(logHeader + "getProposalsByEmployee: Getting proposals for employee with id: " + employeeId);
-
         List<SwapProposal> proposals = proposalRepository.findByEmployeeId(employeeId);
-
         return proposals;
     }
 
     public List<SwapProposal> getAllProposals() {
         log.info(logHeader + "getAllProposals: Getting all proposals");
-
         List<SwapProposal> proposals = proposalRepository.findAll();
-
         return proposals;
     }
 
