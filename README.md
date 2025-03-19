@@ -7,14 +7,36 @@ This application is currently being designed and built through a CI/CD workflow 
 
 This README is a guide to the repository, where you'll find the following folders and helping sections:
 
-**:warning:! For deployment instructions, head down to the Schichtconfig section below**
+**:warning:! For deployment instructions, head down to the Local Deployment section below**
 
 ## Live Application Access
 The application running on server can be accessed through here! `http://138.199.161.219:3000/login`
 
 - To Login, there are some sample accounts you can use right [here](./schichtconfig/Test_accounts.md)
 
-### Local Deployment
+### Production Deployment
+On the server end, the GitHub Workflows described above take charge in all the deployment operations.
+
+To deploy on production follow these next steps:
+1. Open the repository, through this [link](https://github.com/javsort/SchichtPlaner)
+2. Head to the `Actions` tab from the repository menu
+3. To deploy...
+    - All containers:
+        1. Click on the workflow titled [`CI/CD Pipeline - All Containers`](https://github.com/javsort/SchichtPlaner/actions/workflows/pipeline-cicd.yml)
+        2. Click on the `Run workflow` button, and then `Run workflow` again.
+        3. Done! The application will be deployed.
+    - A specific container:
+        1. Click on the workflow titled [`CI/CD Pipeline - Specific Container`](https://github.com/javsort/SchichtPlaner/actions/workflows/pipeline-cicd.yml)
+        2. Click on the `Run workflow` button
+        3. You will be prompted to enter the *'Name of the container'*, please make sure the container's name matches with its name on the [docker-compose](./schichtconfig/docker/docker-compose.yml)
+        4. Once written the name of the cotnainer, click on `Run workflow` again.
+        3. Done! The specified container will be deployed.
+
+The remaining scripts are to be used by the containers themselves or to connect to the server.
+
+**:warning:!** - Whenever running access to the servers you still need a password to login, so only do it if you have that.
+
+## Local Deployment
 
 > [!IMPORTANT]
 > **:warning:!** - **BEFORE** performing a local deployment, be sure to check [`.env.production`](./planner-frontend/.env.production) under the `planner-frontend` and ensure that it looks like this:
@@ -38,28 +60,6 @@ $ ./build-n-run-local.sh
 ```
 
 Whenever running locally, to check the front-end, once the application is built and running, access the site through: `http://localhost:3000`
-
-### Production Deployment
-On the server end, the GitHub Workflows described above take charge in all the deployment operations.
-
-To deploy on production follow these next steps:
-1. Open the repository, through this [link](https://github.com/javsort/SchichtPlaner)
-2. Head to the `Actions` tab from the repository menu
-3. To deploy...
-    - All containers:
-        1. Click on the workflow titled [`CI/CD Pipeline - All Containers`](https://github.com/javsort/SchichtPlaner/actions/workflows/pipeline-cicd.yml)
-        2. Click on the `Run workflow` button, and then `Run workflow` again.
-        3. Done! The application will be deployed.
-    - A specific container:
-        1. Click on the workflow titled [`CI/CD Pipeline - Specific Container`](https://github.com/javsort/SchichtPlaner/actions/workflows/pipeline-cicd.yml)
-        2. Click on the `Run workflow` button
-        3. You will be prompted to enter the *'Name of the container'*, please make sure the container's name matches with its name on the [docker-compose](./schichtconfig/docker/docker-compose.yml)
-        4. Once written the name of the cotnainer, click on `Run workflow` again.
-        3. Done! The specified container will be deployed.
-
-The remaining scripts are to be used by the containers themselves or to connect to the server.
-
-**:warning:!** - Whenever running access to the servers you still need a password to login, so only do it if you have that.
 
 ## Tests!
 
