@@ -1,43 +1,7 @@
-# Sample user accounts:
+# ShcichtConfig
 
-## Admin
-```
-admin@example.com
-admin123
-```
+Here, you'll find relevant docker setup files and scripts which help ease-out the deployment process.
 
-## Shift Supervisor
-```
-shiftsupervisor@example.com
-shiftsuper123
-```
+Under the [`/docker`](./schichtconfig/docker/) folder, there's a pertinent README with details on what's in the docker compose and helpful commands to check logs, bring down containers and perform other relevant tasks on the server.
 
-## Technician
-```
-technician@example.com
-technician123
-```
-
-## Tester
-```
-tester@example.com
-tester123
-```
-
-## Incident Manager
-```
-incidentmanager@example.com
-incidentmanage123
-```
-
-## David
-```
-david@example.com
-david123
-```
-
-## H. Frost
-```
-torsten@example.com
-torsten123
-```
+Regarding the scripts, only [`build-n-run-local.bat`](./schichtconfig/automation-scripts/build-n-run-local.bat) / [`build-n-run-local.sh`](./schichtconfig/automation-scripts/build-n-run-local.sh) is intended to be used outside the server environment Which basically does a clean maven install of the packages and deploys the MariaDB container along with the application's backend & front-end containers to check locally for updates.
