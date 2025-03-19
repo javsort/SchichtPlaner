@@ -288,7 +288,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           >
             <option value="">{t("selectEmployee") || "Select an Employee"}</option>
             {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>{emp.id} - {emp.name}</option>
+              <option key={emp.id} value={emp.id} data-test-id={`employee-option-${emp.id}`}>
+                {emp.id} - {emp.name}
+                </option>
             ))}
           </select>
         </div>
@@ -419,7 +421,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         <tbody>
           {employees.length > 0 ? (
             employees?.map((emp) => (
-              <tr key={emp.id}>
+              <tr key={emp.id} data-test-id={`employee-row-${emp.id}`}>
                 <td>{emp.id || ""}</td>
                 <td>{emp.name}</td>
                 <td>{emp.address}</td>
@@ -427,11 +429,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
                 <td>{emp.email}</td>
                 <td>{getRoleLabel(emp.role)}</td>
                 <td align="center">
-                  <button onClick={() => editEmployee(emp)} data-test-id="edit-button">
+                  <button onClick={() => editEmployee(emp)} data-test-id={`edit-button-${emp.id}`}>
                     {t("edit") || "Edit"}
                   </button>
                   {user?.permissions.includes("EMPLOYEE_DELETE") && (
-                    <button onClick={() => deleteEmployee(emp.id)} data-test-id="delete-button">
+                    <button onClick={() => deleteEmployee(emp.id)} data-test-id={`delete-button-${emp.id}`}>
                       {t("delete") || "Delete"}
                     </button>
                   )}

@@ -52,14 +52,20 @@ def create_new_user_test(wait, driver):
     role_option.click()
     
     submit_button.click()
-    time.sleep(2)  # Wait for changes to reflect
+
+    try:
+        popup_close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Close')]")))
+        popup_close_button.click()
+        print("Popup closed successfully!")
+    except:
+        print("No popup appeared.")
+
+    time.sleep(2)  # Ensure UI updates
+
     print("Employee created successfully!")
  
 def update_existing_user_test(wait, driver):
-    dropdown = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-test-id='employee-select']")))
-    dropdown.click()
-    
-    user_option = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[value='8']")))
+    user_option = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-test-id='employee-option-6']")))
     user_option.click()
     
     phone_input = driver.find_element(By.CSS_SELECTOR, "[data-test-id='phone-input']")
@@ -73,19 +79,18 @@ def update_existing_user_test(wait, driver):
     print("Employee updated successfully!")
 
 def delete_existing_user_test(wait, driver):
-    user_row = wait.until(EC.presence_of_element_located((By.XPATH, "//tr[td[contains(text(),'Test User')]]")))
-    delete_button = user_row.find_element(By.CSS_SELECTOR, "[data-test-id='delete-button']")
+    # employee_row = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-test-id='employee-row-6']")))
+    delete_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, f"[data-test-id='delete-button-6']")))
     
-    # Scroll the element into view
-    driver.execute_script("arguments[0].scrollIntoView(true);", delete_button)
-    time.sleep(1)  # Give it a moment before interacting
-    
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", delete_button)
+    time.sleep(1)  # Give the browser time to adjust view
+
     delete_button.click()
-    
+
     # Confirm deletion (if alert appears)
     alert = wait.until(EC.alert_is_present())
     alert.accept()
-    
+
     time.sleep(2)
     print("Employee deleted successfully!")
 

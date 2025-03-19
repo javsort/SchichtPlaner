@@ -87,9 +87,6 @@ def delete_existing_role_test(wait, driver):
     print("Role deleted successfully!")
 
 def run_tests(FRONT_END_URL):
-    driver = webdriver.Chrome()
-    driver.get(FRONT_END_URL)
-
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(options=options)
@@ -101,7 +98,6 @@ def run_tests(FRONT_END_URL):
     login(wait, driver)
     navigate_to_role_management(wait, driver)
 
-    
     create_new_role_test(wait, driver)
     update_existing_role_test(wait, driver)
     delete_existing_role_test(wait, driver)
