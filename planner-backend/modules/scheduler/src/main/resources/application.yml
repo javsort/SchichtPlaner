@@ -8,7 +8,7 @@ address:
   scheduler:
     url: ${SCHEDULER_SERVICE_URL:http://localhost:8081}
   auth:
-    url: ${AUTH_SERVICE_URL:http://localhost:8082} 
+    url: ${AUTH_SERVICE_URL:http://localhost:8082}
   stats:
     url: ${STATS_SERVICE_URL:http://localhost:8083}
 
@@ -38,8 +38,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: plannershift1@gmail.com
-    password: ocqz mfoj uvxl ceer
+    username: shiftplanner51@gmail.com
+    password: qpkj khka xotv xihe
     properties:
       mail:
         smtp:
@@ -54,5 +54,8 @@ logging:
       springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:INFO}
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:INFO}
       springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:INFO}
+      mail: WARN
+      jakarta:
+        mail: WARN
     com:
       zaxxer.hikari: DEBUG

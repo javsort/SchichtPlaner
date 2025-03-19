@@ -19,11 +19,11 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.LIT.scheduler.model.entity.Shift;
-import com.LIT.scheduler.model.entity.ShiftAssignment;
 import com.LIT.scheduler.model.entity.SwapProposal;
 import com.LIT.scheduler.model.enums.ShiftProposalStatus;
-import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
+import com.LIT.scheduler.model.repository.ShiftRepository;
 import com.LIT.scheduler.model.repository.SwapProposalRepository;
+import com.LIT.scheduler.service.AuthUserService;
 import com.LIT.scheduler.service.NotificationService;
 import com.LIT.scheduler.service.SwapProposalService;
 
@@ -34,16 +34,20 @@ public class SwapProposalServiceTest {
     private SwapProposalRepository proposalRepository;
 
     @Mock
-    private ShiftAssignmentRepository assignmentRepository;
+    private ShiftRepository shiftRepository;
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private AuthUserService authUserService;
 
     @InjectMocks
     private SwapProposalService swapProposalService;
 
     @BeforeEach
     public void setup() {
+        // No fallback code is present now in the service.
     }
 
     @Test
@@ -55,11 +59,10 @@ public class SwapProposalServiceTest {
         proposal.setProposedStartTime(LocalDateTime.now().plusHours(1));
         proposal.setProposedEndTime(LocalDateTime.now().plusHours(2));
 
-        // Simulate that no conflicting assignments exist.
-        when(assignmentRepository.findConflictingAssignments(eq(1L), any(), any()))
+        // Simulate that no conflicting shifts exist.
+        when(shiftRepository.findConflictingShifts(eq(1L), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
-        // Simulate repository saving the proposal.
         when(proposalRepository.save(any(SwapProposal.class))).thenReturn(proposal);
 
         SwapProposal result = swapProposalService.createProposal(proposal);
@@ -73,7 +76,6 @@ public class SwapProposalServiceTest {
         proposal1.setEmployeeId(1L);
         SwapProposal proposal2 = new SwapProposal();
         proposal2.setEmployeeId(2L);
-
         List<SwapProposal> proposals = Arrays.asList(proposal1, proposal2);
         when(proposalRepository.findAll()).thenReturn(proposals);
 
@@ -101,6 +103,7 @@ public class SwapProposalServiceTest {
 
         when(proposalRepository.findById(100L)).thenReturn(Optional.of(proposal));
         when(proposalRepository.save(any(SwapProposal.class))).thenReturn(proposal);
+        when(authUserService.getUserEmailById(1L)).thenReturn("user@example.com");
 
         String managerComment = "Not a good time.";
         SwapProposal result = swapProposalService.declineShiftChange(100L, managerComment);
@@ -110,6 +113,7 @@ public class SwapProposalServiceTest {
 
     @Test
     public void testAcceptShiftChange_NoConflict() {
+        // Prepare a proposal
         SwapProposal proposal = new SwapProposal();
         proposal.setEmployeeId(1L);
         proposal.setCurrentShiftId(100L);
@@ -119,40 +123,28 @@ public class SwapProposalServiceTest {
 
         when(proposalRepository.findById(200L)).thenReturn(Optional.of(proposal));
 
-        // Prepare assignment for swap employee B (matching proposed details).
-        Shift shiftB = new Shift();
-        shiftB.setId(2L);
-        shiftB.setTitle("Test Shift");
-        shiftB.setStartTime(proposal.getProposedStartTime());
-        shiftB.setEndTime(proposal.getProposedEndTime());
-        ShiftAssignment assignmentB = new ShiftAssignment();
-        assignmentB.setId(2L);
-        assignmentB.setShift(shiftB);
+        // Prepare swap employee's shift (the target shift for the swap)
+        Shift swapEmployeeShift = new Shift();
+        swapEmployeeShift.setId(2L);
+        swapEmployeeShift.setTitle("Test Shift");
+        swapEmployeeShift.setStartTime(proposal.getProposedStartTime());
+        swapEmployeeShift.setEndTime(proposal.getProposedEndTime());
+        // When shiftRepository.findByShiftOwnerId is called with swapEmployeeId (10L), return a list with swapEmployeeShift.
+        when(shiftRepository.findByShiftOwnerId(10L)).thenReturn(Collections.singletonList(swapEmployeeShift));
 
-        List<ShiftAssignment> swapUserAssignments = Collections.singletonList(assignmentB);
-        when(assignmentRepository.findByUserId(10L)).thenReturn(swapUserAssignments);
-        when(assignmentRepository.findConflictingAssignments(eq(10L), any(), any()))
-                .thenReturn(Collections.emptyList());
+        // Prepare the requester's shift
+        Shift requesterShift = new Shift();
+        requesterShift.setId(100L);
+        requesterShift.setTitle("Original Shift");
+        requesterShift.setStartTime(LocalDateTime.now());
+        requesterShift.setEndTime(LocalDateTime.now().plusHours(1));
+        when(shiftRepository.findById(100L)).thenReturn(Optional.of(requesterShift));
 
-        // Prepare assignment A for the original employee.
-        Shift shiftA = new Shift();
-        shiftA.setId(3L);
-        shiftA.setTitle("Original Shift");
-        shiftA.setStartTime(LocalDateTime.now());
-        shiftA.setEndTime(LocalDateTime.now().plusHours(1));
-        ShiftAssignment assignmentA = new ShiftAssignment();
-        assignmentA.setId(1L);
-        assignmentA.setShift(shiftA);
+        // For authUserService, provide dummy emails for the original employee and the swap employee.
+        when(authUserService.getUserEmailById(1L)).thenReturn("user1@example.com");
+        when(authUserService.getUserEmailById(swapEmployeeShift.getShiftOwnerId())).thenReturn("userSwap@example.com");
 
-        when(assignmentRepository.findByUserIdAndShiftId(1L, 100L))
-                .thenReturn(Optional.of(assignmentA));
-        // Ensure swap employee does not already have assignment for shift A.
-        when(assignmentRepository.findByUserIdAndShiftId(10L, shiftA.getId()))
-                .thenReturn(Optional.empty());
-
-        // Simulate saving of proposal and assignments.
         when(proposalRepository.save(any(SwapProposal.class))).thenReturn(proposal);
-        when(assignmentRepository.save(any(ShiftAssignment.class))).thenReturn(assignmentA);
 
         SwapProposal result = swapProposalService.acceptShiftChange(200L, 10L);
         assertEquals(ShiftProposalStatus.ACCEPTED, result.getStatus());

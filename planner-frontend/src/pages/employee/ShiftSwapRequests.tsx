@@ -8,7 +8,7 @@ import { useAuth, AuthUser } from "../../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
 import "./ShiftSwapRequests.css";
 import {
-  fetchAllSwapProposals, // API to get all swap proposalss
+  fetchAllSwapProposals, // API to get all swap proposals
   fetchShifts,           // API call that returns all shifts
   requestSwapProposal    // New API function to persist swap requests
 } from "../../Services/api.ts";
@@ -19,6 +19,9 @@ import {
 interface ExtendedAuthUser extends AuthUser {
   id: number;
   name: string;
+  email: string;
+  role: string;
+  permissions: string;
 }
 
 /**
@@ -55,28 +58,30 @@ const ShiftSwapRequests: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
 
-  // Extract current user details (using user.userId if available)
+  // Extract current user details using the proper property names
   const currentUser: ExtendedAuthUser =
-    user && (user as any).userId
-      ? {
-          id: Number((user as any).userId),
-          name: (user as any).username || "John Doe",
-          email: user.email,
-          role: user.role,
-        }
-      : {
-          id: 1,
-          name: "John Doe",
-          email: "",
-          role: "",
-        };
+  user && (user as any).userId
+    ? {
+        id: Number((user as any).userId),
+        name: (user as any).username || "John Doe",
+        email: user.email,
+        role: user.role,
+        permissions: (user as any).permissions || "",
+      }
+    : {
+        id: 1,
+        name: "John Doe",
+        email: "",
+        role: "",
+        permissions: "",
+      };
 
   // Debug logs
   useEffect(() => {
     console.log("Email:", currentUser.email);
-    console.log("Login.tsx:44 Role:", currentUser.role);
-    console.log("Login.tsx:45 Id:", currentUser.id);
-    console.log("Login.tsx:46 Token:", localStorage.getItem("token"));
+    console.log("Role:", currentUser.role);
+    console.log("Id:", currentUser.id);
+    console.log("Token:", localStorage.getItem("token"));
   }, [currentUser]);
 
   const messages = {
@@ -114,7 +119,6 @@ const ShiftSwapRequests: React.FC = () => {
       const role = shift.shiftOwnerRole || t("unassigned");
       const start = shift.startTime ? new Date(shift.startTime) : new Date();
       const end = shift.endTime ? new Date(shift.endTime) : new Date();
-    
       return { id, title, employeeId, shiftOwner, role, start, end };
     });
   };
@@ -178,14 +182,6 @@ const ShiftSwapRequests: React.FC = () => {
 
   /**
    * Handle submitting a new swap request.
-   * The payload now matches the expected JSON format:
-   * {
-   *   "employeeId": currentUser.id,
-   *   "currentShiftId": ownShift.id,
-   *   "proposedTitle": ownShift.title,
-   *   "proposedStartTime": targetShift.start (ISO string),
-   *   "proposedEndTime": targetShift.end (ISO string)
-   * }
    */
   const handleSubmitSwapRequest = async (
     e: React.FormEvent<HTMLFormElement>
@@ -262,9 +258,7 @@ const ShiftSwapRequests: React.FC = () => {
                 value={selectedOwnShift}
                 onChange={(e) => setSelectedOwnShift(e.target.value)}
               >
-                <option value="">
-                  {t("selectYourShift") || "-- Select Your Shift --"}
-                </option>
+                <option value="">{t("selectYourShift") || "-- Select Your Shift --"}</option>
                 {ownShifts.map((shift) => (
                   <option key={shift.id} value={shift.id}>
                     {shift.title} (
@@ -282,9 +276,7 @@ const ShiftSwapRequests: React.FC = () => {
                 value={selectedTargetShift}
                 onChange={(e) => setSelectedTargetShift(e.target.value)}
               >
-                <option value="">
-                  {t("selectTargetShift") || "-- Select Target Shift --"}
-                </option>
+                <option value="">{t("selectTargetShift") || "-- Select Target Shift --"}</option>
                 {targetShifts.map((shift) => (
                   <option key={shift.id} value={shift.id}>
                     {shift.title} (
@@ -302,7 +294,7 @@ const ShiftSwapRequests: React.FC = () => {
         </div>
       </div>
 
-      {/* Display user’s pending swap requests */}
+      {/* Display user’s pending swap requests with offset applied for display */}
       <div className="mt-4 request-list">
         <h3>{t("myPendingSwapRequests") || "My Pending Swap Requests"}</h3>
         {swapRequests.filter((req) => req.employeeId === currentUser.id).length === 0 ? (
@@ -311,18 +303,24 @@ const ShiftSwapRequests: React.FC = () => {
           <ul className="list-group">
             {swapRequests
               .filter((req) => req.employeeId === currentUser.id)
-              .map((req) => (
-                <li key={req.id} className="list-group-item">
-                  <strong>
-                    {t("requestNumber") || "Request #"}
-                    {req.id}
-                  </strong>
-                  : {req.proposedTitle} {t("swapArrow") || "→"}{" "}
-                  {moment(req.proposedStartTime).format("HH:mm")} -{" "}
-                  {moment(req.proposedEndTime).format("HH:mm")} (
-                  {t("status") || "Status"}: {req.status})
-                </li>
-              ))}
+              .map((req) => {
+                // Apply one-hour offset only for display in this list
+                const start = req.proposedStartTime ? new Date(req.proposedStartTime) : new Date();
+                const end = req.proposedEndTime ? new Date(req.proposedEndTime) : new Date();
+                start.setHours(start.getHours() + 1);
+                end.setHours(end.getHours() + 1);
+                return (
+                  <li key={req.id} className="list-group-item">
+                    <strong>
+                      {t("requestNumber") || "Request #"}
+                      {req.id}
+                    </strong>
+                    : {req.proposedTitle} {t("swapArrow") || "→"}{" "}
+                    {moment(start).format("HH:mm")} - {moment(end).format("HH:mm")} (
+                    {t("status") || "Status"}: {req.status})
+                  </li>
+                );
+              })}
           </ul>
         )}
       </div>

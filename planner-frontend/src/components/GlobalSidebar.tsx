@@ -43,6 +43,9 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("lang");
     localStorage.removeItem("userId");
+    localStorage.removeItem("permissions");
+    localStorage.removeItem("role");
+
     navigate("/login");
     onClose();
   };
