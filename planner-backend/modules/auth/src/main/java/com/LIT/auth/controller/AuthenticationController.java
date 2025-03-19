@@ -62,14 +62,40 @@ public class AuthenticationController {
         return response;
     }
 
+    @PostMapping("/newcommer")
+    public ResponseEntity<?> newCommer(@RequestBody LoginRequest loginRequest) {
+        log.info(logHeader + "Newcommer: New user first login detected. Need to finalize registration. New user: " + loginRequest.getEmail() + "\nAttempting to get data for new user...");
+        
+        Map<String, String> jsonToRet = authenticationService.getForNewCommer(loginRequest);
+        log.info(logHeader + "User: " + loginRequest.getEmail() + " is new and must fulfill registration\nResponse: " + jsonToRet);
+
+        ResponseEntity<?> response = ResponseEntity.ok(jsonToRet);
+        log.info(logHeader + "Response: " + response);
+        
+        log.info(logHeader + "Returning response: " + response);
+        return response;
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
 
         log.info(logHeader + "Register request received for user: " + registerRequest.getEmail() + "\nAttempting to register...");
-        authenticationService.register(registerRequest);
+        Map<String, String> jsonToRet = authenticationService.register(registerRequest);
 
         log.info(logHeader + "Register request processed for user: " + registerRequest.getEmail() + "\nUser registered successfully!");
-        return ResponseEntity.ok("User registered successfully!");
+
+        ResponseEntity<?> response = ResponseEntity.ok(jsonToRet);
+        log.info(logHeader + "Response: " + response);
+
+        if (jsonToRet.get("token") == null) {
+            
+            log.error(logHeader + "Response was null, returning bad request");
+            response = ResponseEntity.badRequest().body(response);
+        }
+        
+        log.info(logHeader + "Returning response: " + response);
+        
+        return response;
     }
 
     @PostMapping("/dummy-data") // Resets dummy data
