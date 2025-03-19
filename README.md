@@ -17,7 +17,7 @@ The application running on server can be accessed through here! `http://138.199.
 ### Local Deployment
 
 > [!IMPORTANT]
-> **:warning:!** - **BEFORE** performing a local deployment, be sure to check [`.env.production`](./planner-frontend/.env.production) under the `planner-frontend` and ensure that it looks like this:
+> **:warning:!** - **BEFORE** performing a local deployment, be sure to check [`.env.production`](./planner-frontend/.env.production) under the `planner-frontend` folder and ensure that it looks like this:
 ```
 REACT_APP_API_BASE_URL=http://localhost:8080
 ```
