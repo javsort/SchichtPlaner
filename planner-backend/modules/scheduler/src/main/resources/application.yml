@@ -8,7 +8,7 @@ address:
   scheduler:
     url: ${SCHEDULER_SERVICE_URL:http://localhost:8081}
   auth:
-    url: ${AUTH_SERVICE_URL:http://localhost:8082} 
+    url: ${AUTH_SERVICE_URL:http://localhost:8082}
   stats:
     url: ${STATS_SERVICE_URL:http://localhost:8083}
 
@@ -54,5 +54,8 @@ logging:
       springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:INFO}
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:INFO}
       springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:INFO}
+      mail: WARN
+      jakarta:
+        mail: WARN
     com:
       zaxxer.hikari: DEBUG
