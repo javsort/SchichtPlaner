@@ -56,7 +56,7 @@ const Login: React.FC = () => {
               />
             </div>
             <button type="submit" className="login-btn">
-              {t("loginButton") || "Login"}
+              {t("login") || "Login"}
             </button>
           </form>
           <div className="text-center mt-3">
