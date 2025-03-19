@@ -9,8 +9,10 @@ import "./Login.css";
 
 interface AuthUser {
   userId: number;
+  username: string;
   email: string;
   role: string;
+  permissions: string;
 }
 
 const useAuthTyped = () => {
@@ -30,6 +32,16 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     if (email && password) {
+
+      // this is a new user, send to the register page
+      if (password === "password") {
+        console.log("New user detected, sending to register page...");
+        navigate("/register", { 
+          state: { email: email, tempPassword: password }
+        });
+        return;
+      }
+
       console.log('Logging in...', { email, password });
 
       try {
@@ -39,13 +51,17 @@ const Login: React.FC = () => {
         const retEmail = loginInfo.email;
         const token = loginInfo.token;
         const userId = loginInfo.userId;
+        const username = loginInfo.username;
+        const permissions = Array.isArray(loginInfo.permissions) ? loginInfo.permissions : [];
         
         console.log('Email:', retEmail);
         console.log('Role:', retRole);
         console.log('Id:', userId);
         console.log("Token: '" +  token + "'");
+        console.log("Permissions: '" +  permissions + "'");
+        console.log("Username: '" +  username + "'");
 
-        setUser({ email: retEmail, role: retRole, userId: userId });
+        setUser({ email: retEmail, role: retRole, userId: userId, permissions: permissions, username: username });
 
         // Instead of navigating based on role, always redirect to the Company Shift Calendar page.
         navigate("/shift-view");
@@ -78,6 +94,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                data-test-id="email-input"
               />
             </div>
             <div className="form-group">
@@ -87,6 +104,7 @@ const Login: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                data-test-id="password-input"
               />
             </div>
             <button type="submit" className="login-btn">

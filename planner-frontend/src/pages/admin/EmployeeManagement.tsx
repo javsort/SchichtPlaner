@@ -11,8 +11,8 @@ import { getAllUsers, getAllRoles, createUser, updateUser, deleteUser } from "..
 
 // Define an interface for employee data
 interface Employee {
-  id: number;          // Primary key from DB
-  employeeId?: string; // <-- New field for a custom employee id
+  id: number;
+  employeeId?: string;
   name: string;
   address: string;
   phone: string;
@@ -39,6 +39,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   // State that determines whether delete is allowed (Admin only)
   const [allowDelete, setAllowDelete] = useState(false);
+
+  // For new user popup
+  const [showUserPopup, setShowUserPopup] = useState(false);
+  const [createdEmail, setCreatedEmail] = useState("");
+  const [createdPassword, setCreatedPassword] = useState("");
 
   // Set up React Hook Form
   const {
@@ -86,7 +91,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   };
 
   useEffect(() => {
-    if (user && user.role === "Admin") {
+    if (user && user.permissions.includes("EMPLOYEE_DELETE")) {
       setAllowDelete(true);
     } else {
       setAllowDelete(false);
@@ -158,14 +163,20 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         const newUser = {
           email: data.email,
           username: data.name,
-          password: "password_test", // Default password (consider making this configurable)
+          password: "password", // Default password (consider making this configurable)
           address: data.address,
           phoneNum: data.phone,
           googleId: "",
           roles: [{ id: selectedRole.id, name: selectedRole.name }]
         };
     
-        await createUser(newUser);
+        const retUser = await createUser(newUser);
+
+        setCreatedEmail(retUser.email);
+        setCreatedPassword(newUser.password);
+        setShowUserPopup(true);
+
+
         
         reset(); // Clear the form after submission
         fetchEmployees(); // Refresh employee list after adding a new user
@@ -242,6 +253,22 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
   return (
     <div className="container">
       <h2>{t("employeeManagement") || "Employee Management"}</h2>
+      {showUserPopup && (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h3>User Created!</h3>
+          <p>Share the following credentials to your employee:</p>
+          <p>
+            Email: '<span className="highlight">{createdEmail}</span>'
+          </p>
+          <p>
+            Password: '<span className="highlight">{createdPassword}</span>'
+          </p>
+          <p>It will be prompted to update its password for the first login</p>
+          <button onClick={() => setShowUserPopup(false)}>Close</button>
+        </div>
+      </div>
+    )}
 
       {/* Employee Entry Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="employee-form">
@@ -250,6 +277,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           <div className="form-row">
           <label>{t("selectEmployee") || "Select Employee"}:</label>
           <select
+            data-test-id="employee-select"
             onChange={(e) => {
               const selectedId = Number(e.target.value);
               const selectedEmployee = employees.find(emp => emp.id === selectedId);
@@ -260,7 +288,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           >
             <option value="">{t("selectEmployee") || "Select an Employee"}</option>
             {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>{emp.id} - {emp.name}</option>
+              <option key={emp.id} value={emp.id} data-test-id={`employee-option-${emp.id}`}>
+                {emp.id} - {emp.name}
+                </option>
             ))}
           </select>
         </div>
@@ -277,7 +307,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         
         <div className="form-row">
           <label>{t("name") || "Name"}:</label>
-          <input
+          <input data-test-id="name-input"
             {...register("name", {
               required: t("nameRequired") || "Name is required",
             })}
@@ -289,7 +319,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {/* Address */}
         <div className="form-row">
           <label>{t("address") || "Address"}:</label>
-          <input
+          <input data-test-id="address-input"
             {...register("address", {
               required: t("addressRequired") || "Address is required",
             })}
@@ -301,7 +331,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {/* Phone */}
         <div className="form-row">
           <label>{t("phoneNumber") || "Phone Number"}:</label>
-          <input
+          <input data-test-id="phone-input"
             {...register("phone", {
               required: t("phoneRequired") || "Phone number is required",
               pattern: {
@@ -317,7 +347,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {/* Email */}
         <div className="form-row">
           <label>{t("email") || "E-mail Address"}:</label>
-          <input
+          <input data-test-id="email-input"
             {...register("email", {
               required: t("emailRequired") || "Email is required",
               pattern: {
@@ -343,7 +373,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
             {/* Map over roles from the backend */}
             {roles.map((role) => (
-              <option key={role.id} value={role.name}>
+              <option key={role.id} value={role.name} data-test-id={`role-${role.name}-select`}>
                 {t(
                   roleTranslationMap[role.name.replace("-", " ")] ||
                     role.name.replace("-", " ")
@@ -356,7 +386,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
         {/* Form Buttons */}
         <div className="form-actions">
-          <button type="submit">
+          <button type="submit" data-test-id="submit-button">
             {editingEmployeeId
               ? t("updateEmployee") || "Update Employee"
               : t("addEmployee") || "Add Employee"}
@@ -391,7 +421,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         <tbody>
           {employees.length > 0 ? (
             employees?.map((emp) => (
-              <tr key={emp.id}>
+              <tr key={emp.id} data-test-id={`employee-row-${emp.id}`}>
                 <td>{emp.id || ""}</td>
                 <td>{emp.name}</td>
                 <td>{emp.address}</td>
@@ -399,11 +429,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
                 <td>{emp.email}</td>
                 <td>{getRoleLabel(emp.role)}</td>
                 <td align="center">
-                  <button onClick={() => editEmployee(emp)}>
+                  <button onClick={() => editEmployee(emp)} data-test-id={`edit-button-${emp.id}`}>
                     {t("edit") || "Edit"}
                   </button>
-                  {allowDelete && (
-                    <button onClick={() => deleteEmployee(emp.id)}>
+                  {user?.permissions.includes("EMPLOYEE_DELETE") && (
+                    <button onClick={() => deleteEmployee(emp.id)} data-test-id={`delete-button-${emp.id}`}>
                       {t("delete") || "Delete"}
                     </button>
                   )}

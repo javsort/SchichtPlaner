@@ -19,7 +19,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   interface Shift {
     id: number;
     title: string;
-    employeeId: number | null;
+    shiftOwnerId: number | null;
     shiftOwner: string;
     role: string;
     start: Date;
@@ -30,7 +30,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     return shifts.map((shift) => ({
       id: shift.id,
       title: shift.title || t("unnamedShift"),
-      employeeId: shift.employeeId || null,
+      shiftOwnerId: shift.shiftOwnerId || null,
       shiftOwner: shift.shiftOwnerName || t("unassigned"),
       role: shift.shiftOwnerRole || t("unassigned"),
       start: new Date(shift.startTime),
@@ -87,7 +87,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const [newShift, setNewShift] = useState<Shift>({
     id: 0,
     title: "",
-    employeeId: null,
+    shiftOwnerId: null,
     shiftOwner: "",
     role: "",
     start: new Date(),
@@ -98,12 +98,12 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
 
   const calendarEvents = shifts.map((shift: Shift) => ({
     id: shift.id,
-    title: `${shift.title} (${shift.shiftOwner})`,
+    title: `${shift.title}`,
     shiftOwner: shift.shiftOwner,
     start: shift.start,
     end: shift.end,
     role: shift.role,
-    employeeId: shift.employeeId
+    shiftOwnerId: shift.shiftOwnerId
   }));
 
   // Dynamic event styling
@@ -174,7 +174,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           start: start,
           end: end,
           role: newShift.role,
-          employeeId: newShift.employeeId || null,
+          shiftOwnerId: newShift.shiftOwnerId || null,
           shiftOwner: newShift.shiftOwner,
         });
 
@@ -187,12 +187,12 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           start: start,
           end: end,
           role: newShift.role,
-          employeeId: newShift.employeeId || null,
+          shiftOwnerId: newShift.shiftOwnerId || null,
           shiftOwner: newShift.shiftOwner,
         });
       }
 
-      setNewShift({ id: 0, shiftOwner: "", title: "", start: new Date(), end: new Date(), role: "" , employeeId: null});
+      setNewShift({ id: 0, shiftOwner: "", title: "", start: new Date(), end: new Date(), role: "" , shiftOwnerId: null});
       await loadShifts();
     } catch (error) {
       console.error("Error adding/updating shift:", error);
@@ -207,7 +207,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       start: moment(shift.start).format("YYYY-MM-DDTHH:mm"),
       end: moment(shift.end).format("YYYY-MM-DDTHH:mm"),
       role: shift.role,
-      employeeId: shift.employeeId ,
+      shiftOwnerId: shift.shiftOwnerId ,
       shiftOwner: shift.shiftOwner,
     });
 
@@ -249,14 +249,14 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     if (selectedEmployee) {
       setNewShift({
         ...newShift,
-        employeeId: selectedEmployee.id,
+        shiftOwnerId: selectedEmployee.id,
         shiftOwner: selectedEmployee.name,
         role: selectedEmployee.role,
       });
     } else {
       setNewShift({
         ...newShift,
-        employeeId: null,
+        shiftOwnerId: null,
         shiftOwner: "", // Reset if no employee selected
         role: "Unassigned",
       });
@@ -281,7 +281,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               <>
               <label>{t("selectEmployee") || "Select Employee"}:</label>
               <select
-                value={newShift.employeeId || ""} // Ensure it selects the correct employee ID
+                value={newShift.shiftOwnerId || ""} // Ensure it selects the correct employee ID
                 onChange={handleEmployeeChange}
                 required
               >
@@ -358,7 +358,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                       end: new Date(),
                       shiftOwner: "",
                       role : "",
-                      employeeId: null,
+                      shiftOwnerId: null,
                     });
                   }}
                 >
@@ -394,6 +394,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         <table>
           <thead>
             <tr>
+              <th>{t("employeeId") || "Employee Id"}</th>
               <th>{t("employeeName") || "Employee Name"}</th>
               <th>{t("date") || "Date"}</th>
               <th>{t("time") || "Time"}</th>
@@ -404,6 +405,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           <tbody>
             {shifts.map((shift) => (
               <tr key={shift.id}>
+                <td>{shift.shiftOwnerId || t("unassigned") || "Unassigned"}</td>
                 <td>
                   {shift.shiftOwner || t("unassigned") || "Unassigned"}
                 </td>

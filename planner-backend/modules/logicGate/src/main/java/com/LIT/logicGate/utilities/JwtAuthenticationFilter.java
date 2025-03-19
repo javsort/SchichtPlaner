@@ -52,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Catch the login / registration
         if(authHeader == null) {
 
-            if(requestWrap.getRequestURI().endsWith("/login") || requestWrap.getRequestURI().endsWith("/register") || requestWrap.getRequestURI().endsWith("/hello")) {
+            if(requestWrap.getRequestURI().endsWith("/login") || requestWrap.getRequestURI().endsWith("/register") || requestWrap.getRequestURI().endsWith("/newcommer") || requestWrap.getRequestURI().endsWith("/hello")) {
                 log.info(logHeader + "No token provided, but it's a login / register request -> proceed");
 
                 chain.doFilter(requestWrap, response);

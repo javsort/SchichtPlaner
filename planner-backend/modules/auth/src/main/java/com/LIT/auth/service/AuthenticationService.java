@@ -55,11 +55,11 @@ public class AuthenticationService {
         //Create roles if none exist
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                Role.builder().name("Admin").build(),
-                Role.builder().name("Shift-Supervisor").build(),
-                Role.builder().name("Technician").build(),
-                Role.builder().name("Tester").build(),
-                Role.builder().name("Incident-Manager").build()
+                Role.builder().name("Admin").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "ROLE_MANAGEMENT", "EMPLOYEE_MANAGEMENT", "EMPLOYEE_DELETE", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL")).build(),
+                Role.builder().name("Shift-Supervisor").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "EMPLOYEE_MANAGEMENT", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL")).build(),
+                Role.builder().name("Technician").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build(),
+                Role.builder().name("Tester").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build(),
+                Role.builder().name("Incident-Manager").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build()
             ));
         }
 
@@ -80,7 +80,7 @@ public class AuthenticationService {
 
             User admin = User.builder()
                     .email("admin@example.com")
-                    .username("admin")
+                    .username("Admin Adminson")
                     .password(passwordEncoder.encode("admin123"))
                     .address("1234 Admin St")
                     .phoneNum("123-456-7890")
@@ -89,7 +89,7 @@ public class AuthenticationService {
 
             User shiftSupervisor = User.builder()
                     .email("shiftsupervisor@example.com")
-                    .username("shiftSupervisor")
+                    .username("Shift Supervisor Smith")
                     .password(passwordEncoder.encode("shiftsuper123"))
                     .address("1234 Shift Supervisor St")
                     .phoneNum("123-456-7890")
@@ -98,7 +98,7 @@ public class AuthenticationService {
 
             User technician = User.builder()
                     .email("technician@example.com")
-                    .username("technician")
+                    .username("Technician Mike")
                     .password(passwordEncoder.encode("technician123"))
                     .address("1234 Technician St")
                     .phoneNum("123-456-7890")
@@ -107,7 +107,7 @@ public class AuthenticationService {
             
             User tester = User.builder()
                     .email("tester@example.com")
-                    .username("tester")
+                    .username("Tester Testerson")
                     .password(passwordEncoder.encode("tester123"))
                     .roles(Set.of(testerRole))
                     .address("1234 Tester St")
@@ -116,7 +116,7 @@ public class AuthenticationService {
             
             User incidentManager= User.builder()
                     .email("incidentmanager@example.com")
-                    .username("incidentManager")
+                    .username("Incident Manager Luis")
                     .password(passwordEncoder.encode("incidentmanage123"))
                     .roles(Set.of(incidentManagerRole))
                     .address("1234 Incident Manager St")
@@ -126,7 +126,7 @@ public class AuthenticationService {
             // Trials for Teacher & End-client
             User trialDavid = User.builder()
                     .email("david@example.com")
-                    .username("david")
+                    .username("David Reichelt")
                     .password(passwordEncoder.encode("david123"))
                     .roles(Set.of(adminRole))
                     .address("1234 David St")
@@ -135,7 +135,7 @@ public class AuthenticationService {
 
             User trialTorsten = User.builder()
                     .email("torsten@example.com")
-                    .username("torsten")
+                    .username("Torsten Frost")
                     .password(passwordEncoder.encode("torsten123"))
                     .roles(Set.of(adminRole))
                     .address("1234 Torsten St")
@@ -169,6 +169,8 @@ public class AuthenticationService {
         User user = userOptional.get();
         //get the first one (this is assuming each user has AT LEAST one)
         String role = user.getRoles().iterator().next().getName();
+        String permissions = String.join(",", user.getRoles().iterator().next().getPermissions());
+        String username = user.getUsername();
 
         log.info(logHeader + "login: User found. Generating token...");
 
@@ -180,33 +182,74 @@ public class AuthenticationService {
         toReturn.put("email", user.getEmail());
         toReturn.put("role", role);
         toReturn.put("userId", user.getId().toString());
+        toReturn.put("username", username);
+        toReturn.put("permissions", permissions);
 
         log.info(logHeader + "User " + user.getEmail() + " logged in successfully. Returnig token.");
 
         return toReturn;
     }
 
-    public void register(RegisterRequest registerRequest) {
-        log.info(logHeader + "register: Registering user with email: " + registerRequest.getEmail());
+    public Map<String, String> getForNewCommer(LoginRequest loginRequest) {
+        log.info(logHeader + "getForNewCommer: New user first login detected. Need to finalize registration.");
 
-        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            log.error(logHeader + "register: User already exists");
-            throw new UserAlreadyExistsException("User already exists!");
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
+        if(userOptional.isEmpty()) {
+                log.error(logHeader + "login: User not found");
         }
-        Role employeeRole = roleRepository.findByName("Employee")
-                .orElseThrow(() -> new RuntimeException("Default role not found"));
 
-        log.info(logHeader + "register: User does not exist. Creating new user...");
+        User user = userOptional.get();
 
-        User newUser = User.builder()
-                .email(registerRequest.getEmail())
-                .username(registerRequest.getUsername())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .roles(Set.of(employeeRole))
-                .build();
+        Map<String, String> toReturn = new HashMap<>();
 
-        log.info(logHeader + "register: Saving user to DB...");
+        toReturn.put("userId", user.getId().toString());
+        toReturn.put("email", user.getEmail());
+        toReturn.put("username", user.getUsername());
+        toReturn.put("role", user.getRoles().iterator().next().getName());
+
+        return toReturn;
+    }
+
+    // Fulfill registration
+    public Map<String, String> register(RegisterRequest registerRequest) {
+        log.info(logHeader + "register: Fulfilling registration  user with email: " + registerRequest.getEmail());
+
+        Optional<User> userOptional = userRepository.findByEmail(registerRequest.getEmail());
+
+        if(userOptional.isEmpty()) {
+                log.error(logHeader + "login: User not found");
+                throw new InvalidCredentialsException("Invalid credentials");
+        }
+        
+        // Update with new password
+        User newUser = userOptional.get();
+        newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+        log.info(logHeader + "register: Saving user to DB with updated password...");
 
         userRepository.save(newUser);
-    }
+
+        // Build metadata to finish the login
+        String role = newUser.getRoles().iterator().next().getName();
+        String permissions = String.join(",", newUser.getRoles().iterator().next().getPermissions());
+        String username = newUser.getUsername();
+
+        log.info(logHeader + "login: newUser found. Generating token...");
+
+        // Generate token
+        String token = "Bearer " + jwtTokenUtil.generateToken(newUser.getEmail(), role, newUser.getId(), newUser.getUsername());
+
+        Map<String, String> toReturn = new HashMap<>();
+        toReturn.put("token", token);
+        toReturn.put("email", newUser.getEmail());
+        toReturn.put("role", role);
+        toReturn.put("userId", newUser.getId().toString());
+        toReturn.put("username", username);
+        toReturn.put("permissions", permissions);
+
+        log.info(logHeader + "newUser " + newUser.getEmail() + " logged in successfully. Returnig token.");
+
+        return toReturn;
+}
 }
