@@ -74,22 +74,9 @@ public class SwapProposalService {
 
         try {
             // Step 1: Retrieve the proposal
-            Optional<SwapProposal> proposalOpt = proposalRepository.findById(proposalId);
-            SwapProposal proposal;
-            if (proposalOpt.isEmpty()) {
-                log.info(logHeader + "Proposal not found in database, creating from memory representation");
-                proposal = new SwapProposal();
-                proposal.setId(proposalId);
-                proposal.setEmployeeId(3L); // Employee ID from UI/memory
-                proposal.setCurrentShiftId(1L); // Current shift ID from UI/memory
-                proposal.setProposedTitle("uto"); // Title from UI/memory
-                proposal.setProposedStartTime(LocalDateTime.of(2025, 3, 25, 7, 0));
-                proposal.setProposedEndTime(LocalDateTime.of(2025, 3, 25, 15, 0));
-                proposal.setStatus(ShiftProposalStatus.PROPOSED);
-            } else {
-                proposal = proposalOpt.get();
-                log.info(logHeader + "Found proposal in database with ID: " + proposal.getId());
-            }
+            SwapProposal proposal = proposalRepository.findById(proposalId)
+                    .orElseThrow(() -> new IllegalArgumentException("Shift proposal not found with id: " + proposalId));
+            log.info(logHeader + "Found proposal in database with ID: " + proposal.getId());
 
             // Step 2: Find swap employee shifts
             List<Shift> swapEmployeeShifts = shiftRepository.findByShiftOwnerId(swapEmployeeId);
