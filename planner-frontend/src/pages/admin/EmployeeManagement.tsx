@@ -252,7 +252,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
   return (
     <div className="container">
-      <h2>{t("employeeManagement") || "Employee Management"}</h2>
+      <h2>{t("Employee Management") || "Employee Management"}</h2>
       {showUserPopup && (
       <div className="modal-overlay">
         <div className="modal-content">
@@ -286,7 +286,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
               }
             }}
           >
-            <option value="">{t("selectEmployee") || "Select an Employee"}</option>
+            <option value="">{t("Select Employee") || "Select an Employee"}</option>
             {employees.map((emp) => (
               <option key={emp.id} value={emp.id} data-test-id={`employee-option-${emp.id}`}>
                 {emp.id} - {emp.name}
