@@ -131,7 +131,10 @@
     "calendar": "Calendar", 
     "logout": "Logout",
     "myShiftProposals": "My Shift Proposals",
-  "noShiftProposalsYet": "No shift proposals yet."
+  "noShiftProposalsYet": "No shift proposals yet.",
+  "Select Employee": "Select Employee",
+  "Select Employee": "Mitarbeiter auswählen",
+  "selectRole": "Select Role"
 
 
   }

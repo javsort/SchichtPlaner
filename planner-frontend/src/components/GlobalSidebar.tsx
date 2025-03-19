@@ -18,7 +18,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { labelKey: "employeeManagement", path: "/employee-management", permission: "EMPLOYEE_MANAGEMENT" },
-  { labelKey: "roleManagement", path: "/role-management", permission: "ROLE_MANAGEMENT" },
+  { labelKey: "Role Management", path: "/role-management", permission: "ROLE_MANAGEMENT" },
   { labelKey: "shiftApproval", path: "/shift-approval", permission: "PROPOSAL_APPROVAL" },
   { labelKey: "Requests", path: "/shift-swap-admin", permission: "SWAP_APPROVAL" },
   { labelKey: "shiftManagement", path: "/shift-management", permission: "SHIFT_MANAGEMENT" },

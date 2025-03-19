@@ -394,7 +394,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         <table>
           <thead>
             <tr>
-              <th>{t("employeeId") || "Employee Id"}</th>
+              <th>{t("Employee Id") || "Employee Id"}</th>
               <th>{t("employeeName") || "Employee Name"}</th>
               <th>{t("date") || "Date"}</th>
               <th>{t("time") || "Time"}</th>
