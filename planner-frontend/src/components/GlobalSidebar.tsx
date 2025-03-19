@@ -57,7 +57,9 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
       <h3>{t("shiftPlanner") || "Shift Planner"}</h3>
       <ul className="nav-list">
         {filteredNavItems.map((item, index) => (
-          <li key={index}>
+          <li 
+          key={index} 
+          data-test-id= {`${item.labelKey}-select`}>
             <Link to={item.path} onClick={() => handleLinkClick(item.path)}>
               {t(item.labelKey)}
             </Link>

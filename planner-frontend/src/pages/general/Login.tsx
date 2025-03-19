@@ -81,6 +81,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                data-test-id="email-input"
               />
             </div>
             <div className="form-group">
@@ -90,6 +91,7 @@ const Login: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                data-test-id="password-input"
               />
             </div>
             <button type="submit" className="login-btn">
