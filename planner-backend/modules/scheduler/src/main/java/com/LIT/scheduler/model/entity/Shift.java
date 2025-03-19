@@ -40,4 +40,10 @@ public class Shift {
 
     @Column(nullable = false)
     private LocalDateTime endTime;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Column(name = "user_id")
+    private Long userId;
 }

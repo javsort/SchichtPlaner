@@ -56,7 +56,7 @@ public class ShiftAssignmentService {
                 assignment.getUserId(), newShiftStart, newShiftEnd);
         
         if (!conflicts.isEmpty()) {
-            log.error(logHeader + "Conflict detected: User " + assignment.getUserId() + " already has an assignment overlapping with the new shift (" + newShiftStart + " - " + newShiftEnd + ").");
+            log.error(logHeader + "Conflict detected: User " + assignment.getUserId()+ " already has an assignment overlapping with the new shift (" + newShiftStart + " - " + newShiftEnd + ").");
             throw new ShiftConflictException("Shift conflict detected: The user has an overlapping assignment.");
         }
 

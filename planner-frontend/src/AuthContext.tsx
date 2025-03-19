@@ -7,8 +7,10 @@ import React, {
   ReactNode,
 } from "react";
 
-// Define the shape of your authenticated user.
+// AuthUser interface
 export interface AuthUser {
+  id: number;
+  name: string;
   email: string;
   role: string;
   permissions: string;
