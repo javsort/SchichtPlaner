@@ -23,16 +23,19 @@ public class SwapProposalService {
     private final SwapProposalRepository proposalRepository;
     private final ShiftRepository shiftRepository;
     private final NotificationService notificationService;
+    private final AuthUserService authUserService; // Injected AuthUserService for dynamic email retrieval
+
     private final String logHeader = "[ShiftProposalService] - ";
-    
 
     @Autowired
     public SwapProposalService(SwapProposalRepository proposalRepository,
-                                ShiftRepository shiftRepository,
-                                NotificationService notificationService) {
+                               ShiftRepository shiftRepository,
+                               NotificationService notificationService,
+                               AuthUserService authUserService) {
         this.proposalRepository = proposalRepository;
         this.shiftRepository = shiftRepository;
         this.notificationService = notificationService;
+        this.authUserService = authUserService;
     }
 
     // Employee submits new shift change request (with conflict detection)
@@ -41,36 +44,37 @@ public class SwapProposalService {
 
         LocalDateTime proposedStart = proposal.getProposedStartTime();
         LocalDateTime proposedEnd = proposal.getProposedEndTime();
-        
-        log.info(logHeader + "Checking for conflicts with existing official assignments for employee: " + proposal.getEmployeeId() + " from: " + proposedStart + " to " + proposedEnd);
-        
+
+        log.info(logHeader + "Checking for conflicts with existing official assignments for employee: "
+                + proposal.getEmployeeId() + " from: " + proposedStart + " to " + proposedEnd);
+
         List<Shift> conflicts = shiftRepository.findConflictingShifts(proposal.getEmployeeId(), proposedStart, proposedEnd);
-        
+
         if (!conflicts.isEmpty()) {
-            log.error(logHeader + "Conflict detected: Employee " + proposal.getEmployeeId() + " has an official assignment overlapping with the proposed shift (" + proposedStart + " to " + proposedEnd + ")");
+            log.error(logHeader + "Conflict detected: Employee " + proposal.getEmployeeId()
+                    + " has an official assignment overlapping with the proposed shift (" + proposedStart + " to " + proposedEnd + ")");
             throw new ShiftConflictException("Cannot propose shift: The proposed time overlaps with an existing official shift.");
         } else {
             log.info(logHeader + "No conflicts detected for employee " + proposal.getEmployeeId() + " from " + proposedStart + " to " + proposedEnd + ". Proceeding with proposal creation.");
         }
-        
+
         proposal.setStatus(ShiftProposalStatus.PROPOSED);
-        
+
         proposalRepository.save(proposal);
-        
+
         log.info(logHeader + "Employee " + proposal.getEmployeeId() + " has proposed a new shift change request for current shift id " + proposal.getCurrentShiftId() +
                 " to new shift: " + proposal.getProposedTitle() + " from " + proposal.getProposedStartTime() + " to " + proposal.getProposedEndTime());
-        
+
         return proposal;
     }
 
     public SwapProposal acceptShiftChange(Long proposalId, Long swapEmployeeId) {
         log.info(logHeader + "Starting swap acceptance: proposalId=" + proposalId + ", swapEmployeeId=" + swapEmployeeId);
-        
+
         try {
             // Step 1: Try to find the proposal in the database
             Optional<SwapProposal> proposalOpt = proposalRepository.findById(proposalId);
-            
-            // If not found in database, create a temporary one that matches what's in memory
+
             SwapProposal proposal;
             if (proposalOpt.isEmpty()) {
                 log.info(logHeader + "Proposal not found in database, creating from memory representation");
@@ -86,11 +90,11 @@ public class SwapProposalService {
                 proposal = proposalOpt.get();
                 log.info(logHeader + "Found proposal in database with ID: " + proposal.getId());
             }
-            
+
             // Step 2: Find swap employee shifts
             List<Shift> swapEmployeeShifts = shiftRepository.findByShiftOwnerId(swapEmployeeId);
             log.info(logHeader + "Found " + swapEmployeeShifts.size() + " shifts for swap employee");
-            
+
             // Step 3: Just use the first shift for simplicity
             if (swapEmployeeShifts.isEmpty()) {
                 log.error(logHeader + "No shifts found for swap employee: " + swapEmployeeId);
@@ -98,7 +102,7 @@ public class SwapProposalService {
             }
             Shift swapEmployeeShift = swapEmployeeShifts.get(0);
             log.info(logHeader + "Using shift: " + swapEmployeeShift.getId());
-            
+
             // Step 4: Find or create requester's shift
             Optional<Shift> requestingUserShiftOpt = shiftRepository.findById(proposal.getCurrentShiftId());
             Shift requestingUserShift;
@@ -116,92 +120,67 @@ public class SwapProposalService {
             } else {
                 requestingUserShift = requestingUserShiftOpt.get();
             }
-            
+
             // Step 5: Perform swap
             log.info(logHeader + "Swapping owners between shifts");
-            
+
             // Save original values for swap
             Long tempId = requestingUserShift.getShiftOwnerId();
             String tempName = requestingUserShift.getShiftOwnerName();
             String tempRole = requestingUserShift.getShiftOwnerRole();
-            
+
             // Update shifts
             requestingUserShift.setShiftOwnerId(swapEmployeeShift.getShiftOwnerId());
             requestingUserShift.setShiftOwnerName(swapEmployeeShift.getShiftOwnerName());
             requestingUserShift.setShiftOwnerRole(swapEmployeeShift.getShiftOwnerRole());
-            
+
             swapEmployeeShift.setShiftOwnerId(tempId);
             swapEmployeeShift.setShiftOwnerName(tempName);
             swapEmployeeShift.setShiftOwnerRole(tempRole);
-            
+
             // Step 6: Save everything
             shiftRepository.save(requestingUserShift);
             shiftRepository.save(swapEmployeeShift);
-            
+
             // Step 7: Update proposal status
             proposal.setStatus(ShiftProposalStatus.ACCEPTED);
             SwapProposal savedProposal = proposalRepository.save(proposal);
             log.info(logHeader + "Swap completed successfully");
 
             notificationService.sendEmail(
-            getEmployeeEmail(proposal.getEmployeeId()),
-            "Shift Swap Accepted",
-            "Your shift swap request has been accepted, check your calendar"
+                    getEmployeeEmail(proposal.getEmployeeId()),
+                    "Shift Swap Accepted",
+                    "Your shift swap request has been accepted, check your calendar"
             );
-            
+
             return savedProposal;
         } catch (Exception e) {
             log.error(logHeader + "Error in acceptShiftChange: " + e.getMessage(), e);
             throw e;
         }
     }
-    
-    // Helper method to find the best matching shift
-    private Shift findBestMatchingShift(List<Shift> shifts, String proposedTitle) {
-        // First try exact match
-        for (Shift shift : shifts) {
-            if (shift.getTitle() != null && proposedTitle != null && 
-                shift.getTitle().trim().equalsIgnoreCase(proposedTitle.trim())) {
-                log.info(logHeader + "Found exact title match: " + shift.getTitle());
-                return shift;
-            }
-        }
-        
-        // Then try contains match
-        for (Shift shift : shifts) {
-            if (shift.getTitle() != null && proposedTitle != null && 
-                shift.getTitle().toLowerCase().contains(proposedTitle.toLowerCase())) {
-                log.info(logHeader + "Found partial title match: " + shift.getTitle());
-                return shift;
-            }
-        }
-        
-        // If no match found, return the first shift as fallback
-        log.info(logHeader + "No title match found, using first shift: " + shifts.get(0).getTitle());
-        return shifts.get(0);
-    }
-    
+
     // Manager declines a shift change request
     public SwapProposal declineShiftChange(Long proposalId, String managerComment) {
         log.info(logHeader + "Manager is declining shift change proposal: " + proposalId);
-        
+
         Optional<SwapProposal> opt = proposalRepository.findById(proposalId);
-        
+
         if (!opt.isPresent()) {
             throw new IllegalArgumentException("Shift proposal not found.");
         }
-        
+
         SwapProposal proposal = opt.get();
-        
+
         proposal.setStatus(ShiftProposalStatus.REJECTED);
         proposal.setManagerComment(managerComment);
-        
+
         log.info(logHeader + "Manager declined proposal " + proposalId + " for employee " + proposal.getEmployeeId() + " with comment: " + managerComment);
-        
+
         notificationService.sendEmail(
-            getEmployeeEmail(proposal.getEmployeeId()),
-            "Shift Swap Declined",
-            "Your shift swap request has been declined. Manager comment: " + managerComment
+                getEmployeeEmail(proposal.getEmployeeId()),
+                "Shift Swap Declined",
+                "Your shift swap request has been declined. Manager comment: " + managerComment
         );
 
         return proposalRepository.save(proposal);
@@ -209,24 +188,22 @@ public class SwapProposalService {
 
     public List<SwapProposal> getProposalsByEmployee(Long employeeId) {
         log.info(logHeader + "getProposalsByEmployee: Getting proposals for employee with id: " + employeeId);
-        
+
         List<SwapProposal> proposals = proposalRepository.findByEmployeeId(employeeId);
-        
+
         return proposals;
     }
 
     public List<SwapProposal> getAllProposals() {
         log.info(logHeader + "getAllProposals: Getting all proposals");
-        
+
         List<SwapProposal> proposals = proposalRepository.findAll();
-        
+
         return proposals;
     }
 
+    // Retrieve the user's email dynamically using AuthUserService
     private String getEmployeeEmail(Long employeeId) {
-        return "pekaric.edi1@gmail.com"; // Hardcoded as all of the mails are not real mails
-        //return userService.getUserById(employeeId)
-        //                  .map(User::getEmail)
-        //                  .orElse("eddie.pekaric@hotmail.com");
+        return authUserService.getUserEmailById(employeeId);
     }
 }
