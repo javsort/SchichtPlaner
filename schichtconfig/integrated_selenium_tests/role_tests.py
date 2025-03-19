@@ -28,7 +28,7 @@ def navigate_to_role_management(wait, driver):
     sidebar_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-test-id='toggle-sidebar-button']")))
     sidebar_button.click()
     
-    role_management_link = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-test-id='roleManagement-select']")))
+    role_management_link = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-test-id='Role Management-select']")))
     role_management_link.click()
     
     wait.until(EC.presence_of_element_located((By.CLASS_NAME, "role-management-container")))
