@@ -15,6 +15,10 @@ import {
 
 import { useTranslation } from "react-i18next";
 
+// Force English locale to start on Monday
+// This will affect the moment locale data used by react-big-calendar
+moment.updateLocale("en", { week: { dow: 1 } });
+
 const localizer = momentLocalizer(moment);
 
 interface Shift {
@@ -150,7 +154,6 @@ const ShiftApprovalCalendar: React.FC = () => {
       alert(t("failedReject") || "Failed to reject shift. Please try again.");
     }
   };
-
 
   const calendarEvents = shifts.map((shift) => ({
     id: shift.id,
