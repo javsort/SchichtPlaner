@@ -20,7 +20,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Keeps columns aligned */
+  /* Removed table-layout: fixed; for auto-sizing columns */
   margin-top: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
@@ -35,31 +35,28 @@
   vertical-align: top;
 }
 
-/* Example column widths (optional) */
+/* Remove any fixed widths so columns auto-size based on content
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1) {
   width: 60px;
 }
-
 .table thead th:nth-child(2),
 .table tbody td:nth-child(2) {
   width: 120px;
 }
-
 .table thead th:nth-child(3),
 .table tbody td:nth-child(3) {
   width: 150px;
 }
-
 .table thead th:nth-child(4),
 .table tbody td:nth-child(4) {
   width: 120px;
 }
-
 .table thead th:nth-child(5),
 .table tbody td:nth-child(5) {
   width: 150px;
 }
+*/
 
 /* CALENDAR CONTAINER */
 .calendar-container {

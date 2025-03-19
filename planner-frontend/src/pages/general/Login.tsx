@@ -1,9 +1,11 @@
-// src/pages/general/Login.tsx
+
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext.tsx";
 import { login } from "../../Services/api.ts";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 
 import "./Login.css";
 
@@ -22,6 +24,7 @@ const useAuthTyped = () => {
 };
 
 const Login: React.FC = () => {
+  const { t } = useTranslation();
   const { setUser } = useAuthTyped();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
@@ -69,26 +72,28 @@ const Login: React.FC = () => {
         console.error("API Error:", error.response ? error.response.data : error);
         setErrorMessage(
           error.response?.data?.message ??
-            "There was an error logging you in! Please try again."
+            t("loginError", "There was an error logging you in! Please try again.")
         );
       }
     } else {
-      setErrorMessage("Please enter valid credentials.");
+      setErrorMessage(t("invalidCredentials", "Please enter valid credentials."));
     }
   };
 
   return (
     <div className="login-page">
-      {/* The larger white box */}
       <div className="login-box">
-        {/* The narrower content wrapper */}
         <div className="login-content">
-          <img src="/MainLogo.png" alt="Main Logo" className="login-logo" />
-          <h2>Shift Planner Login</h2>
+          {/* Added Language Switcher Button */}
+          <div style={{ textAlign: "right", marginBottom: "10px" }}>
+            <LanguageSwitcher />
+          </div>
+          <img src="/MainLogo.png" alt={t("mainLogo", "Main Logo")} className="login-logo" />
+          <h2>{t("shiftPlannerLogin", "Shift Planner Login")}</h2>
           {errorMessage && <div className="error-message">{errorMessage}</div>}
           <form onSubmit={handleLogin}>
             <div className="form-group">
-              <label>Email</label>
+              <label>{t("email", "Email")}</label>
               <input
                 type="text"
                 value={email}
@@ -98,7 +103,7 @@ const Login: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Password</label>
+              <label>{t("password", "Password")}</label>
               <input
                 type="password"
                 value={password}
@@ -108,7 +113,7 @@ const Login: React.FC = () => {
               />
             </div>
             <button type="submit" className="login-btn">
-              Login
+              {t("login", "Login")}
             </button>
           </form>
         </div>

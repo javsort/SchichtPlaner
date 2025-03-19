@@ -279,7 +279,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           <form onSubmit={handleAddOrUpdateShift}>
             {!isEditing && (
               <>
-              <label>{t("selectEmployee") || "Select Employee"}:</label>
+              <label>{t("Select Employee") || "Select Employee"}:</label>
               <select
                 value={newShift.shiftOwnerId || ""} // Ensure it selects the correct employee ID
                 onChange={handleEmployeeChange}
@@ -394,7 +394,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         <table>
           <thead>
             <tr>
-              <th>{t("employeeId") || "Employee Id"}</th>
+              <th>{t("Employee Id") || "Employee Id"}</th>
               <th>{t("employeeName") || "Employee Name"}</th>
               <th>{t("date") || "Date"}</th>
               <th>{t("time") || "Time"}</th>
