@@ -143,7 +143,14 @@
   "SWAP_APPROVAL": "Approve or reject shift swap requests",
   "SHIFT_PROPOSAL": "Propose shift swaps",
   "SWAP_PROPOSAL": "Request shift swaps",
-  "CALENDAR_VIEW": "View shift calendar"
+  "CALENDAR_VIEW": "View shift calendar",
+  "loginError": "There was an error logging you in! Please try again.",
+  "invalidCredentials": "Please enter valid credentials.",
+  "mainLogo": "Main Logo",
+  "shiftPlannerLogin": "Shift Planner Login",
+ 
+  "password": "Password",
+  "login": "Login"
 
 
   }
