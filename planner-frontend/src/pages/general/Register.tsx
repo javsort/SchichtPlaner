@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; // Import useNavigate for redirection
 import { getUserData, register } from "../../Services/api.ts";
 import { useAuth } from "../../AuthContext.tsx";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from "../../components/LanguageSwitcher.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css'; // Optional: Custom styles
 
+import "./Register.css";
 interface AuthUser {
   userId: string;
   username: string;
@@ -27,6 +30,7 @@ const useAuthTyped = () => {
 };
 
 const RegisterPage: React.FC = () => {
+  const { t } = useTranslation();
   const { setUser } = useAuthTyped();
   const navigate = useNavigate(); 
   const [errorMessage, setErrorMessage] = useState("");
@@ -140,15 +144,23 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="register-container d-flex justify-content-center align-items-center">
       <div className="register-card p-4 shadow-lg rounded">
-        <h2 className="text-center">Welcome Employee</h2>
+        {/* Language Switcher Button added inside the card */}
+        <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+          <LanguageSwitcher />
+        </div>
+        {/* Logo added above the heading */}
+        <div className="text-center mb-3">
+          <img src="/MainLogo.png" alt={t("mainLogo", "Main Logo")} className="login-logo" />
+        </div>
+        <h2 className="text-center">{t("welcomeEmployee", "Welcome Employee")}</h2>
         <div className="text-center mt-3 mb-3">
-          <label>This is a new account.</label>
-          <label>You must update your password:</label>
+          <label>{t("newAccount", "This is a new account.")}</label>
+          <label>{t("updatePassword", "You must update your password:")}</label>
         </div>
         {errorMessage && <div className="error-message">{errorMessage}</div>}
         <form onSubmit={handleRegister}>
           <div className="form-group mb-3">
-            <label>Username</label>
+            <label>{t("username", "Username")}</label>
             <input
               type="text"
               value={userMetadata?.username || ''}
@@ -157,7 +169,7 @@ const RegisterPage: React.FC = () => {
             />
           </div>
           <div className="form-group mb-3">
-            <label>Email</label>
+            <label>{t("email", "Email")}</label>
             <input
               type="text"
               value={userMetadata?.email || ''}
@@ -166,7 +178,7 @@ const RegisterPage: React.FC = () => {
             />
           </div>
           <div className="form-group mb-3">
-            <label>Role</label>
+            <label>{t("role", "Role")}</label>
             <input
               type="text"
               value={userMetadata?.role || ''}
@@ -175,7 +187,7 @@ const RegisterPage: React.FC = () => {
             />
           </div>
           <div className="form-group mb-3">
-            <label>New Password</label>
+            <label>{t("newPassword", "New Password")}</label>
             <input
               type="password"
               value={password}
@@ -185,7 +197,7 @@ const RegisterPage: React.FC = () => {
             />
           </div>
           <div className="form-group mb-3">
-            <label>Confirm New Password</label>
+            <label>{t("confirmNewPassword", "Confirm New Password")}</label>
             <input
               type="password"
               value={confirmPassword}
@@ -195,12 +207,12 @@ const RegisterPage: React.FC = () => {
             />
           </div>
           <button type="submit" className="btn btn-primary w-100">
-            Register
+            {t("register", "Register")}
           </button>
         </form>
         <div className="text-center mt-3">
           <a href="/login" className="text-decoration-none">
-            Already have an account? Login
+            {t("alreadyHaveAccount", "Already have an account? Login")}
           </a>
         </div>
       </div>

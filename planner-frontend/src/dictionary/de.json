@@ -51,7 +51,7 @@
   "name": "Name",
   "address": "Adresse",
   "phoneNumber": "Telefonnummer",
-  "email": "E-Mail-Adresse",
+  "email": "E-mail-Adresse",
   "role": "Rolle",
   "absences": "Fehlzeiten",
   "nameRequired": "Name ist erforderlich",
@@ -188,5 +188,31 @@
   "SWAP_APPROVAL": "Schichttauschanfragen genehmigen",
   "SHIFT_PROPOSAL": "Schichttausch vorschlagen",
   "SWAP_PROPOSAL": "Schichttausch anfordern",
-  "CALENDAR_VIEW": "Kalenderansicht"
-}
+  "CALENDAR_VIEW": "Kalenderansicht",
+  
+  
+    "mainLogo": "Hauptlogo",
+    "welcomeEmployee": "Willkommen Mitarbeiter",
+    "newAccount": "Dies ist ein neues Konto.",
+    "updatePassword": "Sie müssen Ihr Passwort aktualisieren:",
+    "username": "Nutzername",
+    
+    "role": "Rolle",
+    "newPassword": "Neues Passwort",
+    "confirmNewPassword": "Neues Passwort bestätigen",
+    "register": "Registrieren",
+    "alreadyHaveAccount": "Sie haben bereits ein Konto? Anmelden",
+    
+      "loginError": "Beim Einloggen ist ein Fehler aufgetreten! Bitte versuchen Sie es erneut.",
+      "invalidCredentials": "Bitte geben Sie gültige Anmeldedaten ein.",
+      "mainLogo": "Hauptlogo",
+      "shiftPlannerLogin": "Schichtplaner Login",
+    
+      "password": "Passwort",
+      "login": "Anmelden"
+    }
+    
+  
+  
+  
+
