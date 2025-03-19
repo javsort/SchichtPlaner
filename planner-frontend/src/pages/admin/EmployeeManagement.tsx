@@ -275,7 +275,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         { editingEmployeeId == null &&
           <>
           <div className="form-row">
-          <label>{t("selectEmployee") || "Select Employee"}:</label>
+          <label>{t("Select Employee") || "Select Employee"}:</label>
           <select
             data-test-id="employee-select"
             onChange={(e) => {

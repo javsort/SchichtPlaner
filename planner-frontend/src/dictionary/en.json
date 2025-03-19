@@ -131,7 +131,19 @@
     "calendar": "Calendar", 
     "logout": "Logout",
     "myShiftProposals": "My Shift Proposals",
-  "noShiftProposalsYet": "No shift proposals yet."
+  "noShiftProposalsYet": "No shift proposals yet.",
+  "Select Employee": "Select Employee",
+  "Select Employee": "Mitarbeiter auswählen",
+  "selectRole": "Select Role",
+  "ROLE_MANAGEMENT": "Manage roles and permissions",
+  "EMPLOYEE_MANAGEMENT": "Manage employee details and assignments",
+  "EMPLOYEE_DELETE": "Delete employees from the system",
+  "SHIFT_MANAGEMENT": "Manage shifts and schedules",
+  "PROPOSAL_APPROVAL": "Approve or reject shift proposals",
+  "SWAP_APPROVAL": "Approve or reject shift swap requests",
+  "SHIFT_PROPOSAL": "Propose shift swaps",
+  "SWAP_PROPOSAL": "Request shift swaps",
+  "CALENDAR_VIEW": "View shift calendar"
 
 
   }
