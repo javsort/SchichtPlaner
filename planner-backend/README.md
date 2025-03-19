@@ -5,14 +5,14 @@ According to the current architecture design, the backend of the application is 
 The modules divide as follows:
 | Container Name       | Java Module Name                                                       |
 |:--------------------:|:----------------------------------------------------------------------:|
-| planner-logic-gate   | [logicGate](./planner-backend/modules/logicGate/)                      |
-| planner-scheduler    | [scheduler](./planner-backend/modules/scheduler/)                      |
-| planner-auth         | [auth](./planner-backend/modules/auth/)                                |
-| planner-stats        | [statistics](./planner-backend/modules/statistics/) (work in progress) |
+| planner-logic-gate   | [logicGate](./modules/logicGate/)                                      |
+| planner-scheduler    | [scheduler](./modules/scheduler/)                                      |
+| planner-auth         | [auth](./modules/auth/)                                                |
+| planner-stats        | [statistics](./modules/statistics/) (work in progress)                 |
 | Coming Soon!         | -                                                                      |
 
 
-To run the full backend, it is sufficient to simply go back to [./schichtconfig/automation-scripts/](./schichtconfig/automation-scripts/) and run [`./no-front-buildnrun-loc.sh`](./schichtconfig/automation-scripts/no-front-buildnrun-loc.sh) / [`./no-front-buildnrun-loc.bat`](./schichtconfig/automation-scripts/no-front-buildnrun-loc.bat) depending of your OS.
+To run the full backend, it is sufficient to simply go back to [../schichtconfig/automation-scripts/](../schichtconfig/automation-scripts/) and run [`./no-front-buildnrun-loc.sh`](../schichtconfig/automation-scripts/no-front-buildnrun-loc.sh) / [`./no-front-buildnrun-loc.bat`](../schichtconfig/automation-scripts/no-front-buildnrun-loc.bat) depending of your OS.
 ```sh
 $ cd schichtconfig/automation-scripts
 
