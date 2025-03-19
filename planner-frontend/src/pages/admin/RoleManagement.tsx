@@ -96,15 +96,15 @@ const RoleManagement: React.FC = () => {
       <div className="role-selection">
         <label>Select Role:</label>
         <select onChange={(e) => handleRoleChange(e.target.value)} value={selectedRole ?? "new"}>
-          <option value="new">-- Create New Role --</option>
+          <option value="new" data-test-id="new-role-input">-- Create New Role --</option>
           {roles.map((role) => (
-            <option key={role.id} value={role.id}>
+            <option key={role.id} value={role.id} data-test-id={`role-${role.name}-select`}>
               {role.name}
             </option>
           ))}
         </select>
         {selectedRole && (
-          <button className="delete-btn" onClick={handleDeleteRole}>
+          <button className="delete-btn" onClick={handleDeleteRole} data-test-id="delete-role-button">
             Delete Role
           </button>
         )}
@@ -118,6 +118,7 @@ const RoleManagement: React.FC = () => {
           placeholder="Enter role name"
           value={roleName}
           onChange={(e) => setRoleName(e.target.value)}
+          data-test-id="role-name-input"
         />
       </div>
 
@@ -142,6 +143,7 @@ const RoleManagement: React.FC = () => {
                     type="checkbox"
                     checked={permissions.includes(permission)}
                     onChange={() => togglePermission(permission)}
+                    data-test-id={`permission-checkbox-${permission}`}
                   />
                 </td>
               </tr>
@@ -150,11 +152,11 @@ const RoleManagement: React.FC = () => {
         </table>
         <div className="button-container">
         {selectedRole === null ? (
-            <button className="create-btn" onClick={handleCreateRole}>
+            <button className="create-btn" onClick={handleCreateRole} data-test-id="create-role-button">
             Create Role
             </button>
         ) : (
-            <button className="save-btn" onClick={handleUpdatePermissions}>
+            <button className="save-btn" onClick={handleUpdatePermissions} data-test-id="save-changes-button">
             Save Changes
             </button>
         )}

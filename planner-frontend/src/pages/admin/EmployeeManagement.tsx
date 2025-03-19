@@ -277,6 +277,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           <div className="form-row">
           <label>{t("selectEmployee") || "Select Employee"}:</label>
           <select
+            data-test-id="employee-select"
             onChange={(e) => {
               const selectedId = Number(e.target.value);
               const selectedEmployee = employees.find(emp => emp.id === selectedId);
@@ -287,7 +288,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
           >
             <option value="">{t("selectEmployee") || "Select an Employee"}</option>
             {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>{emp.id} - {emp.name}</option>
+              <option key={emp.id} value={emp.id} data-test-id={`employee-option-${emp.id}`}>
+                {emp.id} - {emp.name}
+                </option>
             ))}
           </select>
         </div>
@@ -304,7 +307,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         
         <div className="form-row">
           <label>{t("name") || "Name"}:</label>
-          <input
+          <input data-test-id="name-input"
             {...register("name", {
               required: t("nameRequired") || "Name is required",
             })}
@@ -316,7 +319,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {/* Address */}
         <div className="form-row">
           <label>{t("address") || "Address"}:</label>
-          <input
+          <input data-test-id="address-input"
             {...register("address", {
               required: t("addressRequired") || "Address is required",
             })}
@@ -328,7 +331,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {/* Phone */}
         <div className="form-row">
           <label>{t("phoneNumber") || "Phone Number"}:</label>
-          <input
+          <input data-test-id="phone-input"
             {...register("phone", {
               required: t("phoneRequired") || "Phone number is required",
               pattern: {
@@ -344,7 +347,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         {/* Email */}
         <div className="form-row">
           <label>{t("email") || "E-mail Address"}:</label>
-          <input
+          <input data-test-id="email-input"
             {...register("email", {
               required: t("emailRequired") || "Email is required",
               pattern: {
@@ -370,7 +373,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
             {/* Map over roles from the backend */}
             {roles.map((role) => (
-              <option key={role.id} value={role.name}>
+              <option key={role.id} value={role.name} data-test-id={`role-${role.name}-select`}>
                 {t(
                   roleTranslationMap[role.name.replace("-", " ")] ||
                     role.name.replace("-", " ")
@@ -383,7 +386,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
 
         {/* Form Buttons */}
         <div className="form-actions">
-          <button type="submit">
+          <button type="submit" data-test-id="submit-button">
             {editingEmployeeId
               ? t("updateEmployee") || "Update Employee"
               : t("addEmployee") || "Add Employee"}
@@ -418,7 +421,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
         <tbody>
           {employees.length > 0 ? (
             employees?.map((emp) => (
-              <tr key={emp.id}>
+              <tr key={emp.id} data-test-id={`employee-row-${emp.id}`}>
                 <td>{emp.id || ""}</td>
                 <td>{emp.name}</td>
                 <td>{emp.address}</td>
@@ -426,11 +429,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
                 <td>{emp.email}</td>
                 <td>{getRoleLabel(emp.role)}</td>
                 <td align="center">
-                  <button onClick={() => editEmployee(emp)}>
+                  <button onClick={() => editEmployee(emp)} data-test-id={`edit-button-${emp.id}`}>
                     {t("edit") || "Edit"}
                   </button>
                   {user?.permissions.includes("EMPLOYEE_DELETE") && (
-                    <button onClick={() => deleteEmployee(emp.id)}>
+                    <button onClick={() => deleteEmployee(emp.id)} data-test-id={`delete-button-${emp.id}`}>
                       {t("delete") || "Delete"}
                     </button>
                   )}
