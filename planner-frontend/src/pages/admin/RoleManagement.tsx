@@ -24,7 +24,7 @@ const RoleManagement: React.FC = () => {
     CALENDAR_VIEW: t("CALENDAR_VIEW_DESC", "View shift calendar."),
   };
 
-  const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS); // no unused warning now
+  const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS);
 
   const [roles, setRoles] = useState<{ id: number; name: string; permissions: string[] }[]>([]);
   const [selectedRole, setSelectedRole] = useState<number | null>(null);
@@ -70,7 +70,8 @@ const RoleManagement: React.FC = () => {
   };
 
   const handleCreateRole = async () => {
-    if (!roleName.trim()) return alert(t("fillRequiredFields", "Please fill out all required fields."));
+    if (!roleName.trim())
+      return alert(t("fillRequiredFields", "Please fill out all required fields."));
     await createRole({ name: roleName, permissions });
     alert(t("roleCreated", "Role created successfully!"));
     setRoleName("");
@@ -79,7 +80,11 @@ const RoleManagement: React.FC = () => {
   };
 
   const handleDeleteRole = async () => {
-    if (!selectedRole || !window.confirm(t("confirmDelete", "Are you sure you want to delete this role?"))) return;
+    if (
+      !selectedRole ||
+      !window.confirm(t("confirmDelete", "Are you sure you want to delete this role?"))
+    )
+      return;
     await deleteRole(selectedRole);
     alert(t("roleDeleted", "Role deleted successfully!"));
     fetchRoles();
@@ -93,8 +98,13 @@ const RoleManagement: React.FC = () => {
       <h2>{t("roleManagement", "Role Management")}</h2>
 
       <div className="role-selection">
-        <label>{t("selectRole", "Select Role")}:</label>
-        <select onChange={(e) => handleRoleChange(e.target.value)} value={selectedRole ?? "new"}>
+        {/* Use htmlFor on the label and matching id on the select */}
+        <label htmlFor="role-select">{t("selectRole", "Select Role")}:</label>
+        <select
+          id="role-select"
+          onChange={(e) => handleRoleChange(e.target.value)}
+          value={selectedRole ?? "new"}
+        >
           <option value="new">{t("createNewRole", "-- Create New Role --")}</option>
           {roles.map((role) => (
             <option key={role.id} value={role.id}>
@@ -110,8 +120,9 @@ const RoleManagement: React.FC = () => {
       </div>
 
       <div className="role-name-container">
-        <label>{t("roleName", "Role Name")}:</label>
+        <label htmlFor="role-name-input">{t("roleName", "Role Name")}:</label>
         <input
+          id="role-name-input"
           type="text"
           placeholder={t("rolePlaceholder", "Enter role name")}
           value={roleName}
