@@ -41,13 +41,6 @@ interface ProposalShift {
 const ShiftApprovalCalendar: React.FC = () => {
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
-  if (i18n.language === "en") {
-    moment.updateLocale("en", {
-      week: {
-        dow: 1, // Monday is the first day of the week
-      },
-    });
-  }
 
   // State for all approved shifts (to be shown on the calendar).
   const [shifts, setShifts] = useState<Shift[]>([]);
