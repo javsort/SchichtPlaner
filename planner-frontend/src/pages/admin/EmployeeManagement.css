@@ -169,3 +169,23 @@
   color: #D9534F;
   font-weight: bold;
 }
+.custom-tooltip .tooltip-inner {
+  background-color: #fff !important; /* White background */
+  color: #333 !important;           /* Dark text */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  padding: 8px;
+}
+
+.tooltip-icon {
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.form-row label {
+  display: flex;
+  align-items: center;
+}

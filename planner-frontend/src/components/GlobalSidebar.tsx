@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.tsx";
 import { useTranslation } from "react-i18next";
-import { FiLogOut } from "react-icons/fi"; // Import the logout icon
+import { FiLogOut } from "react-icons/fi";
 import "./GlobalSidebar.css";
 
 interface GlobalSidebarProps {
@@ -37,7 +37,6 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Handle logout by clearing localStorage (or calling your AuthContext logout function)
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -45,7 +44,6 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     localStorage.removeItem("userId");
     localStorage.removeItem("permissions");
     localStorage.removeItem("role");
-
     navigate("/login");
     onClose();
   };
@@ -67,11 +65,13 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
           </li>
         ))}
       </ul>
-      {/* Logout button placed at the bottom */}
+
+      {/* Logout button at the bottom */}
       <div className="logout-container">
         <button className="logout-btn" onClick={handleLogout}>
           <span>
-            <FiLogOut style={{ marginRight: "8px" }} />
+            {/* IMPORTANT: We flip the FiLogOut icon horizontally */}
+            <FiLogOut style={{ marginRight: "8px", transform: "scaleX(-1)" }} />
           </span>
           {typeof t("logout") === "string" ? t("logout") : "Logout"}
         </button>

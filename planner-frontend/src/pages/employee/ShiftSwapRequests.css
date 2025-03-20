@@ -1,122 +1,95 @@
-/* Container for the entire Shift Swap page */
+/* FULL-PAGE CONTAINER */
 .shift-swap-container {
   width: 100%;
-  min-height: 100vh; /* fill full viewport height */
-  padding: 20px;
-  box-sizing: border-box;
+  min-height: 100vh; /* fill the full browser height */
+  margin: 0 auto;
+  padding: 10px;     /* Reduced padding moves heading higher */
+  background-color: #fff;
   font-family: var(--font-primary, Arial, sans-serif);
-  color: var(--header-text, #333);
-  background-color: #ffffff; /* white background */
 }
 
-/* Heading */
+/* Heading Styles */
 .shift-swap-container h2 {
+  margin-top: 0;       /* Remove default top margin */
+  margin-bottom: 20px; /* Slight space below heading */
   text-align: left;
-  margin-bottom: 20px;
   color: #2c3e50;
 }
 
-/* Calendar container (if any) */
-.calendar-container {
-  margin-bottom: 30px;
-}
-
-/* Request Form Styling */
-.request-form {
-  border: 1px solid var(--card-border, #ddd);
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #ffffff;
-  margin-bottom: 30px;
-}
-
-.request-form h3 {
-  text-align: left;
-  margin-bottom: 15px;
-  color: #2c3e50;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--header-text, #333);
-}
-
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid var(--card-border, #ccc);
-  border-radius: 4px;
-  background-color: #ffffff;
-  color: var(--color-black, #333);
-}
-
-.form-group textarea {
-  resize: vertical;
-  height: 80px;
-}
-
-/* Request Form Button Styling */
-.request-form button {
-  background-color: #4da8d6;
-  color: #fff;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.request-form button:hover {
-  background-color: #4da8d6;
-}
-
-/* Request List Table */
-.request-list table {
+/* TABLE STYLES */
+.table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.request-list th,
-.request-list td {
+.table thead th,
+.table tbody td {
   border: 1px solid var(--card-border, #ddd);
-  padding: 10px;
+  padding: 12px;
   text-align: left;
+  vertical-align: top;
 }
 
-.request-list th {
-  background-color: var(--card-heading, #f0f0f0);
+/* CALENDAR CONTAINER */
+.calendar-container {
+  width: 100%;       /* Fill entire page width */
+  max-width: none;   /* Remove any max-width */
+  margin: 20px 0;    /* Vertical spacing */
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Request List Buttons */
-.request-list button {
-  margin-right: 5px;
-  padding: 5px 10px;
+/* Enclose the entire time-view (dates & days) in a border */
+.calendar-container .rbc-time-view {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Ensure header and content backgrounds stay white */
+.calendar-container .rbc-time-view .rbc-time-header,
+.calendar-container .rbc-time-view .rbc-time-content {
+  background-color: #fff;
+}
+
+/* Add top border to the header to fully enclose the calendar from above */
+.calendar-container .rbc-time-view .rbc-time-header {
+  border-top: 1px solid #ddd;
+}
+
+/* Vertical border between time gutter and day columns */
+.calendar-container .rbc-time-gutter {
+  border-right: 1px solid #ddd;
+}
+
+/* Horizontal lines between each hour row */
+.calendar-container .rbc-time-content .rbc-timeslot-group {
+  border-top: 1px solid #ddd; /* Horizontal line above each timeslot group */
+}
+
+/* Vertical lines between days in week/day views */
+.calendar-container .rbc-time-content > * + * > * {
+  border-left: 1px solid #ddd;
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Custom Submit Button for Swap Request */
+.submit-swap-btn {
+  background-color: #4da8d6 !important;
   border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-}
-
-.request-list button:hover {
-  opacity: 0.8;
-}
-
-.request-list button:first-child {
-  background-color: #4da8d6;
-  color: #fff;
-}
-
-.request-list button:last-child {
-  background-color: #69be28;
-  color: #fff;
+  color: #fff !important;
 }
 
 /* ----------------------------------

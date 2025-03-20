@@ -54,35 +54,36 @@ export interface SwapRequest {
 type CalendarView = "month" | "week" | "day" | "agenda";
 const localizer = momentLocalizer(moment);
 
+// Define custom formats to force 24-hour time display in the calendar
+const formats = {
+  timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
+  eventTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) =>
+    `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+  agendaTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) =>
+    `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+};
+
 const ShiftSwapRequests: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
 
   // Extract current user details using the proper property names
   const currentUser: ExtendedAuthUser =
-  user && (user as any).userId
-    ? {
-        id: Number((user as any).userId),
-        name: (user as any).username || "John Doe",
-        email: user.email,
-        role: user.role,
-        permissions: (user as any).permissions || "",
-      }
-    : {
-        id: 1,
-        name: "John Doe",
-        email: "",
-        role: "",
-        permissions: "",
-      };
-
-  // Debug logs
-  useEffect(() => {
-    console.log("Email:", currentUser.email);
-    console.log("Role:", currentUser.role);
-    console.log("Id:", currentUser.id);
-    console.log("Token:", localStorage.getItem("token"));
-  }, [currentUser]);
+    user && (user as any).userId
+      ? {
+          id: Number((user as any).userId),
+          name: (user as any).username || "John Doe",
+          email: user.email,
+          role: user.role,
+          permissions: (user as any).permissions || "",
+        }
+      : {
+          id: 1,
+          name: "John Doe",
+          email: "",
+          role: "",
+          permissions: "",
+        };
 
   const messages = {
     today: t("calendarToday"),
@@ -245,6 +246,7 @@ const ShiftSwapRequests: React.FC = () => {
             view={view}
             onView={(newView) => setView(newView as CalendarView)}
             style={{ height: 500, width: "100%" }}
+            formats={formats}
           />
         </div>
 
@@ -287,7 +289,7 @@ const ShiftSwapRequests: React.FC = () => {
               </select>
             </div>
 
-            <button type="submit" className="btn btn-primary w-100">
+            <button type="submit" className="btn submit-swap-btn w-100">
               {t("submitSwapRequest") || "Submit Swap Request"}
             </button>
           </form>

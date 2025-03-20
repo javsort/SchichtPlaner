@@ -1,15 +1,17 @@
-/* Container for the entire calendar page */
+/* ============================
+   1) CONTAINER & HEADER
+============================ */
 .company-shift-calendar-container {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
+  /* Fill width and at least full viewport height */
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto; /* center horizontally if parent allows */
   padding: 0;
+  font-family: var(--font-primary, sans-serif);
   display: flex;
   flex-direction: column;
-  font-family: var(--font-primary, sans-serif);
 }
 
-/* Header styles */
 .calendar-header {
   display: flex;
   justify-content: space-between;
@@ -17,16 +19,42 @@
   padding: 5px 10px;
   border-bottom: 1px solid var(--card-border, #ccc);
   background-color: var(--main-bg, #f5f5f5);
-  flex: 0 0 auto;
 }
 
-.calendar-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: var(--header-text, #2c3e50);
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
 }
 
-/* Import/Export buttons container */
+/* ============================
+   2) MAIN CALENDAR AREA
+============================ */
+.calendar-main-layout {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.calendar-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* ============================
+   3) IMPORT/EXPORT BUTTONS
+============================ */
+.import-export-buttons {
+  display: flex;
+  align-items: center;
+}
+
 .import-export-buttons button {
   margin: 0 5px;
   background: none;
@@ -43,62 +71,54 @@
   color: var(--text-color-hover, #666);
 }
 
-/* Main layout */
-.calendar-main-layout {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background-color: #ffffff;
-}
-
-/* Main content styles */
-.calendar-main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  padding: 10px;
-  overflow: hidden;
-}
-
-/* Filter buttons styles */
+/* ============================
+   4) FILTER BUTTONS (My/All/Unoccupied)
+============================ */
 .calendar-filters {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 10px;
-  flex: 0 0 auto;
+}
+
+.calendar-filters .filter-label {
+  font-weight: normal;
+  margin: 0;
 }
 
 .calendar-filters button {
   background-color: #4da8d6;
   color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  margin: 5px;
+  padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 1rem;
   transition: background 0.3s ease-in-out;
 }
 
-.calendar-filters button.active {
-  background-color: #69be28;
-}
-
 .calendar-filters button:hover {
-  background-color: #4da8d6;
+  background-color: #3498db;
 }
 
-/* Calendar container */
+.calendar-filters button.active {
+  background-color: #4da8d6; /* highlight active filter */
+}
+
+/* ============================
+   5) CALENDAR CONTAINER
+============================ */
 .calendar-container {
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
   align-items: stretch;
   overflow: hidden;
-  margin-bottom: 0;
+  margin: 0 auto; /* center horizontally */
+  max-width: 1200px; /* optional limit so it doesn’t stretch too wide */
+  width: 100%;
 }
 
-/* Force the Big Calendar to fill this container */
 .calendar-container .rbc-calendar {
   width: 100%;
   height: 100%;
@@ -106,4 +126,97 @@
   background-color: #fff;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+/* ============================
+   6) REACT-BIG-CALENDAR OVERRIDES
+============================ */
+
+/* 6.1) RBC Toolbar (Today, Back, Next, etc.) */
+.rbc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 16px;
+  margin-bottom: 10px !important;
+}
+
+/* The groups containing the buttons */
+.rbc-toolbar .rbc-btn-group {
+  display: inline-flex;
+  border: none !important;
+  background: none;
+  gap: 4px; 
+}
+
+/* Make RBC’s toolbar buttons bigger */
+.rbc-toolbar .rbc-btn-group .rbc-btn {
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1.2rem;    /* bigger text */
+  padding: 12px 20px;  /* more padding for a larger button area */
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.rbc-toolbar .rbc-btn-group .rbc-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Active/selected view highlight (e.g. "Week" if you're in week view) */
+.rbc-toolbar .rbc-active,
+.rbc-toolbar button[aria-pressed="true"] {
+  background: #4da8d6;
+  color: #fff;
+  border-color: #4da8d6;
+}
+
+/* RBC’s date label: “March 17 – 23” */
+.rbc-toolbar .rbc-toolbar-label {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 1rem;
+}
+
+/* 6.2) Remove extra top borders */
+.rbc-month-view,
+.rbc-time-view,
+.rbc-day-view,
+.rbc-agenda-view {
+  border-top: none !important;
+}
+
+/* Remove RBC’s default header border/shadow */
+.rbc-header {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 6.3) Full-column highlight for "today" in all views (Day/Week/Month) */
+.rbc-day-bg.rbc-today,
+.rbc-day-slot.rbc-today {
+  background-color: #eaf6ff !important; 
+}
+
+/* 6.4) Remove extra lines/borders in time/day views if you like */
+.rbc-time-view .rbc-time-content,
+.rbc-time-view .rbc-time-header,
+.rbc-day-view .rbc-time-header {
+  border: none !important;
+  box-shadow: none !important;
+}
+.rbc-day-slot .rbc-time-slot {
+  border-top: none !important;
+}
+
+/* 6.5) Current time indicator line (green) */
+.rbc-current-time-indicator {
+  background-color: #69be28 !important;
+  height: 2px;
 }

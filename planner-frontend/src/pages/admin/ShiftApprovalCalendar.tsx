@@ -14,12 +14,19 @@ import {
 } from "../../Services/api.ts";
 
 import { useTranslation } from "react-i18next";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 // Force English locale to start on Monday
-// This will affect the moment locale data used by react-big-calendar
 moment.updateLocale("en", { week: { dow: 1 } });
 
 const localizer = momentLocalizer(moment);
+
+// Force 24-hour time format for the calendar's displays
+const calendarFormats = {
+  timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
+  eventTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) =>
+    `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+};
 
 interface Shift {
   id: number;
@@ -39,25 +46,26 @@ interface ProposalShift {
   title: string;
   start: Date;
   end: Date;
-  status: string;        // "PROPOSED", "ACCEPTED", etc.
+  status: string;
 }
+
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4da8d6" strokeWidth="1" />
+    <path fill="#000000" d="M7.5 12h1V7h-1v5zm0-6h1V5h-1v1z" />
+  </svg>
+);
 
 const ShiftApprovalCalendar: React.FC = () => {
   const { t, i18n } = useTranslation();
   moment.locale(i18n.language);
 
-  // State for all approved shifts (to be shown on the calendar).
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [loadingShifts, setLoadingShifts] = useState(false);
-
-  // State for pending requests (shift proposals).
   const [pendingRequests, setPendingRequests] = useState<ProposalShift[]>([]);
   const [loadingPending, setLoadingPending] = useState(false);
-
-  // Default view for the calendar
   const [view, setView] = useState(Views.WEEK);
 
-  // Shifts mapper
   const mapShifts = (apiShifts: any[]): Shift[] => {
     return apiShifts.map((shift) => ({
       id: shift.id,
@@ -70,7 +78,6 @@ const ShiftApprovalCalendar: React.FC = () => {
     }));
   };
 
-  // Proposals mapper
   const mapProposalShifts = (apiProposals: any[]): ProposalShift[] => {
     return apiProposals
       .filter(
@@ -92,7 +99,7 @@ const ShiftApprovalCalendar: React.FC = () => {
         status: shift.status,
       }));
   };
-  
+
   const loadShifts = async () => {
     setLoadingShifts(true);
     try {
@@ -134,7 +141,6 @@ const ShiftApprovalCalendar: React.FC = () => {
   const handleApprove = async (id: number) => {
     try {
       await approveShiftProposal(id);
-      // Reload both sets: the newly approved proposal should move to the 'shifts' set
       loadShifts();
       getPendingShifts();
     } catch (error) {
@@ -157,7 +163,7 @@ const ShiftApprovalCalendar: React.FC = () => {
 
   const calendarEvents = shifts.map((shift) => ({
     id: shift.id,
-    title: `${shift.title}`,
+    title: `${shift.title} - ${shift.shiftOwner}`,
     start: shift.start,
     end: shift.end,
     role: shift.role,
@@ -192,22 +198,35 @@ const ShiftApprovalCalendar: React.FC = () => {
       <div className="shift-approval-content">
         <h2>{t("shiftApproval") || "Shift Approval"}</h2>
 
-        {/* View selector for the big calendar */}
+        {/* View selector for the big calendar with tooltip icon on the left */}
         <div className="view-selector">
-          <label htmlFor="calendar-view">{t("calendarView") || "Calendar View:"}</label>
-          <select
-            id="calendar-view"
-            value={view}
-            onChange={(e) => setView(e.target.value as Views)}
-          >
-            <option value={Views.MONTH}>{t("month") || "Month"}</option>
-            <option value={Views.WEEK}>{t("week") || "Week"}</option>
-            <option value={Views.DAY}>{t("day") || "Day"}</option>
-            <option value={Views.AGENDA}>{t("agenda") || "Agenda"}</option>
-          </select>
+          <div style={{ display: "inline-flex", alignItems: "center" }}>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="calendar-view-tooltip" className="custom-tooltip">
+                  {t("calendarViewTooltip", "Select a calendar view.")}
+                </Tooltip>
+              }
+            >
+              <span className="tooltip-icon" style={{ marginRight: "8px" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
+            <select
+              id="calendar-view"
+              value={view}
+              onChange={(e) => setView(e.target.value as Views)}
+            >
+              <option value={Views.MONTH}>{t("month") || "Month"}</option>
+              <option value={Views.WEEK}>{t("week") || "Week"}</option>
+              <option value={Views.DAY}>{t("day") || "Day"}</option>
+              <option value={Views.AGENDA}>{t("agenda") || "Agenda"}</option>
+            </select>
+          </div>
         </div>
 
-        {/* Show the big calendar for "shifts" */}
+        {/* Calendar display */}
         <div className="calendar-container">
           {loadingShifts ? (
             <p>{t("loadingCalendar") || "Loading calendar..."}</p>
@@ -225,11 +244,12 @@ const ShiftApprovalCalendar: React.FC = () => {
               eventPropGetter={eventStyleGetter}
               min={new Date(1970, 1, 1, 0, 0)}
               max={new Date(1970, 1, 1, 23, 59)}
+              formats={calendarFormats}
             />
           )}
         </div>
 
-        {/* Table of pending shift requests */}
+        {/* Pending shift requests table */}
         <h3>{t("pendingShiftRequests") || "Pending Shift Requests"}</h3>
         {loadingPending ? (
           <p>{t("loadingPending") || "Loading pending requests..."}</p>
@@ -255,8 +275,8 @@ const ShiftApprovalCalendar: React.FC = () => {
                   <td>{req.role}</td>
                   <td>{moment(req.start).format("YYYY-MM-DD")}</td>
                   <td>
-                    {moment(req.start).format("hh:mm A")} -{" "}
-                    {moment(req.end).format("hh:mm A")}
+                    {moment(req.start).format("HH:mm")} -{" "}
+                    {moment(req.end).format("HH:mm")}
                   </td>
                   <td>
                     <button onClick={() => handleApprove(req.id)} className="approve-btn">
