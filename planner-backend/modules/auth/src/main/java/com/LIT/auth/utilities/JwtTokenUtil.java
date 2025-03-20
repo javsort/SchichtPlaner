@@ -21,7 +21,7 @@ public class JwtTokenUtil {
 
     private static final long EXPIRATION_TIME = 3600000; // 1 hour
 
-    public String generateToken(String email, String role, Long userId, String username) {
+    public String generateToken(String email, String role, Long userId, String username, String permissions) {
         log.info(logHeader + "generateToken: Generating token for user: " + email);        
         return JWT.create()
                 .withIssuer("LIT - auth0")
@@ -30,6 +30,7 @@ public class JwtTokenUtil {
                 .withClaim("role", role)
                 .withClaim("userName", username)
                 .withClaim("userId", userId)
+                .withClaim("permissions", permissions)
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC256(secret));
@@ -53,6 +54,11 @@ public class JwtTokenUtil {
     public String extractUsername(String token) {
         log.info(logHeader + "extractUsername: Extracting username from token");
         return JWT.decode(token).getClaim("userName").asString();
+    }
+
+    public String extractPermissions(String token) {
+        log.info(logHeader + "extractPermissions: Extracting permissions from token");
+        return JWT.decode(token).getClaim("permissions").asString();
     }
 
     public boolean validateToken(String token) {

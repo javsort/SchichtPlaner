@@ -207,7 +207,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = () => {
               {t("passwordLabel") || "Password"}: '<span className="highlight">{createdPassword}</span>'
             </p>
             <p>{t("passwordUpdatePrompt") || "It will be prompted to update its password for the first login"}</p>
-            <button onClick={() => setShowUserPopup(false)}>{t("close") || "Close"}</button>
+            <button onClick={() => setShowUserPopup(false)} data-test-id="new-user-close-button">{t("close") || "Close"}</button>
           </div>
         </div>
       )}
