@@ -45,7 +45,10 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({}) => {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [view, setView] = useState(Views.WEEK);
-  const [calendarFilter, setCalendarFilter] = useState("all");
+
+  // Changed the initial filter from "all" to "my"
+  const [calendarFilter, setCalendarFilter] = useState("my");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Current user ID
@@ -72,7 +75,7 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({}) => {
       }
     };
     loadShifts();
-  }, []);
+  }, [t]);
 
   // Fetch employees
   useEffect(() => {
@@ -107,7 +110,7 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({}) => {
   // Filter the shifts according to the selected button
   const filteredShifts = shifts.filter((shift) => {
     if (calendarFilter === "my") {
-      return  id && shift.shiftOwnerId === id;
+      return id && shift.shiftOwnerId === id;
     } else if (calendarFilter === "unoccupied") {
       return shift.shiftOwnerId === null;
     }
