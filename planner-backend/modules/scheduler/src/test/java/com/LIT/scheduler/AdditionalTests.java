@@ -170,7 +170,7 @@ public class AdditionalTests {
         // Set up the mock server expectation.
         localMockServer.expect(requestTo(new URI(expectedUrl)))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(header("X-User-Role", "ROLE_Admin"))
+                .andExpect(header("X-User-Permissions", "EMPLOYEE_MANAGEMENT"))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
         // Call the method.

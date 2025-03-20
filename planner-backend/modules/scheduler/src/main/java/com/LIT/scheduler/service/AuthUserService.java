@@ -33,7 +33,7 @@ public class AuthUserService {
 
         // Set the header to a value allowed by the auth service.
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-Role", "ROLE_Admin"); // Use ROLE_Admin or ROLE_Shift-Supervisor as required
+        headers.set("X-User-Permissions", "EMPLOYEE_MANAGEMENT"); // Have the correct permissions
         log.debug("[AuthUserService] - Headers being sent: {}", headers);
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
