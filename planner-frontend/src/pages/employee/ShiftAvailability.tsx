@@ -7,6 +7,7 @@ import {
   deleteShiftProposal,
 } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function getDaysInMonth(year: number, month: number): Date[] {
   const dates: Date[] = [];
@@ -30,11 +31,37 @@ function generateTimeOptions(): string[] {
   return options;
 }
 
+// Simple info icon used for tooltips
+const InfoIcon: React.FC = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    style={{ marginLeft: "6px" }}
+  >
+    <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4da8d6" strokeWidth="1" />
+    <path fill="#000000" d="M7.5 12h1V7h-1v5zm0-6h1V5h-1v1z" />
+  </svg>
+);
+
+type Availability = {
+  from: string;
+  to: string;
+};
+
+type MyProposal = {
+  id?: number;
+  date: string;
+  from: string;
+  to: string;
+};
+
 const ShiftAvailability: React.FC = () => {
   const { t } = useTranslation();
 
   // Instead of a fixed English array, we call t(...) for each month.
-  // The second argument (e.g. "January") is just a fallback if no translation is found.
+  // The second argument is a fallback.
   const MONTH_NAMES = [
     t("January", "January"),
     t("February", "February"),
@@ -56,8 +83,8 @@ const ShiftAvailability: React.FC = () => {
   const [days, setDays] = useState<Date[]>(getDaysInMonth(selectedYear, selectedMonth));
   const timeOptions = generateTimeOptions();
 
-  const [availability, setAvailability] = useState<{ [dateStr: string]: { from: string; to: string } }>(() => {
-    const init: { [dateStr: string]: { from: string; to: string } } = {};
+  const [availability, setAvailability] = useState<{ [dateStr: string]: Availability }>(() => {
+    const init: { [dateStr: string]: Availability } = {};
     getDaysInMonth(today.getFullYear(), today.getMonth()).forEach((date) => {
       const dateStr = date.toISOString().split("T")[0];
       init[dateStr] = { from: "", to: "" };
@@ -66,7 +93,7 @@ const ShiftAvailability: React.FC = () => {
   });
 
   // Store user’s selected shift proposals for the sidebar
-  const [myProposals, setMyProposals] = useState<any[]>([]);
+  const [myProposals, setMyProposals] = useState<MyProposal[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editFrom, setEditFrom] = useState<string>("");
   const [editTo, setEditTo] = useState<string>("");
@@ -135,7 +162,7 @@ const ShiftAvailability: React.FC = () => {
     const newDays = getDaysInMonth(selectedYear, selectedMonth);
     setDays(newDays);
 
-    const init: { [dateStr: string]: { from: string; to: string } } = {};
+    const init: { [dateStr: string]: Availability } = {};
     newDays.forEach((date) => {
       const dateStr = date.toISOString().split("T")[0];
       init[dateStr] = { from: "", to: "" };
@@ -176,23 +203,22 @@ const ShiftAvailability: React.FC = () => {
       if (from && to) {
         hasAtLeastOneShift = true;
         try {
-        const startDate = new Date(`${dateStr}T${from}:00`);
-        startDate.setDate(startDate.getDate() + 1);
-        const start = new Date(
-          startDate.getTime() - startDate.getTimezoneOffset() * 60000
-        ).toISOString();
+          const startDate = new Date(`${dateStr}T${from}:00`);
+          startDate.setDate(startDate.getDate() + 1);
+          const start = new Date(
+            startDate.getTime() - startDate.getTimezoneOffset() * 60000
+          ).toISOString();
 
-        const endDate = new Date(`${dateStr}T${to}:00`);
-        endDate.setDate(endDate.getDate() + 1);
-        const end = new Date(
-          endDate.getTime() - endDate.getTimezoneOffset() * 60000
-        ).toISOString();
+          const endDate = new Date(`${dateStr}T${to}:00`);
+          endDate.setDate(endDate.getDate() + 1);
+          const end = new Date(
+            endDate.getTime() - endDate.getTimezoneOffset() * 60000
+          ).toISOString();
 
           await proposeShift(employeeId, proposedTitle, start, end, status);
-          
+
           // Create new proposal for optimistic update
           const newProposal: MyProposal = {
-            // Temporary ID - you may want to update this with the real ID from the response.
             id: Date.now(),
             date: dateStr,
             from,
@@ -306,6 +332,18 @@ const ShiftAvailability: React.FC = () => {
         <div className="month-year-selector">
           <label>
             {t("monthLabel") || "Month:"}{" "}
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="month-tooltip">
+                  {t("monthTooltip", "Select your month.")}
+                </Tooltip>
+              }
+            >
+              <span style={{ cursor: "pointer" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(Number(e.target.value))}
@@ -317,8 +355,21 @@ const ShiftAvailability: React.FC = () => {
               ))}
             </select>
           </label>
+
           <label>
             {t("yearLabel") || "Year:"}{" "}
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="year-tooltip">
+                  {t("yearTooltip", "Select your year.")}
+                </Tooltip>
+              }
+            >
+              <span style={{ cursor: "pointer" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -478,3 +529,4 @@ const ShiftAvailability: React.FC = () => {
 };
 
 export default ShiftAvailability;
+

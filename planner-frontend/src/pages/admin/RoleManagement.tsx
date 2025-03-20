@@ -1,5 +1,7 @@
+// src/pages/admin/RoleManagement.tsx
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
   getRoles,
   updateRole,
@@ -66,13 +68,13 @@ const RoleManagement: React.FC = () => {
   const handleUpdatePermissions = async () => {
     if (selectedRole === null) return;
     await updateRole(selectedRole, permissions);
-    alert("Permissions updated successfully!");
+    alert(t("permissionsUpdated", "Permissions updated successfully!"));
     fetchRoles();
   };
 
   // Create a new role
   const handleCreateRole = async () => {
-    if (!roleName.trim()) return alert("Enter a valid role name.");
+    if (!roleName.trim()) return alert(t("validRoleNameError", "Enter a valid role name."));
     await createRole({ name: roleName, permissions });
     setRoleName("");
     setPermissions([]);
@@ -81,7 +83,7 @@ const RoleManagement: React.FC = () => {
 
   // Delete selected role
   const handleDeleteRole = async () => {
-    if (!selectedRole || !window.confirm("Are you sure you want to delete this role?")) return;
+    if (!selectedRole || !window.confirm(t("confirmDeleteRole", "Are you sure you want to delete this role?"))) return;
     await deleteRole(selectedRole);
     fetchRoles();
     setSelectedRole(null);
@@ -89,13 +91,35 @@ const RoleManagement: React.FC = () => {
     setPermissions([]);
   };
 
+  // Simple info icon for tooltips
+  const InfoIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4da8d6" strokeWidth="1" />
+      <path fill="#000000" d="M7.5 12h1V7h-1v5zm0-6h1V5h-1v1z" />
+    </svg>
+  );
+
   return (
     <div className="role-management-container">
       <h2>{t("Role Management", "Role Management")}</h2>
 
       {/* Role Selection or Create New */}
       <div className="role-selection">
-        <label>{t("selectRole", "Select Role:")}</label>
+        <label>
+          <OverlayTrigger
+            placement="top"
+            overlay={
+              <Tooltip id="select-role-tooltip" className="custom-tooltip">
+                {t("selectRoleTooltip", "Select a role from the list or create a new one.")}
+              </Tooltip>
+            }
+          >
+            <span className="tooltip-icon">
+              <InfoIcon />
+            </span>
+          </OverlayTrigger>
+          {t("selectRole", "Select Role:")}
+        </label>
         <select onChange={(e) => handleRoleChange(e.target.value)} value={selectedRole ?? "new"}>
           <option value="new" data-test-id="new-role-input">
             {t("createRole", "-- Create New Role --")}
@@ -119,7 +143,21 @@ const RoleManagement: React.FC = () => {
 
       {/* Role Name Input */}
       <div className="role-name-container">
-        <label>{t("roleName", "Role Name:")}</label>
+        <label>
+          <OverlayTrigger
+            placement="top"
+            overlay={
+              <Tooltip id="role-name-tooltip" className="custom-tooltip">
+                {t("roleNameTooltip", "Enter a unique role name.")}
+              </Tooltip>
+            }
+          >
+            <span className="tooltip-icon">
+              <InfoIcon />
+            </span>
+          </OverlayTrigger>
+          {t("roleName", "Role Name:")}
+        </label>
         <input
           type="text"
           placeholder={t("enterRoleName", "Enter role name")}
@@ -135,15 +173,56 @@ const RoleManagement: React.FC = () => {
         <table className="permissions-table">
           <thead>
             <tr>
-              <th>{t("permissionHeader", "Permission")}</th>
-              <th>{t("descriptionHeader", "Description")}</th>
-              <th>{t("enabledHeader", "Enabled")}</th>
+              <th>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={
+                    <Tooltip id="permission-tooltip" className="custom-tooltip">
+                      {t("permissionTooltip", "Permission identifier.")}
+                    </Tooltip>
+                  }
+                >
+                  <span className="tooltip-icon">
+                    <InfoIcon />
+                  </span>
+                </OverlayTrigger>
+                {t("permissionHeader", "Permission")}
+              </th>
+              <th>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={
+                    <Tooltip id="description-tooltip" className="custom-tooltip">
+                      {t("descriptionTooltip", "Permission description.")}
+                    </Tooltip>
+                  }
+                >
+                  <span className="tooltip-icon">
+                    <InfoIcon />
+                  </span>
+                </OverlayTrigger>
+                {t("descriptionHeader", "Description")}
+              </th>
+              <th>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={
+                    <Tooltip id="enabled-tooltip" className="custom-tooltip">
+                      {t("enabledTooltip", "Toggle permission on or off.")}
+                    </Tooltip>
+                  }
+                >
+                  <span className="tooltip-icon">
+                    <InfoIcon />
+                  </span>
+                </OverlayTrigger>
+                {t("enabledHeader", "Enabled")}
+              </th>
             </tr>
           </thead>
           <tbody>
             {ALL_PERMISSIONS.map((permission) => (
               <tr key={permission}>
-                {/* Translated permission key */}
                 <td>{t(permission, permission)}</td>
                 <td>{PERMISSION_DESCRIPTIONS[permission]}</td>
                 <td>
