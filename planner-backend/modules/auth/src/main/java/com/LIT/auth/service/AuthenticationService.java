@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.checkerframework.checker.units.qual.m;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.LIT.auth.exception.InvalidCredentialsException;
-import com.LIT.auth.exception.UserAlreadyExistsException;
 import com.LIT.auth.model.dto.Req.LoginRequest;
 import com.LIT.auth.model.dto.Req.RegisterRequest;
 import com.LIT.auth.model.entity.Role;
@@ -175,7 +173,7 @@ public class AuthenticationService {
         log.info(logHeader + "login: User found. Generating token...");
 
         // Generate token
-        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role, user.getId(), user.getUsername());
+        String token = "Bearer " + jwtTokenUtil.generateToken(user.getEmail(), role, user.getId(), user.getUsername(), permissions);
 
         Map<String, String> toReturn = new HashMap<>();
         toReturn.put("token", token);
@@ -238,7 +236,7 @@ public class AuthenticationService {
         log.info(logHeader + "login: newUser found. Generating token...");
 
         // Generate token
-        String token = "Bearer " + jwtTokenUtil.generateToken(newUser.getEmail(), role, newUser.getId(), newUser.getUsername());
+        String token = "Bearer " + jwtTokenUtil.generateToken(newUser.getEmail(), role, newUser.getId(), newUser.getUsername(), permissions);
 
         Map<String, String> toReturn = new HashMap<>();
         toReturn.put("token", token);
