@@ -248,3 +248,22 @@
   color: #fff;
   font-size: 14px;
 }
+.tooltip {
+  opacity: 1; /* Ensures the tooltip is visible */
+}
+
+.tooltip .tooltip-inner {
+  background-color: #fff !important;
+  color: #333 !important;
+  border: 1px solid #ccc !important;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.tooltip .arrow::before {
+  border-top-color: #ccc !important;
+  border-bottom-color: #ccc !important;
+  border-left-color: #ccc !important;
+  border-right-color: #ccc !important;
+}
