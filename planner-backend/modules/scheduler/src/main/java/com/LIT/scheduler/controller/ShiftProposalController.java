@@ -11,6 +11,10 @@ import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestController
@@ -84,7 +88,7 @@ public class ShiftProposalController {
             return ResponseEntity.status(403).build();
         }
         
-        log.info(logHeader + "getAllProposals: Role has been verified, proceeding to get all proposals for: " + role);
+        log.info(logHeader + "getAllProposals: Permissions have been verified, proceeding to get all proposals for user with permissions: " + permissions);
 
         List<ShiftProposal> proposals = proposalService.getAllProposals();
 
