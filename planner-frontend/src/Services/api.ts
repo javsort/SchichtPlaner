@@ -515,6 +515,122 @@ export const supervisorDeleteShift = async (shiftId) => {
 };
 
 /*
+ * Swap Proposal functions
+ */
+export const requestSwapProposal = async (proposal: any) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/scheduler/swap-proposals/request-change`,
+      proposal,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.getItem("token") || "",
+        },
+      }
+    );
+    console.log("Swap proposal submitted successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting swap proposal", error);
+    throw error;
+  }
+};
+
+export const approveSwapProposal = async (proposalId: string, swapEmployeeId: string) => {
+  console.log('Approving swap proposal with ID:', proposalId);
+  console.log('Target employee ID:', swapEmployeeId);
+  
+  // Ensure IDs are properly formatted
+  if (!proposalId || !swapEmployeeId) {
+    throw new Error('Missing required parameters: proposalId or swapEmployeeId');
+  }
+  
+  const token = localStorage.getItem('token') || '';
+  
+  try {
+    const response = await axios.put(
+      `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/accept-change/${swapEmployeeId}`,
+      {}, // Empty body as per the controller definition
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+      }
+    );
+    
+    console.log("Swap proposal approved successfully", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error approving swap proposal:", error);
+    if (error.response) {
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    }
+    throw error;
+  }
+};
+
+export const declineSwapProposal = async (proposalId: string, managerComment?: string) => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}/api/scheduler/swap-proposals/${proposalId}/decline-change`,
+      managerComment ? managerComment : "",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.getItem("token") || "",
+        },
+      }
+    );
+    console.log("Swap proposal declined successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error declining swap proposal", error);
+    throw error;
+  }
+};
+
+export const fetchSwapProposalsByEmployee = async (employeeId: number) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/api/scheduler/swap-proposals/employee/${employeeId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.getItem("token") || "",
+        },
+      }
+    );
+    console.log("Swap proposals for employee fetched successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching swap proposals for employee", error);
+    return [];
+  }
+};
+
+export const fetchAllSwapProposals = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/api/scheduler/swap-proposals`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.getItem("token") || "",
+        },
+      }
+    );
+    console.log("All swap proposals fetched successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all swap proposals", error);
+    return [];
+  }
+};
+
+/*
  * Role admin stuff
  */
 export const getRoles = async () => {

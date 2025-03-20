@@ -3,70 +3,95 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CompanyShiftCalendar.css";
-import GlobalSidebar from "../../components/GlobalSidebar.tsx";
-import { fetchShifts } from "../../Services/api.ts";
+import { fetchShifts, getAllUsers } from "../../Services/api.ts";
 import { useTranslation } from "react-i18next";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+
+// A simple info icon (SVG)
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4da8d6" strokeWidth="1" />
+    <path fill="#000000" d="M7.5 12h1V7h-1v5zm0-6h1V5h-1v1z" />
+  </svg>
+);
 
 const localizer = momentLocalizer(moment);
 
-interface CompanyShiftCalendarProps {
-  currentUser?: { userId: number; name: string };
+interface Shift {
+  id: number;
+  title: string;
+  shiftOwnerId: number | null;
+  shiftOwner: string;
+  role: string;
+  start: Date;
+  end: Date;
 }
 
-const CompanyShiftCalendar: React.FC = () => {
+interface Employee {
+  id: number;
+  name: string;
+}
+
+interface CompanyShiftCalendarProps {
+  currentUser?: { id: number; name: string };
+}
+
+const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({}) => {
   const { t, i18n } = useTranslation();
+  // Keep this to localize things like day names, but RBC’s time display will be overridden below
   moment.locale(i18n.language);
 
-  const userIdString = localStorage.getItem("userId");
-  const userId = userIdString ? parseInt(userIdString, 10) : null;
-
-  const [shifts, setShifts] = useState([]);
+  // State for shifts and employees
+  const [shifts, setShifts] = useState<Shift[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [view, setView] = useState(Views.WEEK);
   const [calendarFilter, setCalendarFilter] = useState("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  interface Shift {
-    id: number;
-    title: string;
-    shiftOwnerId: number | null;
-    shiftOwner: string;
-    role: string;
-    start: Date;
-    end: Date;
-  };
-  
-  const mapShifts = (apiShifts: any[]): Shift[] => {
-    return apiShifts.map((shift) => ({
-      id: shift.id,
-      title: shift.title || t("unnamedShift"),
-      shiftOwnerId: shift.shiftOwnerId ?? null,
-      shiftOwner: shift.shiftOwnerName || t("unassigned"),
-      role: shift.shiftOwnerRole || t("unassigned"),
-      start: new Date(shift.startTime),
-      end: new Date(shift.endTime),
-    }));
-  };
+  // Current user ID
+  const userIdString = localStorage.getItem("userId");
+  const id = userIdString ? parseInt(userIdString) : null
 
-  const loadShifts = async () => {
-    try {
-      const fetchedShifts = await fetchShifts();
-      if (!Array.isArray(fetchedShifts)) {
-        console.error("Invalid API response:", fetchedShifts);
-        return;
-      }
-
-      const formattedShifts = mapShifts(fetchedShifts);
-
-      setShifts(formattedShifts);
-    } catch (error) {
-      console.error("Error fetching shifts:", error);
-    }
-  };
-
+  // Fetch shifts
   useEffect(() => {
+    const loadShifts = async () => {
+      try {
+        const fetchedShifts = await fetchShifts();
+        const formattedShifts = fetchedShifts.map((shift: any) => ({
+          id: shift.id,
+          title: shift.title || t("unnamedShift"),
+          shiftOwnerId: shift.shiftOwnerId ?? null,
+          shiftOwner: shift.shiftOwnerName || t("unassigned"),
+          role: shift.shiftOwnerRole || t("unassigned"),
+          start: new Date(shift.startTime),
+          end: new Date(shift.endTime),
+        }));
+        setShifts(formattedShifts);
+      } catch (error) {
+        console.error("Error loading shifts:", error);
+      }
+    };
     loadShifts();
   }, []);
 
+  // Fetch employees
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        const fetchedUsers = await getAllUsers();
+        const employeeList = fetchedUsers.map((user: any) => ({
+          id: user.id,
+          name: user.username,
+        }));
+        setEmployees(employeeList);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    };
+    loadEmployees();
+  }, []);
+
+  // Import / Export
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
@@ -79,16 +104,17 @@ const CompanyShiftCalendar: React.FC = () => {
     // Export logic here
   };
 
+  // Filter the shifts according to the selected button
   const filteredShifts = shifts.filter((shift) => {
     if (calendarFilter === "my") {
-      console.log("Changing view to show user's shifts", userId);
-      return  userId && shift.shiftOwnerId === userId;
+      return  id && shift.shiftOwnerId === id;
     } else if (calendarFilter === "unoccupied") {
       return shift.shiftOwnerId === null;
     }
-    return true;
-  }); 
+    return true; // "all" means no filter
+  });
 
+  // Convert those shifts into RBC events
   const calendarEvents = filteredShifts.map((shift) => {
     const displayedOwner = shift.shiftOwner
       ? shift.shiftOwner || t("assigned") || "Assigned"
@@ -96,19 +122,20 @@ const CompanyShiftCalendar: React.FC = () => {
 
     return {
       ...shift,
-      title: `${shift.title}`,
+      title: `${shift.title} - ${displayedOwner}`,
     };
   });
 
-  const eventStyleGetter = (event: any) => ({
-    style: {
-      backgroundColor: "#3174ad",
-      borderRadius: "5px",
-      color: "white",
-      border: "none",
-    },
-  });
+  // Custom formats to ensure 24-hour times (HH:mm) regardless of locale
+  const calendarFormats = {
+    timeGutterFormat: "HH:mm",
+    eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, "HH:mm", culture)} — ${localizer.format(end, "HH:mm", culture)}`,
+    agendaTimeRangeFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, "HH:mm", culture)} – ${localizer.format(end, "HH:mm", culture)}`,
+  };
 
+  // RBC's default toolbar labels (localized)
   const messages = {
     today: t("calendarToday"),
     previous: t("calendarBack"),
@@ -121,11 +148,70 @@ const CompanyShiftCalendar: React.FC = () => {
 
   return (
     <div className="company-shift-calendar-container">
+      {/* Header with Import/Export */}
       <header className="calendar-header">
+        {/* Left side placeholder (could contain a page title) */}
         <div></div>
+
+        {/* Right side: Import & Export with tooltips */}
         <div className="import-export-buttons">
-          <button onClick={handleImportClick}>{t("importData") || "Import Data"}</button>
-          <button onClick={handleExport}>{t("exportData") || "Export Data"}</button>
+          {/* Import group */}
+          <div style={{ display: "inline-flex", alignItems: "center" }}>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="import-tooltip">
+                  {t("importTooltip", "Click to import data")}
+                </Tooltip>
+              }
+            >
+              <button onClick={handleImportClick}>
+                {t("importData") || "Import Data"}
+              </button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="import-info-tooltip">
+                  {t("importInfo", "Additional import info")}
+                </Tooltip>
+              }
+            >
+              <span className="tooltip-icon" style={{ marginLeft: "8px" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
+          </div>
+
+          {/* Export group */}
+          <div style={{ display: "inline-flex", alignItems: "center", marginLeft: "15px" }}>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="export-tooltip">
+                  {t("exportTooltip", "Click to export data")}
+                </Tooltip>
+              }
+            >
+              <button onClick={handleExport}>
+                {t("exportData") || "Export Data"}
+              </button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="export-info-tooltip">
+                  {t("exportInfo", "Additional export info")}
+                </Tooltip>
+              }
+            >
+              <span className="tooltip-icon" style={{ marginLeft: "8px" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
+          </div>
+
+          {/* Hidden file input for import */}
           <input
             type="file"
             accept=".csv, .xlsx, .xls"
@@ -136,16 +222,48 @@ const CompanyShiftCalendar: React.FC = () => {
           />
         </div>
       </header>
+
       <div className="calendar-main-layout">
         <main className="calendar-main-content">
+          {/* Filter Buttons */}
           <div className="calendar-filters">
-            <span className="filter-label">{t("viewLabel") || "View:"}</span>
-            <button onClick={() => setCalendarFilter("my")}>{t("myShifts") || "My Shifts"}</button>
-            <button onClick={() => setCalendarFilter("all")}>{t("allShifts") || "All Shifts"}</button>
-            <button onClick={() => setCalendarFilter("unoccupied")}>
+            <span className="filter-label" style={{ fontWeight: "normal" }}>
+              {t("viewLabel") || "View:"}
+            </span>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="view-tooltip">
+                  {t("calendarViewTooltip", "Select a calendar view")}
+                </Tooltip>
+              }
+            >
+              <span className="tooltip-icon" style={{ marginLeft: "8px" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
+
+            <button
+              onClick={() => setCalendarFilter("my")}
+              className={calendarFilter === "my" ? "active" : ""}
+            >
+              {t("myShifts") || "My Shifts"}
+            </button>
+            <button
+              onClick={() => setCalendarFilter("all")}
+              className={calendarFilter === "all" ? "active" : ""}
+            >
+              {t("allShifts") || "All Shifts"}
+            </button>
+            <button
+              onClick={() => setCalendarFilter("unoccupied")}
+              className={calendarFilter === "unoccupied" ? "active" : ""}
+            >
               {t("unoccupiedShifts") || "Unoccupied Shifts"}
             </button>
           </div>
+
+          {/* Calendar */}
           <div className="calendar-container">
             <Calendar
               key={i18n.language}
@@ -157,7 +275,8 @@ const CompanyShiftCalendar: React.FC = () => {
               endAccessor="end"
               view={view}
               onView={(newView) => setView(newView)}
-              eventPropGetter={eventStyleGetter}
+              // Forces consistent 24-hour display
+              formats={calendarFormats}
               min={new Date(1970, 1, 1, 0, 0)}
               max={new Date(1970, 1, 1, 23, 59)}
             />

@@ -19,6 +19,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
             className="hamburger-btn"
             onClick={onToggleSidebar}
             aria-label="Toggle Sidebar"
+            data-test-id="toggle-sidebar-button"
           >
             ☰
           </button>

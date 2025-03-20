@@ -2,12 +2,16 @@ package com.LIT.scheduler.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.LIT.scheduler.model.entity.ShiftAssignment;
-import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
+
 import com.LIT.scheduler.exception.ShiftConflictException;
 import com.LIT.scheduler.model.entity.Shift;
+import com.LIT.scheduler.model.entity.ShiftAssignment;
+import com.LIT.scheduler.model.repository.ShiftAssignmentRepository;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -15,11 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ShiftAssignmentService {
     
     private final ShiftAssignmentRepository shiftAssignmentRepository;
+    private final NotificationService notificationService;
     private final String logHeader = "[ShiftAssignmentService] - ";
 
     @Autowired
-    public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository) {
+    public ShiftAssignmentService(ShiftAssignmentRepository shiftAssignmentRepository, NotificationService notificationService) {
         this.shiftAssignmentRepository = shiftAssignmentRepository;
+        this.notificationService = notificationService;
     }
 
     public List<ShiftAssignment> getAssignmentsByUserId(Long userId) {
@@ -55,11 +61,31 @@ public class ShiftAssignmentService {
         }
 
         log.info(logHeader + "No conflicts detected. Proceeding to assign shift for user: " + assignment.getUserId());
+        notificationService.sendEmail(
+            getEmployeeEmail(assignment.getUserId()),
+            "Shift Assignment Confirmed",
+            "You have been assigned to shift: " + assignment.getShift().getTitle()
+        );
         return shiftAssignmentRepository.save(assignment);
     }
 
     public void removeAssignment(Long id) {
         log.info(logHeader + "removeAssignment: Removing assignment with id: " + id);
+        Optional<ShiftAssignment> optAssignment = shiftAssignmentRepository.findById(id);
+        optAssignment.ifPresent(assignment -> {
+            notificationService.sendEmail(
+                getEmployeeEmail(assignment.getUserId()),
+                "Shift Cancelled",
+                "Your shift " + assignment.getShift().getTitle() + " has been cancelled."
+            );
+        });
         shiftAssignmentRepository.deleteById(id);
+    }
+
+    private String getEmployeeEmail(Long employeeId) {
+        return "pekaric.edi1@gmail.com";
+        //return userService.getUserById(employeeId)
+        //                  .map(User::getEmail)
+        //                  .orElse("eddie.pekaric@hotmail.com");
     }
 }
