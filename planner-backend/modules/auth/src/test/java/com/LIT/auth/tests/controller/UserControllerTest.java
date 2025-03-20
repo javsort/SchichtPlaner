@@ -40,7 +40,7 @@ class UserControllerTest {
 
         mockMvc.perform(
                 delete("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_Admin")
+                  .header("X-User-Permissions", "SWAP_APPROVAL,SWAP_PROPOSAL,CALENDAR_VIEW,ROLE_MANAGEMENT,SHIFT_PROPOSAL,EMPLOYEE_MANAGEMENT,PROPOSAL_APPROVAL,SHIFT_MANAGEMENT,EMPLOYEE_DELETE")
         )
         .andExpect(status().isNoContent());
     }
@@ -54,9 +54,9 @@ class UserControllerTest {
 
         mockMvc.perform(
                 delete("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_Shift-Supervisor")
+                  .header("X-User-Permissions", "SWAP_APPROVAL,SWAP_PROPOSAL,CALENDAR_VIEW,ROLE_MANAGEMENT,SHIFT_PROPOSAL,EMPLOYEE_MANAGEMENT,PROPOSAL_APPROVAL,SHIFT_MANAGEMENT")
         )
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isForbidden());
     }
 
     /*
@@ -71,7 +71,7 @@ class UserControllerTest {
 
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_Admin")
+                  .header("X-User-Permissions", "SWAP_APPROVAL,SWAP_PROPOSAL,CALENDAR_VIEW,ROLE_MANAGEMENT,SHIFT_PROPOSAL,EMPLOYEE_MANAGEMENT,PROPOSAL_APPROVAL,SHIFT_MANAGEMENT,EMPLOYEE_DELETE")
         )
         .andExpect(status().isNotFound());
     }
@@ -85,7 +85,7 @@ class UserControllerTest {
 
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_Shift-Supervisor")
+                  .header("X-User-Permissions", "SWAP_APPROVAL,SWAP_PROPOSAL,CALENDAR_VIEW,ROLE_MANAGEMENT,SHIFT_PROPOSAL,EMPLOYEE_MANAGEMENT,PROPOSAL_APPROVAL,SHIFT_MANAGEMENT")
         )
         .andExpect(status().isNotFound());
     }
@@ -100,9 +100,9 @@ class UserControllerTest {
 
         mockMvc.perform(
                 get("/api/auth/users/{id}", 1L)
-                  .header("X-User-Role", "ROLE_Technician")
+                  .header("X-User-Permissions", "SWAP_PROPOSAL,CALENDAR_VIEW,SHIFT_PROPOSAL")
         )
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isForbidden());
     }   
 
 }

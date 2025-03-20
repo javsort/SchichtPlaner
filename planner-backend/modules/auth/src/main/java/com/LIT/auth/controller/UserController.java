@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LIT.auth.model.entity.User;
 import com.LIT.auth.model.dto.Req.UserDTO;
+import com.LIT.auth.model.entity.User;
 import com.LIT.auth.service.UserService;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,23 +42,32 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    private Set<String> getPermissions(String permissions) {
+        return Arrays.stream(permissions.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
+    }
+
     @GetMapping("/{id}")    
-    public ResponseEntity<User> getUserById(@PathVariable Long id, @RequestHeader("X-User-Role") String role) {
-        log.info(logHeader + "getUserById: User with role: '" + role + "' wants to retrieve user info with the id: " + id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id, @RequestHeader("X-User-Permissions") String permissions) {
+        log.info(logHeader + "getUserById: User with permissions: '" + permissions + "' wants to retrieve user info with the id: " + id);
 
-        if(role == null) {
-            log.error(logHeader + "getUserById: ERROR! User role is not provided in the header");
-
-            return ResponseEntity.badRequest().build();
-        }
-
-        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_Shift-Supervisor")) {
-            log.error(logHeader + "getUserById: ERROR! User does not have the clearance to get a user by id. The user role is: " + role);
+        if(permissions == null || permissions.isEmpty()) {
+            log.error(logHeader + "getUserById: ERROR! User permissions is not provided in the header");
 
             return ResponseEntity.badRequest().build();
         }
 
-        log.info(logHeader + "getUserById: Role is valid. Getting user by id: " + id);
+        Set<String> userPermissions = getPermissions(permissions);
+
+        if(!userPermissions.contains("EMPLOYEE_MANAGEMENT")) {
+            log.error(logHeader + "getUserById: ERROR! User does not have permission to get user by id. The user permissions is: " + permissions);
+            log.info(logHeader + "The needed permission is: 'EMPLOYEE_MANAGEMENT'");
+
+            return ResponseEntity.status(403).build();
+        }
+
+        log.info(logHeader + "getUserById: permissions are valid. Getting user by id: " + id);
 
         Optional<User> user = userService.getUserById(id);
 
@@ -76,22 +89,25 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestHeader("X-User-Role") String role) {
-        log.info(logHeader + "deleteUser: Deleting user by id: " + id + " with role: " + role);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestHeader("X-User-Permissions") String permissions) {
+        log.info(logHeader + "deleteUser: Deleting user by id: " + id + " with permissions: " + permissions);
 
-        if(role == null) {
-            log.error(logHeader + "getUserById: ERROR! User role is not provided in the header");
-
-            return ResponseEntity.badRequest().build();
-        }
-
-        if(!role.equals("ROLE_Admin")) {
-            log.error(logHeader + "deleteUser: ERROR! User does not have permission to delete user. The user role is: " + role);
+        if(permissions == null || permissions.isEmpty()) {
+            log.error(logHeader + "getUserById: ERROR! User permissions are not provided in the header");
 
             return ResponseEntity.badRequest().build();
         }
 
-        log.info(logHeader + "deleteUser: Role is valid. Deleting user by id: " + id);
+        Set<String> userPermissions = getPermissions(permissions);
+
+        if(!userPermissions.contains("EMPLOYEE_DELETE")) {
+            log.error(logHeader + "getUserById: ERROR! User does not have permission to get user by id. The user permissions is: " + permissions);
+            log.info(logHeader + "The needed permission is: 'EMPLOYEE_DELETE'");
+
+            return ResponseEntity.status(403).build();
+        }
+
+        log.info(logHeader + "deleteUser: permissions is valid. Deleting user by id: " + id);
 
         userService.deleteUser(id);
         
