@@ -290,7 +290,17 @@ const ShiftAvailability: React.FC = () => {
 
     const proposedStartTime = startDate.toISOString();
     const proposedEndTime = endDate.toISOString();
-    const proposedTitle = `Shift for Employee ${empId}`;
+
+    const employee = localStorage.getItem("user");
+    if (!employee) {
+      showNotification(t("employeeNotFound") || "Error: Employee not found.", "error");
+      return;
+    }
+
+    const employeeData = JSON.parse(employee);
+    const role = employeeData.role;
+
+    const proposedTitle = `Shift for Employee ${empId} (${role})`;
     const status = "PROPOSED";
 
     const updatedPayload = {
