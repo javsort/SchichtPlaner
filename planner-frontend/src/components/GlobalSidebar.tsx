@@ -24,7 +24,8 @@ const navItems: NavItem[] = [
   { labelKey: "shiftManagement", path: "/shift-management", permission: "SHIFT_MANAGEMENT" },
   { labelKey: "shiftAvailability", path: "/shift-availability", permission: "SHIFT_PROPOSAL" },
   { labelKey: "Calendar", path: "/shift-view", permission: "CALENDAR_VIEW" },
-  { labelKey: "shiftSwap", path: "/shift-swap", permission: "SWAP_PROPOSAL" }
+  { labelKey: "shiftSwap", path: "/shift-swap", permission: "SWAP_PROPOSAL" },
+  { labelKey: "employeeReport", path: "/employee-report", permission: "EMPLOYEE_REPORT" }
 ];
 
 const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
@@ -37,9 +38,8 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Handle logout by clearing localStorage (or call your AuthContext logout function)
   const handleLogout = () => {
-    localStorage.removeItem("user"); // Or call your logout function
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("lang");
     localStorage.removeItem("userId");
@@ -47,10 +47,12 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // Filter items based on user role
-  const filteredNavItems = navItems.filter(
-    (item) => user && user.permissions?.includes(item.permission)
-  );
+  const filteredNavItems = navItems.filter((item) => {
+    if (!user) return false;
+    if (user.role === "Admin") return true;
+    const perms = Array.isArray(user.permissions) ? user.permissions : [user.permissions];
+    return perms.includes(item.permission);
+  });
 
   return (
     <div className={`global-sidebar ${open ? "open" : ""}`}>
@@ -64,7 +66,6 @@ const GlobalSidebar: React.FC<GlobalSidebarProps> = ({ open, onClose }) => {
           </li>
         ))}
       </ul>
-      {/* Logout button placed at the bottom */}
       <div className="logout-container">
         <button className="logout-btn" onClick={handleLogout}>
           <span>

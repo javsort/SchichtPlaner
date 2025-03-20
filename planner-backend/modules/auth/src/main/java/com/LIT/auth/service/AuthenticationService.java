@@ -55,9 +55,9 @@ public class AuthenticationService {
         //Create roles if none exist
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                Role.builder().name("Admin").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "ROLE_MANAGEMENT", "EMPLOYEE_MANAGEMENT", "EMPLOYEE_DELETE", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL")).build(),
-                Role.builder().name("Shift-Supervisor").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "EMPLOYEE_MANAGEMENT", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL")).build(),
-                Role.builder().name("Technician").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build(),
+                Role.builder().name("Admin").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "ROLE_MANAGEMENT", "EMPLOYEE_MANAGEMENT", "EMPLOYEE_DELETE", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL", "EMPLOYEE_REPORT")).build(),
+                Role.builder().name("Shift-Supervisor").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "EMPLOYEE_MANAGEMENT", "SHIFT_MANAGEMENT", "PROPOSAL_APPROVAL", "SWAP_APPROVAL", "EMPLOYEE_REPORT")).build(),
+                Role.builder().name("Technician").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL", "EMPLOYEE_REPORT")).build(),
                 Role.builder().name("Tester").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build(),
                 Role.builder().name("Incident-Manager").permissions(Set.of("CALENDAR_VIEW", "SHIFT_PROPOSAL", "SWAP_PROPOSAL")).build()
             ));

@@ -8,6 +8,7 @@ public enum RolePermissions {
     SHIFT_MANAGEMENT,
     PROPOSAL_APPROVAL,
     SWAP_APPROVAL,
+    EMPLOYEE_REPORT,
 
     // Regular employee permissions
     SHIFT_PROPOSAL,

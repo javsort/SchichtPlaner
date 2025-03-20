@@ -1,3 +1,4 @@
+// src/pages/admin/RoleManagement.tsx
 import React, { useEffect, useState } from "react";
 import {
   getRoles,
@@ -17,6 +18,7 @@ const PERMISSION_DESCRIPTIONS: { [key: string]: string } = {
   SHIFT_PROPOSAL: "Propose shift swaps.",
   SWAP_PROPOSAL: "Request shift swaps.",
   CALENDAR_VIEW: "View shift calendar.",
+  EMPLOYEE_REPORT: "Access and generate employee reports.", 
 };
 
 const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS);
@@ -151,15 +153,15 @@ const RoleManagement: React.FC = () => {
           </tbody>
         </table>
         <div className="button-container">
-        {selectedRole === null ? (
+          {selectedRole === null ? (
             <button className="create-btn" onClick={handleCreateRole} data-test-id="create-role-button">
-            Create Role
+              Create Role
             </button>
-        ) : (
+          ) : (
             <button className="save-btn" onClick={handleUpdatePermissions} data-test-id="save-changes-button">
-            Save Changes
+              Save Changes
             </button>
-        )}
+          )}
         </div>
       </div>
     </div>

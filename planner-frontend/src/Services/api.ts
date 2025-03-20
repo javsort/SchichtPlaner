@@ -75,13 +75,60 @@ export const login = async (email: string, password: string) => {
 
     console.log('Logged in successfully! user:', data.email, 'role:', data.role, 'token:', data.token, 'userId:', data.userId, 'permissions:', permissionsArray);
 
-    return { email: data.email, role: data.role, token: data.token, userId: data.userId, permissions: permissionsArray };
+    return { email: data.email, role: data.role, token: data.token, userId: data.userId, permissions: permissionsArray, username: data.username };
 
   } catch (error) {
     console.error('Error logging in', error);
 
   }
 };
+
+export const getUserData = async (email: string, password: string) => {
+
+  try {
+    const response = await axios.post(`${baseUrl}/api/auth/newcommer`, {
+      email: email,
+      password: password
+    });
+
+    const data = await response.data;
+
+    console.log('New User meta info fetched successfully!', response.data);
+
+    return data;
+
+  } catch (error) {
+    console.error('Error getting all users', error)
+  }
+}
+
+// More like finish registration, only admin creates the user, but this one updates the password
+export const register = async (email: string, password: string) => {
+  try {
+    const response = await axios.post(`${baseUrl}/api/auth/register`, {
+      email: email,
+      password: password
+    });
+
+    const data = await response.data;
+
+    const permissionsArray = data.permissions ? data.permissions.split(",") : [];
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.userId);
+    localStorage.setItem('role', data.role);
+    localStorage.setItem('permissions', JSON.stringify(permissionsArray));
+
+    console.log('Logged in successfully! user:', data.email, 'role:', data.role, 'token:', data.token, 'userId:', data.userId, 'permissions:', permissionsArray);
+
+    return { email: data.email, role: data.role, token: data.token, userId: data.userId, permissions: permissionsArray, username: data.username };
+
+  } catch (error) {
+    console.error('Error logging in', error);
+
+  }
+};
+
 
 export const getAllUsers = async () => {
   try {
@@ -133,6 +180,8 @@ export const createUser = async (user) => {
         }
       }
     )
+
+    return response.data;
 
   } catch (error) {
     console.error('Error creating user: ', error)
@@ -369,7 +418,7 @@ export const supervisorCreateShift = async (shift) => {
   console.log('Creating shift:', shift);
   
   const shiftToCreate = {
-    shiftOwnerId: shift.employeeId || null,
+    shiftOwnerId: shift.shiftOwnerId || null,
     title: shift.title,
     shiftOwnerName: shift.shiftOwner || "",
     shiftOwnerRole: shift.role, 
@@ -689,3 +738,60 @@ export const deleteRole = async (roleId) => {
 
   }
 };
+
+/*
+ * Employee Report stuff
+ */
+export const getEmployeeReportCSV = async (): Promise<string> => {
+    console.log('Fetching Employee CSV Report... URL:', `${baseUrl}/api/employee/reports/csv`);
+    try {
+      const response = await axios.get(`${baseUrl}/api/employee/reports/csv`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        },
+        responseType: 'text'
+      });
+      console.log('Employee CSV Report fetched successfully', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Employee CSV Report:', error);
+      throw error;
+    }
+  };
+  
+  export const getEmployeeReportExcel = async (): Promise<Blob> => {
+    console.log('Fetching Employee Excel Report... URL:', `${baseUrl}/api/employee/reports/excel`);
+    try {
+      const response = await axios.get(`${baseUrl}/api/employee/reports/excel`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        },
+        responseType: 'blob'
+      });
+      console.log('Employee Excel Report fetched successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Employee Excel Report:', error);
+      throw error;
+    }
+  };
+  
+  export const getEmployeeReportICS = async (): Promise<string> => {
+    console.log('Fetching Employee ICS Report... URL:', `${baseUrl}/api/employee/reports/ics`);
+    try {
+      const response = await axios.get(`${baseUrl}/api/employee/reports/ics`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token') || ''
+        },
+        responseType: 'text'
+      });
+      console.log('Employee ICS Report fetched successfully', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Employee ICS Report:', error);
+      throw error;
+    }
+  };

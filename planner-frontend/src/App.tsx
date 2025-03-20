@@ -27,6 +27,7 @@ import ShiftAvailability from "./pages/employee/ShiftAvailability.tsx";
 import CompanyShiftCalendar from "./pages/employee/CompanyShiftCalendar.tsx";
 import ShiftSwapRequests from "./pages/employee/ShiftSwapRequests.tsx";
 
+import EmployeeReport from "./pages/employee/EmployeeReport.tsx";
 
 // Context & Private Route
 import { AuthProvider } from "./AuthContext.tsx";
@@ -114,6 +115,14 @@ const App: React.FC = () => {
               <Route path="shift-swap" element={<ShiftSwapRequests />} />
             </Route>
           </Route>
+
+            {/* Employee Report Route */}
+          <Route element={<PrivateRoute requiredPermissions={["EMPLOYEE_REPORT"]} />}>
+            <Route element={<MainLayout />}>
+              <Route path="employee-report" element={<EmployeeReport />} />
+            </Route>
+          </Route>
+
 
           {/* Fallback Route */}
           <Route path="*" element={<Navigate to="/login" replace />} />
