@@ -116,6 +116,7 @@ public class LogicGateController {
         String role = (String) requestWrap.getAttribute("role");
         String userName = (String) requestWrap.getAttribute("userName");
         Long userId = (Long) requestWrap.getAttribute("userId");
+        String permissions = (String) requestWrap.getAttribute("permissions");
         
         if(role != null){
             headers.set("X-User-Role", role);
@@ -127,6 +128,10 @@ public class LogicGateController {
 
         if(userId != null){
             headers.set("X-User-Id", userId.toString());
+        }
+
+        if(permissions != null){
+            headers.set("X-User-Permissions", permissions);
         }
         
         // Form entity to send for the request
