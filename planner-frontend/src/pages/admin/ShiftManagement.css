@@ -1,6 +1,6 @@
-/* ------------------------------------- */
-/* Overall Container */
-/* ------------------------------------- */
+/* --------------------------------------------
+   1) PAGE LAYOUT (Form, Calendar, Overview)
+--------------------------------------------- */
 .shift-management {
   display: flex;
   flex-direction: column;
@@ -12,22 +12,19 @@
   box-sizing: border-box;
 }
 
-/* Main header styling - aligned left */
 .page-header {
-  margin: 0;
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
   text-align: left;
   color: #2c3e50;
 }
 
-/* Container for form and calendar side-by-side */
 .shift-management-top {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
 }
 
-/* Shift creation form container */
+/* SHIFT CREATION CARD */
 .shift-creation {
   flex: 0 0 35%;
   min-width: 250px;
@@ -37,26 +34,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Calendar card styling */
-.calendar-card {
-  flex: 1;
-  min-width: 300px;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Section headers for shift creation, calendar, and shift overview */
-.shift-creation h3,
-.calendar-card h3,
-.shift-overview h3 {
+.shift-creation h3 {
   margin-top: 0;
   margin-bottom: 15px;
   color: #2c3e50;
 }
 
-/* Shift creation form styles */
 .shift-creation form {
   display: flex;
   flex-direction: column;
@@ -82,7 +65,8 @@
   color: #2c3e50;
 }
 
-.shift-creation input {
+.shift-creation input,
+.shift-creation select {
   padding: 8px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -92,13 +76,13 @@
   color: #2c3e50;
 }
 
-.shift-creation .form-actions {
+.form-actions {
   display: flex;
   gap: 10px;
   margin-top: 0;
 }
 
-/* Buttons for shift creation form */
+/* SHIFT creation form buttons */
 .shift-creation button {
   padding: 10px 20px;
   font-size: 16px;
@@ -108,20 +92,33 @@
   border-radius: 4px;
   cursor: pointer;
 }
-
 .shift-creation button:hover {
-  background-color: #4da8d6;
+  background-color: #3498db;
 }
-
 .shift-creation button[type="button"] {
   background-color: #69be28;
 }
-
 .shift-creation button[type="button"]:hover {
-  background-color: #69be28;
+  background-color: #58a71f;
 }
 
-/* Shift overview table container */
+/* CALENDAR CARD */
+.calendar-card {
+  flex: 1;
+  min-width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+/* SHIFT OVERVIEW CARD */
 .shift-overview {
   background-color: #fff;
   border-radius: 8px;
@@ -160,7 +157,6 @@
   background-color: #f9f9f9;
 }
 
-/* Buttons for shift overview table */
 .shift-overview button {
   padding: 6px 12px;
   margin: 0 4px;
@@ -175,139 +171,80 @@
   background-color: #4da8d6;
   color: #fff;
 }
-
 .shift-overview button:first-of-type:hover {
-  background-color: #4da8d6;
+  background-color: #3498db;
 }
-
-
-/* Notification bar styling */
-.notification-bar {
-  position: fixed;
-  top: 20px;
-  right: -300px; /* Start off-screen */
-  width: 250px;
-  padding: 10px;
-  border-radius: 4px;
+.shift-overview button:last-of-type {
+  background-color: #69be28;
   color: #fff;
-  transition: right 0.5s ease;
-  z-index: 9999;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.shift-overview button:last-of-type:hover {
+  background-color: #58a71f;
 }
 
-.notification-bar.show {
-  right: 20px;
-}
-
-.notification-bar.success {
-  background-color: #f5fff8; /* Light success color */
-}
-
-.notification-bar.error {
-  background-color: #dc3545; /* Red for errors */
-}
-
-/* ------------------------------------- */
-/* Tooltip Overrides: White BG, Dark Text */
-/* ------------------------------------- */
-.tooltip.show {
-  opacity: 1;
-}
-
-.tooltip .tooltip-inner {
-  background-color: #fff !important;
-  color: #333 !important;
-  border: 1px solid #ccc !important;
-}
-
-.tooltip .arrow::before {
-  border-top-color: #ccc !important;
-  border-bottom-color: #ccc !important;
-  border-right-color: #ccc !important;
-  border-left-color: #ccc !important;
-}
-
-/* ------------------------------------- */
-/* React Big Calendar Overrides */
-/* ------------------------------------- */
-
-/* 1) Toolbar (Today | Back | Next | Month | Week | Day | Agenda) */
+/* -----------------------------------------------
+   2) REACT BIG CALENDAR OVERRIDES (Classic Look)
+----------------------------------------------- */
 .rbc-toolbar {
-  background-color: #fff !important;
-  border: 1px solid #ddd !important;
-  border-radius: 8px;
-  margin-bottom: 20px !important; /* space below toolbar */
-  color: #333 !important;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: 10px !important;
+  padding: 0.5rem 0;
 }
 
-.rbc-toolbar button {
-  background-color: #fff !important;
-  color: #333 !important;
-  border: 1px solid #ddd !important;
+.rbc-toolbar .rbc-btn-group {
+  display: inline-flex;
+  background: none;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  margin: 0 5px 5px 0;
-  padding: 5px 10px;
+  overflow: hidden;
+}
+
+.rbc-toolbar .rbc-btn-group .rbc-btn {
+  background: #fff;
+  color: #444;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.rbc-toolbar button:hover,
-.rbc-toolbar button:focus {
-  background-color: #f9f9f9 !important;
+.rbc-toolbar .rbc-btn-group .rbc-btn + .rbc-btn {
+  border-left: 1px solid #ccc;
 }
 
-/* Active (selected) view button highlight */
-.rbc-toolbar .rbc-btn-group > button.rbc-active {
-  background-color: #e6e6e6 !important;
-  color: #333 !important;
+.rbc-toolbar .rbc-btn-group .rbc-btn:hover {
+  background-color: #f2f2f2;
 }
 
-/* 2) Month/Week/Day/Agenda containers */
-.rbc-month-view,
-.rbc-time-view,
-.rbc-agenda-view {
-  background-color: #fff !important;
-  border: 1px solid #ddd !important;
-  border-radius: 8px;
-  color: #333 !important;
+.rbc-toolbar .rbc-btn-group .rbc-active,
+.rbc-toolbar button[aria-pressed="true"] {
+  background: #e6e6e6;
+  color: #333;
 }
 
-/* 3) Remove green highlight for "today" */
-.rbc-day-bg.rbc-today {
-  background-color: #fff !important;
-  border: 1px solid #ddd !important;
+.rbc-toolbar .rbc-toolbar-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 1rem;
 }
 
+/* If you want “today’s” column in light blue: */
+.rbc-day-bg.rbc-today,
 .rbc-day-slot.rbc-today {
-  background-color: #fff !important;
+  background-color: #eaf6ff !important;
 }
 
-/* 4) Day headers (Mon, Tue, Wed, etc.) */
-.rbc-header {
-  background-color: #f2f2f2 !important;
-  color: #333 !important;
-  font-weight: 600;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-  padding: 8px;
-}
-
-/* 5) Event styling */
+/* RBC event styling */
 .rbc-event {
-  background-color: #3174ad !important; /* your preferred event color */
-  color: #fff !important;
   border-radius: 4px;
   padding: 2px 4px;
-  font-size: 14px;
   margin: 2px;
-}
-
-.rbc-event:hover {
-  background-color: #255985 !important;
-}
-
-/* 6) Remove any default RBC shadows or lines if desired */
-.rbc-time-view .rbc-allday-cell {
-  border-bottom: 1px solid #ddd !important;
+  color: #fff;
+  font-size: 14px;
 }

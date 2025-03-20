@@ -1,9 +1,9 @@
-// src/pages/admin/ShiftManagement.tsx
+// src/pages/ShiftManagement.jsx
 import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import "moment/locale/de";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import "moment/locale/de"; // If you need German or other locales
+import "react-big-calendar/lib/css/react-big-calendar.css"; // RBC default styling
 import { useTranslation } from "react-i18next";
 import "./ShiftManagement.css";
 import {
@@ -13,96 +13,16 @@ import {
   supervisorDeleteShift,
   supervisorUpdateShift,
 } from "../../Services/api.ts";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-
-// Simple info icon for tooltips
-const InfoIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-    <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4da8d6" strokeWidth="1" />
-    <path fill="#000000" d="M7.5 12h1V7h-1v5zm0-6h1V5h-1v1z" />
-  </svg>
-);
-
-/**
- * Custom toolbar replicating the layout in your screenshot:
- * - Left group: [ Today | Back | Next ]
- * - Center label: "March 17 – 23" (or localized date range)
- * - Right group: [ Month | Week | Day | Agenda ]
- * - Translated button labels, but forced date/time layout in English
- */
-const CustomToolbar = (toolbarProps) => {
-  const { onNavigate, onView, view, label, localizer } = toolbarProps;
-  const { messages } = localizer;
-
-  const goToBack = () => onNavigate("PREV");
-  const goToNext = () => onNavigate("NEXT");
-  const goToToday = () => onNavigate("TODAY");
-
-  const handleViewChange = (newView) => {
-    onView(newView);
-  };
-
-  return (
-    <div className="rbc-toolbar-custom">
-      {/* LEFT BUTTON GROUP: Today, Back, Next */}
-      <div className="rbc-btn-group left-group">
-        <button type="button" onClick={goToToday}>
-          {messages.today}
-        </button>
-        <button type="button" onClick={goToBack}>
-          {messages.previous}
-        </button>
-        <button type="button" onClick={goToNext}>
-          {messages.next}
-        </button>
-      </div>
-
-      {/* CENTER: current date range label (e.g. "March 17 – 23") */}
-      <span className="rbc-toolbar-label">{label}</span>
-
-      {/* RIGHT BUTTON GROUP: Month, Week, Day, Agenda */}
-      <div className="rbc-btn-group right-group">
-        <button
-          type="button"
-          onClick={() => handleViewChange(Views.MONTH)}
-          className={view === Views.MONTH ? "rbc-active" : ""}
-        >
-          {messages.month}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleViewChange(Views.WEEK)}
-          className={view === Views.WEEK ? "rbc-active" : ""}
-        >
-          {messages.week}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleViewChange(Views.DAY)}
-          className={view === Views.DAY ? "rbc-active" : ""}
-        >
-          {messages.day}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleViewChange(Views.AGENDA)}
-          className={view === Views.AGENDA ? "rbc-active" : ""}
-        >
-          {messages.agenda}
-        </button>
-      </div>
-    </div>
-  );
-};
+import momentTZ from "moment-timezone"; // if needed for time zones
 
 const ShiftManagement = ({ currentUser = { id: 1 } }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Set moment's locale to match the current language
+  moment.locale(i18n.language);
 
-  // Force English for date/time layout
-  moment.locale("en");
   const localizer = momentLocalizer(moment);
 
-  // Translated labels for the toolbar
+  // RBC’s default toolbar labels, localized
   const messages = {
     today: t("calendarToday") || "Today",
     previous: t("calendarBack") || "Back",
@@ -113,12 +33,16 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     agenda: t("agenda") || "Agenda",
   };
 
-  // Load shifts/employees from your API
+  // STATE for shifts, employees
   const [shifts, setShifts] = useState([]);
   const [employees, setEmployees] = useState([]);
 
-  const mapShifts = (shifts) =>
-    shifts.map((shift) => ({
+  // SHIFT interface (pseudo-TS for clarity)
+  // { id, title, shiftOwnerId, shiftOwner, role, start, end }
+
+  // Map raw shifts from API into RBC-friendly objects
+  const mapShifts = (rawShifts) =>
+    rawShifts.map((shift) => ({
       id: shift.id,
       title: shift.title || t("unnamedShift"),
       shiftOwnerId: shift.shiftOwnerId || null,
@@ -128,6 +52,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       end: new Date(shift.endTime),
     }));
 
+  // LOAD SHIFT DATA
   const loadShifts = async () => {
     try {
       const fetchedShifts = await fetchShifts();
@@ -141,6 +66,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     }
   };
 
+  // LOAD EMPLOYEE DATA
   const loadEmployees = async () => {
     try {
       const users = await getAllUsers();
@@ -151,7 +77,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       const employeeList = users.map((user) => ({
         id: user.id,
         name: user.username,
-        role: user.roles[0]?.name || t("unassigned"),
+        role: user.roles?.[0]?.name || t("unassigned"),
       }));
       setEmployees(employeeList);
     } catch (error) {
@@ -159,13 +85,16 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     }
   };
 
+  // On mount
   useEffect(() => {
     loadShifts();
     loadEmployees();
   }, []);
 
-  // SHIFT CREATION / EDIT STATE
+  // RBC “view” state
   const [view, setView] = useState(Views.WEEK);
+
+  // SHIFT creation/edit form state
   const [newShift, setNewShift] = useState({
     id: 0,
     title: "",
@@ -178,91 +107,95 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingShiftId, setEditingShiftId] = useState(null);
 
-  // Convert shifts to calendar events
-  const calendarEvents = shifts.map((shift) => ({
-    id: shift.id,
-    title: shift.title,
-    shiftOwner: shift.shiftOwner,
-    start: shift.start,
-    end: shift.end,
-    role: shift.role,
-    shiftOwnerId: shift.shiftOwnerId,
+  // RBC events: convert shifts to RBC-friendly objects
+  const calendarEvents = shifts.map((s) => ({
+    id: s.id,
+    title: s.title,
+    shiftOwner: s.shiftOwner,
+    start: s.start,
+    end: s.end,
+    role: s.role,
+    shiftOwnerId: s.shiftOwnerId,
   }));
 
-  // Style function for calendar events
-  const eventStyleGetter = () => {
-    return {
-      style: {
-        backgroundColor: "#3174ad",
-        borderRadius: "5px",
-        color: "white",
-      },
-    };
-  };
+  // A single color for all events (RBC default is #3174ad)
+  const eventStyleGetter = () => ({
+    style: {
+      backgroundColor: "#3174ad",
+      borderRadius: "5px",
+      color: "#fff",
+    },
+  });
 
   // SHIFT CREATE/UPDATE
   const handleAddOrUpdateShift = async (e) => {
     e.preventDefault();
-    if (!newShift.title || !newShift.start || !newShift.end || !newShift.role) {
+    const { title, start, end, role, shiftOwnerId, shiftOwner } = newShift;
+    if (!title || !start || !end || !role) {
       alert(t("fillRequiredFields") || "Please fill out all required fields.");
       return;
     }
 
-    const startDate = new Date(newShift.start);
-    const endDate = new Date(newShift.end);
-    const start = new Date(
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    // Convert to UTC ISO (minus local TZ offset)
+    const startISO = new Date(
       startDate.getTime() - startDate.getTimezoneOffset() * 60000
     ).toISOString();
-    const end = new Date(
+    const endISO = new Date(
       endDate.getTime() - endDate.getTimezoneOffset() * 60000
     ).toISOString();
 
-    if (start >= end) {
+    // Basic validation
+    if (startISO >= endISO) {
       alert(t("endTimeAfterStart") || "End time must be after start time.");
       return;
     }
     if (startDate.toDateString() !== endDate.toDateString()) {
       alert(
-        t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day."
+        t("shiftLongerThanOneDay") ||
+          "Shifts cannot extend beyond a single day."
       );
       return;
     }
 
+    // If editing or creating
     try {
       if (isEditing) {
         await supervisorUpdateShift(editingShiftId, {
-          title: newShift.title,
-          start,
-          end,
-          role: newShift.role,
-          shiftOwnerId: newShift.shiftOwnerId || null,
-          shiftOwner: newShift.shiftOwner,
+          title,
+          start: startISO,
+          end: endISO,
+          role,
+          shiftOwnerId: shiftOwnerId || null,
+          shiftOwner,
         });
         setIsEditing(false);
         setEditingShiftId(null);
       } else {
         await supervisorCreateShift({
-          title: newShift.title,
-          start,
-          end,
-          role: newShift.role,
-          shiftOwnerId: newShift.shiftOwnerId || null,
-          shiftOwner: newShift.shiftOwner,
+          title,
+          start: startISO,
+          end: endISO,
+          role,
+          shiftOwnerId: shiftOwnerId || null,
+          shiftOwner,
         });
       }
       // Reset form
       setNewShift({
         id: 0,
         title: "",
+        shiftOwnerId: null,
         shiftOwner: "",
         role: "",
-        shiftOwnerId: null,
         start: new Date(),
         end: new Date(),
       });
       await loadShifts();
-    } catch (error) {
-      console.error("Error adding/updating shift:", error);
+    } catch (err) {
+      console.error("Error adding/updating shift:", err);
     }
   };
 
@@ -290,42 +223,39 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       try {
         await supervisorDeleteShift(shiftId);
         await loadShifts();
-      } catch (error) {
-        console.error("Error deleting shift:", error);
+      } catch (err) {
+        console.error("Error deleting shift:", err);
       }
     }
-    loadShifts();
   };
 
-  // EMPLOYEE SELECT
+  // Employee selection in the form
   const handleEmployeeChange = (e) => {
     const selectedId = parseInt(e.target.value, 10);
-    const selectedEmployee = employees.find((emp) => emp.id === selectedId);
-    if (selectedEmployee) {
-      setNewShift({
-        ...newShift,
-        shiftOwnerId: selectedEmployee.id,
-        shiftOwner: selectedEmployee.name,
-        role: selectedEmployee.role,
-      });
+    const foundEmp = employees.find((emp) => emp.id === selectedId);
+    if (foundEmp) {
+      setNewShift((prev) => ({
+        ...prev,
+        shiftOwnerId: foundEmp.id,
+        shiftOwner: foundEmp.name,
+        role: foundEmp.role,
+      }));
     } else {
-      setNewShift({
-        ...newShift,
+      setNewShift((prev) => ({
+        ...prev,
         shiftOwnerId: null,
         shiftOwner: "",
         role: t("unassigned") || "Unassigned",
-      });
+      }));
     }
   };
 
   return (
     <div className="shift-management">
-      <h2 className="page-header">
-        {t("shiftManagement") || "Shift Management"}
-      </h2>
+      <h2 className="page-header">{t("shiftManagement") || "Shift Management"}</h2>
 
       <div className="shift-management-top">
-        {/* SHIFT CREATION / EDIT FORM */}
+        {/* SHIFT FORM */}
         <div className="shift-creation">
           <h3>
             {isEditing
@@ -333,38 +263,25 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               : t("createNewShift") || "Create New Shift"}
           </h3>
           <form onSubmit={handleAddOrUpdateShift}>
-            {/* Only show employee dropdown if not editing */}
+            {/* If not editing, show select employee */}
             {!isEditing && (
               <>
-                <label>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip>
-                        {t("selectEmployeeTooltip", "Select an employee from the list.")}
-                      </Tooltip>
-                    }
-                  >
-                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
-                      <InfoIcon />
-                    </span>
-                  </OverlayTrigger>
-                  {t("Select Employee") || "Select Employee"}:
-                </label>
+                <label>{t("Select Employee") || "Select Employee"}:</label>
                 <select
                   value={newShift.shiftOwnerId || ""}
                   onChange={handleEmployeeChange}
                   required
                 >
                   <option value="">{t("employee") || "Select Employee"}</option>
-                  {employees.map((employee) => (
-                    <option key={employee.id} value={employee.id}>
-                      {employee.name}
+                  {employees.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      {emp.name}
                     </option>
                   ))}
                 </select>
               </>
             )}
+            {/* If editing, display assigned employee */}
             {isEditing && (
               <>
                 <label>{t("employeeAssigned") || "Employee Assigned"}:</label>
@@ -372,51 +289,23 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               </>
             )}
 
-            {/* SHIFT NAME */}
             <div className="form-row">
               <div className="form-group">
-                <label>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip>
-                        {t("shiftNameTooltip", "Enter the name of the shift.")}
-                      </Tooltip>
-                    }
-                  >
-                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
-                      <InfoIcon />
-                    </span>
-                  </OverlayTrigger>
-                  {t("shiftName") || "Shift Name"}:
-                </label>
+                <label>{t("shiftName") || "Shift Name"}:</label>
                 <input
                   type="text"
                   value={newShift.title}
-                  onChange={(e) => setNewShift({ ...newShift, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewShift({ ...newShift, title: e.target.value })
+                  }
                   required
                 />
               </div>
             </div>
 
-            {/* START / END DATES */}
             <div className="form-row">
               <div className="form-group">
-                <label>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip>
-                        {t("startDateTimeTooltip", "Select the start date/time.")}
-                      </Tooltip>
-                    }
-                  >
-                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
-                      <InfoIcon />
-                    </span>
-                  </OverlayTrigger>
-                  {t("startDateTime") || "Start Date & Time"}:
-                </label>
+                <label>{t("startDateTime") || "Start Date & Time"}:</label>
                 <input
                   type="datetime-local"
                   value={newShift.start}
@@ -425,21 +314,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 />
               </div>
               <div className="form-group">
-                <label>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip>
-                        {t("endDateTimeTooltip", "Select the end date/time.")}
-                      </Tooltip>
-                    }
-                  >
-                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
-                      <InfoIcon />
-                    </span>
-                  </OverlayTrigger>
-                  {t("endDateTime") || "End Date & Time"}:
-                </label>
+                <label>{t("endDateTime") || "End Date & Time"}:</label>
                 <input
                   type="datetime-local"
                   value={newShift.end}
@@ -449,29 +324,13 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               </div>
             </div>
 
-            {/* ROLE */}
             <div className="form-row">
               <div className="form-group">
-                <label>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip>
-                        {t("roleTooltip", "The role assigned to the shift.")}
-                      </Tooltip>
-                    }
-                  >
-                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
-                      <InfoIcon />
-                    </span>
-                  </OverlayTrigger>
-                  {t("role") || "Role"}:
-                </label>
+                <label>{t("role") || "Role"}:</label>
                 <div className="role-display">{newShift.role}</div>
               </div>
             </div>
 
-            {/* FORM BUTTONS */}
             <div className="form-actions">
               <button type="submit">
                 {isEditing ? t("updateShift") || "Update Shift" : t("addShift") || "Add Shift"}
@@ -485,11 +344,11 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                     setNewShift({
                       id: 0,
                       title: "",
-                      start: new Date(),
-                      end: new Date(),
+                      shiftOwnerId: null,
                       shiftOwner: "",
                       role: "",
-                      shiftOwnerId: null,
+                      start: new Date(),
+                      end: new Date(),
                     });
                   }}
                 >
@@ -500,22 +359,13 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           </form>
         </div>
 
-        {/* CALENDAR CARD */}
+        {/* CALENDAR */}
         <div className="calendar-card">
-          <h3>
-            {t("calendar") || "Calendar"}
-            <OverlayTrigger
-              placement="top"
-              overlay={<Tooltip>{t("calendarTooltip", "Company calendar view")}</Tooltip>}
-            >
-              <span className="tooltip-icon" style={{ marginLeft: "8px" }}>
-                <InfoIcon />
-              </span>
-            </OverlayTrigger>
-          </h3>
+          <h3>{t("calendar") || "Calendar"}</h3>
           <Calendar
+            key={i18n.language} // re-render if language changes
             localizer={localizer}
-            culture="en"
+            culture={i18n.language}
             messages={messages}
             events={calendarEvents}
             startAccessor="start"
@@ -523,7 +373,6 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             view={view}
             onView={setView}
             eventPropGetter={eventStyleGetter}
-            components={{ toolbar: CustomToolbar }}
             style={{ height: 500 }}
           />
         </div>

@@ -38,6 +38,7 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   currentUser = { id: 1, name: "John Doe" },
 }) => {
   const { t, i18n } = useTranslation();
+  // Keep this to localize things like day names, but RBC’s time display will be overridden below
   moment.locale(i18n.language);
 
   // State for shifts and employees
@@ -123,7 +124,14 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
     };
   });
 
-  // We remove eventStyleGetter so RBC uses its default event color (#3174ad)
+  // Custom formats to ensure 24-hour times (HH:mm) regardless of locale
+  const calendarFormats = {
+    timeGutterFormat: "HH:mm",
+    eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, "HH:mm", culture)} — ${localizer.format(end, "HH:mm", culture)}`,
+    agendaTimeRangeFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, "HH:mm", culture)} – ${localizer.format(end, "HH:mm", culture)}`,
+  };
 
   // RBC's default toolbar labels (localized)
   const messages = {
@@ -263,9 +271,10 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
               events={calendarEvents}
               startAccessor="start"
               endAccessor="end"
-              /* Because we removed eventStyleGetter, RBC uses its default color (#3174ad) for events */
               view={view}
               onView={(newView) => setView(newView)}
+              // Forces consistent 24-hour display
+              formats={calendarFormats}
               min={new Date(1970, 1, 1, 0, 0)}
               max={new Date(1970, 1, 1, 23, 59)}
             />
