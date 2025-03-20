@@ -20,9 +20,11 @@ const localizer = momentLocalizer(moment);
 interface Shift {
   id: number;
   title: string;
+  shiftOwnerId: number | null;
+  shiftOwner: string;
+  role: string;
   start: Date;
   end: Date;
-  assignedEmployees?: number[];
 }
 
 interface Employee {
@@ -34,9 +36,7 @@ interface CompanyShiftCalendarProps {
   currentUser?: { id: number; name: string };
 }
 
-const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
-  currentUser = { id: 1, name: "John Doe" },
-}) => {
+const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({}) => {
   const { t, i18n } = useTranslation();
   // Keep this to localize things like day names, but RBC’s time display will be overridden below
   moment.locale(i18n.language);
@@ -48,6 +48,10 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   const [calendarFilter, setCalendarFilter] = useState("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Current user ID
+  const userIdString = localStorage.getItem("userId");
+  const id = userIdString ? parseInt(userIdString) : null
+
   // Fetch shifts
   useEffect(() => {
     const loadShifts = async () => {
@@ -55,10 +59,12 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
         const fetchedShifts = await fetchShifts();
         const formattedShifts = fetchedShifts.map((shift: any) => ({
           id: shift.id,
-          title: shift.title,
+          title: shift.title || t("unnamedShift"),
+          shiftOwnerId: shift.shiftOwnerId ?? null,
+          shiftOwner: shift.shiftOwnerName || t("unassigned"),
+          role: shift.shiftOwnerRole || t("unassigned"),
           start: new Date(shift.startTime),
           end: new Date(shift.endTime),
-          assignedEmployees: shift.assignedEmployees || [],
         }));
         setShifts(formattedShifts);
       } catch (error) {
@@ -101,26 +107,22 @@ const CompanyShiftCalendar: React.FC<CompanyShiftCalendarProps> = ({
   // Filter the shifts according to the selected button
   const filteredShifts = shifts.filter((shift) => {
     if (calendarFilter === "my") {
-      return shift.assignedEmployees?.includes(currentUser.id);
+      return  id && shift.shiftOwnerId === id;
     } else if (calendarFilter === "unoccupied") {
-      return !shift.assignedEmployees || shift.assignedEmployees.length === 0;
+      return shift.shiftOwnerId === null;
     }
     return true; // "all" means no filter
   });
 
   // Convert those shifts into RBC events
   const calendarEvents = filteredShifts.map((shift) => {
-    const assignedNames = (shift.assignedEmployees || []).map((id) => {
-      const emp = employees.find((e) => e.id === id);
-      return emp ? emp.name : `Unknown #${id}`;
-    });
-    const displayNames = assignedNames.length
-      ? assignedNames.join(", ")
+    const displayedOwner = shift.shiftOwner
+      ? shift.shiftOwner || t("assigned") || "Assigned"
       : t("unassigned") || "Unassigned";
 
     return {
       ...shift,
-      title: `${shift.title} (${displayNames})`,
+      title: `${shift.title} - ${displayedOwner}`,
     };
   });
 

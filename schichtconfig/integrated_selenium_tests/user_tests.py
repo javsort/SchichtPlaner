@@ -54,7 +54,7 @@ def create_new_user_test(wait, driver):
     submit_button.click()
 
     try:
-        popup_close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Close')]")))
+        popup_close_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-test-id='new-user-close-button']")))
         popup_close_button.click()
         print("Popup closed successfully!")
     except:
