@@ -1,4 +1,4 @@
-// src/pages/ShiftManagement.jsx
+// src/pages/admin/ShiftManagement.tsx
 import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
@@ -6,28 +6,119 @@ import "moment/locale/de";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useTranslation } from "react-i18next";
 import "./ShiftManagement.css";
-import { fetchShifts, getAllUsers, supervisorCreateShift, supervisorDeleteShift, supervisorUpdateShift } from "../../Services/api.ts";
+import {
+  fetchShifts,
+  getAllUsers,
+  supervisorCreateShift,
+  supervisorDeleteShift,
+  supervisorUpdateShift,
+} from "../../Services/api.ts";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+
+// Simple info icon for tooltips
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4da8d6" strokeWidth="1" />
+    <path fill="#000000" d="M7.5 12h1V7h-1v5zm0-6h1V5h-1v1z" />
+  </svg>
+);
+
+/**
+ * Custom toolbar replicating the layout in your screenshot:
+ * - Left group: [ Today | Back | Next ]
+ * - Center label: "March 17 – 23" (or localized date range)
+ * - Right group: [ Month | Week | Day | Agenda ]
+ * - Translated button labels, but forced date/time layout in English
+ */
+const CustomToolbar = (toolbarProps) => {
+  const { onNavigate, onView, view, label, localizer } = toolbarProps;
+  const { messages } = localizer;
+
+  const goToBack = () => onNavigate("PREV");
+  const goToNext = () => onNavigate("NEXT");
+  const goToToday = () => onNavigate("TODAY");
+
+  const handleViewChange = (newView) => {
+    onView(newView);
+  };
+
+  return (
+    <div className="rbc-toolbar-custom">
+      {/* LEFT BUTTON GROUP: Today, Back, Next */}
+      <div className="rbc-btn-group left-group">
+        <button type="button" onClick={goToToday}>
+          {messages.today}
+        </button>
+        <button type="button" onClick={goToBack}>
+          {messages.previous}
+        </button>
+        <button type="button" onClick={goToNext}>
+          {messages.next}
+        </button>
+      </div>
+
+      {/* CENTER: current date range label (e.g. "March 17 – 23") */}
+      <span className="rbc-toolbar-label">{label}</span>
+
+      {/* RIGHT BUTTON GROUP: Month, Week, Day, Agenda */}
+      <div className="rbc-btn-group right-group">
+        <button
+          type="button"
+          onClick={() => handleViewChange(Views.MONTH)}
+          className={view === Views.MONTH ? "rbc-active" : ""}
+        >
+          {messages.month}
+        </button>
+        <button
+          type="button"
+          onClick={() => handleViewChange(Views.WEEK)}
+          className={view === Views.WEEK ? "rbc-active" : ""}
+        >
+          {messages.week}
+        </button>
+        <button
+          type="button"
+          onClick={() => handleViewChange(Views.DAY)}
+          className={view === Views.DAY ? "rbc-active" : ""}
+        >
+          {messages.day}
+        </button>
+        <button
+          type="button"
+          onClick={() => handleViewChange(Views.AGENDA)}
+          className={view === Views.AGENDA ? "rbc-active" : ""}
+        >
+          {messages.agenda}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const ShiftManagement = ({ currentUser = { id: 1 } }) => {
-  const { t, i18n } = useTranslation();
-  moment.locale(i18n.language);
+  const { t } = useTranslation();
+
+  // Force English for date/time layout
+  moment.locale("en");
   const localizer = momentLocalizer(moment);
 
+  // Translated labels for the toolbar
+  const messages = {
+    today: t("calendarToday") || "Today",
+    previous: t("calendarBack") || "Back",
+    next: t("calendarNext") || "Next",
+    month: t("month") || "Month",
+    week: t("week") || "Week",
+    day: t("day") || "Day",
+    agenda: t("agenda") || "Agenda",
+  };
+
+  // Load shifts/employees from your API
   const [shifts, setShifts] = useState([]);
   const [employees, setEmployees] = useState([]);
 
-  interface Shift {
-    id: number;
-    title: string;
-    shiftOwnerId: number | null;
-    shiftOwner: string;
-    role: string;
-    start: Date;
-    end: Date;
-  };
-
-  const mapShifts = (shifts): Shift[] => {
-    return shifts.map((shift) => ({
+  const mapShifts = (shifts) =>
+    shifts.map((shift) => ({
       id: shift.id,
       title: shift.title || t("unnamedShift"),
       shiftOwnerId: shift.shiftOwnerId || null,
@@ -36,8 +127,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       start: new Date(shift.startTime),
       end: new Date(shift.endTime),
     }));
-  };
-  
+
   const loadShifts = async () => {
     try {
       const fetchedShifts = await fetchShifts();
@@ -45,11 +135,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         console.error("Invalid API response:", fetchedShifts);
         return;
       }
-
-      const formattedShifts = mapShifts(fetchedShifts);
-
-      setShifts(formattedShifts);
-
+      setShifts(mapShifts(fetchedShifts));
     } catch (error) {
       console.error("Error fetching shifts:", error);
     }
@@ -62,29 +148,25 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
         console.error("Invalid API response:", users);
         return;
       }
-
-      // Extract usernames for employees
-      const employeeList = users.map(user => ({
+      const employeeList = users.map((user) => ({
         id: user.id,
         name: user.username,
-        role: user.roles[0]?.name || t("unassigned") || "Unassigned"
+        role: user.roles[0]?.name || t("unassigned"),
       }));
-
       setEmployees(employeeList);
-
     } catch (error) {
       console.error("Error fetching employees:", error);
     }
-  }
+  };
 
-  // Load shifts from the backend
   useEffect(() => {
     loadShifts();
     loadEmployees();
   }, []);
 
+  // SHIFT CREATION / EDIT STATE
   const [view, setView] = useState(Views.WEEK);
-  const [newShift, setNewShift] = useState<Shift>({
+  const [newShift, setNewShift] = useState({
     id: 0,
     title: "",
     shiftOwnerId: null,
@@ -96,26 +178,29 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingShiftId, setEditingShiftId] = useState(null);
 
-  const calendarEvents = shifts.map((shift: Shift) => ({
+  // Convert shifts to calendar events
+  const calendarEvents = shifts.map((shift) => ({
     id: shift.id,
-    title: `${shift.title}`,
+    title: shift.title,
     shiftOwner: shift.shiftOwner,
     start: shift.start,
     end: shift.end,
     role: shift.role,
-    shiftOwnerId: shift.shiftOwnerId
+    shiftOwnerId: shift.shiftOwnerId,
   }));
 
-  // Dynamic event styling
-  const eventStyleGetter = (event) => {
-    let backgroundColor = "#3174ad";
-    /*if (event.role.includes("Supervisor")) backgroundColor = "#2980b9";
-    else if (event.role.includes("Technician")) backgroundColor = "#27ae60";*/
-
-    return { style: { backgroundColor, borderRadius: "5px", color: "white" } };
+  // Style function for calendar events
+  const eventStyleGetter = () => {
+    return {
+      style: {
+        backgroundColor: "#3174ad",
+        borderRadius: "5px",
+        color: "white",
+      },
+    };
   };
 
-
+  // SHIFT CREATE/UPDATE
   const handleAddOrUpdateShift = async (e) => {
     e.preventDefault();
     if (!newShift.title || !newShift.start || !newShift.end || !newShift.role) {
@@ -124,46 +209,22 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     }
 
     const startDate = new Date(newShift.start);
-    startDate.setDate(startDate.getDate());
-    const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString();
-
     const endDate = new Date(newShift.end);
-    endDate.setDate(endDate.getDate());
-    const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString();
-
-    console.log(`Before offset: Start: ${startDate}, End: ${endDate}`);
-    console.log(`After offset: Start: ${start}, End: ${end}`);
+    const start = new Date(
+      startDate.getTime() - startDate.getTimezoneOffset() * 60000
+    ).toISOString();
+    const end = new Date(
+      endDate.getTime() - endDate.getTimezoneOffset() * 60000
+    ).toISOString();
 
     if (start >= end) {
       alert(t("endTimeAfterStart") || "End time must be after start time.");
       return;
     }
-    
-    // Fix pls
-    /* Check for conflicts
-    let conflictFound = false;
-    assignedEmployees.forEach((empId) => {
-      shifts.forEach((existingShift) => {
-        if (isEditing && existingShift.id === editingShiftId) return;
-        if (existingShift.assignedEmployees.includes(empId)) {
-          if (start < existingShift.end && existingShift.start < end) {
-            conflictFound = true;
-            alert(
-              t("conflictFound", {
-                empName: empId,
-                existingTitle: existingShift.title,
-              }) ||
-                `Conflict: Employee ${empId} already has an overlapping shift "${existingShift.title}".`
-            );
-          }
-        }
-      });
-    });
-    if (conflictFound) return; */
-
-    // If no conflicts, proceed to add or update
     if (startDate.toDateString() !== endDate.toDateString()) {
-      alert(t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day.");
+      alert(
+        t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day."
+      );
       return;
     }
 
@@ -171,50 +232,55 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       if (isEditing) {
         await supervisorUpdateShift(editingShiftId, {
           title: newShift.title,
-          start: start,
-          end: end,
+          start,
+          end,
           role: newShift.role,
           shiftOwnerId: newShift.shiftOwnerId || null,
           shiftOwner: newShift.shiftOwner,
         });
-
         setIsEditing(false);
         setEditingShiftId(null);
-        
       } else {
         await supervisorCreateShift({
           title: newShift.title,
-          start: start,
-          end: end,
+          start,
+          end,
           role: newShift.role,
           shiftOwnerId: newShift.shiftOwnerId || null,
           shiftOwner: newShift.shiftOwner,
         });
       }
-
-      setNewShift({ id: 0, shiftOwner: "", title: "", start: new Date(), end: new Date(), role: "" , shiftOwnerId: null});
+      // Reset form
+      setNewShift({
+        id: 0,
+        title: "",
+        shiftOwner: "",
+        role: "",
+        shiftOwnerId: null,
+        start: new Date(),
+        end: new Date(),
+      });
       await loadShifts();
     } catch (error) {
       console.error("Error adding/updating shift:", error);
     }
   };
-  
 
+  // SHIFT EDIT
   const handleEditShift = (shift) => {
-    
     setNewShift({
       title: shift.title,
       start: moment(shift.start).format("YYYY-MM-DDTHH:mm"),
       end: moment(shift.end).format("YYYY-MM-DDTHH:mm"),
       role: shift.role,
-      shiftOwnerId: shift.shiftOwnerId ,
+      shiftOwnerId: shift.shiftOwnerId,
       shiftOwner: shift.shiftOwner,
     });
-
     setIsEditing(true);
     setEditingShiftId(shift.id);
   };
 
+  // SHIFT DELETE
   const handleDeleteShift = async (shiftId) => {
     if (
       window.confirm(
@@ -222,30 +288,19 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       )
     ) {
       try {
-        await supervisorDeleteShift(shiftId); 
+        await supervisorDeleteShift(shiftId);
         await loadShifts();
       } catch (error) {
         console.error("Error deleting shift:", error);
       }
     }
-
     loadShifts();
   };
 
-  // Calendar translation messages
-  const messages = {
-    today: t("calendarToday"),
-    previous: t("calendarBack"),
-    next: t("calendarNext"),
-    month: t("month"),
-    week: t("week"),
-    day: t("day"),
-    agenda: t("agenda"),
-  };
-
+  // EMPLOYEE SELECT
   const handleEmployeeChange = (e) => {
-    const selectedEmployee = employees.find(emp => emp.id === parseInt(e.target.value, 10));
-  
+    const selectedId = parseInt(e.target.value, 10);
+    const selectedEmployee = employees.find((emp) => emp.id === selectedId);
     if (selectedEmployee) {
       setNewShift({
         ...newShift,
@@ -257,19 +312,20 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
       setNewShift({
         ...newShift,
         shiftOwnerId: null,
-        shiftOwner: "", // Reset if no employee selected
-        role: "Unassigned",
+        shiftOwner: "",
+        role: t("unassigned") || "Unassigned",
       });
     }
   };
 
   return (
     <div className="shift-management">
-      {/* Heading aligned left via CSS class */}
-      <h2 className="page-header">{t("shiftManagement") || "Shift Management"}</h2>
+      <h2 className="page-header">
+        {t("shiftManagement") || "Shift Management"}
+      </h2>
 
       <div className="shift-management-top">
-        {/* Shift Creation / Edit Form */}
+        {/* SHIFT CREATION / EDIT FORM */}
         <div className="shift-creation">
           <h3>
             {isEditing
@@ -277,32 +333,63 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               : t("createNewShift") || "Create New Shift"}
           </h3>
           <form onSubmit={handleAddOrUpdateShift}>
+            {/* Only show employee dropdown if not editing */}
             {!isEditing && (
               <>
-              <label>{t("Select Employee") || "Select Employee"}:</label>
-              <select
-                value={newShift.shiftOwnerId || ""} // Ensure it selects the correct employee ID
-                onChange={handleEmployeeChange}
-                required
-              >
-                <option value="">{t("employee") || "Select Employee"}</option>
-                {employees.map((employee) => (
-                  <option key={employee.id} value={employee.id}>
-                    {employee.name}
-                  </option>
-                ))}
-              </select>
+                <label>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip>
+                        {t("selectEmployeeTooltip", "Select an employee from the list.")}
+                      </Tooltip>
+                    }
+                  >
+                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
+                      <InfoIcon />
+                    </span>
+                  </OverlayTrigger>
+                  {t("Select Employee") || "Select Employee"}:
+                </label>
+                <select
+                  value={newShift.shiftOwnerId || ""}
+                  onChange={handleEmployeeChange}
+                  required
+                >
+                  <option value="">{t("employee") || "Select Employee"}</option>
+                  {employees.map((employee) => (
+                    <option key={employee.id} value={employee.id}>
+                      {employee.name}
+                    </option>
+                  ))}
+                </select>
               </>
             )}
             {isEditing && (
               <>
-              <label>{t("employeeAssigned") || "Employee Assigned"}:</label>
-              <div className="employee-display">{newShift.shiftOwner}</div>
+                <label>{t("employeeAssigned") || "Employee Assigned"}:</label>
+                <div className="employee-display">{newShift.shiftOwner}</div>
               </>
             )}
+
+            {/* SHIFT NAME */}
             <div className="form-row">
               <div className="form-group">
-                <label>{t("shiftName") || "Shift Name"}:</label>
+                <label>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip>
+                        {t("shiftNameTooltip", "Enter the name of the shift.")}
+                      </Tooltip>
+                    }
+                  >
+                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
+                      <InfoIcon />
+                    </span>
+                  </OverlayTrigger>
+                  {t("shiftName") || "Shift Name"}:
+                </label>
                 <input
                   type="text"
                   value={newShift.title}
@@ -312,9 +399,24 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               </div>
             </div>
 
+            {/* START / END DATES */}
             <div className="form-row">
               <div className="form-group">
-                <label>{t("startDateTime") || "Start Date & Time"}:</label>
+                <label>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip>
+                        {t("startDateTimeTooltip", "Select the start date/time.")}
+                      </Tooltip>
+                    }
+                  >
+                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
+                      <InfoIcon />
+                    </span>
+                  </OverlayTrigger>
+                  {t("startDateTime") || "Start Date & Time"}:
+                </label>
                 <input
                   type="datetime-local"
                   value={newShift.start}
@@ -323,7 +425,21 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 />
               </div>
               <div className="form-group">
-                <label>{t("endDateTime") || "End Date & Time"}:</label>
+                <label>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip>
+                        {t("endDateTimeTooltip", "Select the end date/time.")}
+                      </Tooltip>
+                    }
+                  >
+                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
+                      <InfoIcon />
+                    </span>
+                  </OverlayTrigger>
+                  {t("endDateTime") || "End Date & Time"}:
+                </label>
                 <input
                   type="datetime-local"
                   value={newShift.end}
@@ -333,15 +449,29 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
               </div>
             </div>
 
+            {/* ROLE */}
             <div className="form-row">
               <div className="form-group">
                 <label>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip>
+                        {t("roleTooltip", "The role assigned to the shift.")}
+                      </Tooltip>
+                    }
+                  >
+                    <span className="tooltip-icon" style={{ marginRight: "8px" }}>
+                      <InfoIcon />
+                    </span>
+                  </OverlayTrigger>
                   {t("role") || "Role"}:
                 </label>
                 <div className="role-display">{newShift.role}</div>
               </div>
             </div>
 
+            {/* FORM BUTTONS */}
             <div className="form-actions">
               <button type="submit">
                 {isEditing ? t("updateShift") || "Update Shift" : t("addShift") || "Add Shift"}
@@ -353,11 +483,12 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                     setIsEditing(false);
                     setEditingShiftId(null);
                     setNewShift({
+                      id: 0,
                       title: "",
                       start: new Date(),
                       end: new Date(),
                       shiftOwner: "",
-                      role : "",
+                      role: "",
                       shiftOwnerId: null,
                     });
                   }}
@@ -369,13 +500,22 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
           </form>
         </div>
 
-        {/* Calendar Card */}
+        {/* CALENDAR CARD */}
         <div className="calendar-card">
-          <h3>{t("calendar") || "Calendar"}</h3>
+          <h3>
+            {t("calendar") || "Calendar"}
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip>{t("calendarTooltip", "Company calendar view")}</Tooltip>}
+            >
+              <span className="tooltip-icon" style={{ marginLeft: "8px" }}>
+                <InfoIcon />
+              </span>
+            </OverlayTrigger>
+          </h3>
           <Calendar
-            key={i18n.language}
             localizer={localizer}
-            culture={i18n.language}
+            culture="en"
             messages={messages}
             events={calendarEvents}
             startAccessor="start"
@@ -383,12 +523,13 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             view={view}
             onView={setView}
             eventPropGetter={eventStyleGetter}
+            components={{ toolbar: CustomToolbar }}
             style={{ height: 500 }}
           />
         </div>
       </div>
 
-      {/* Shift Overview Table */}
+      {/* SHIFT OVERVIEW TABLE */}
       <div className="shift-overview">
         <h3>{t("shiftOverview") || "Shift Overview"}</h3>
         <table>
@@ -406,15 +547,15 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             {shifts.map((shift) => (
               <tr key={shift.id}>
                 <td>{shift.shiftOwnerId || t("unassigned") || "Unassigned"}</td>
-                <td>
-                  {shift.shiftOwner || t("unassigned") || "Unassigned"}
-                </td>
+                <td>{shift.shiftOwner || t("unassigned") || "Unassigned"}</td>
                 <td>{moment(shift.start).format("YYYY-MM-DD")}</td>
                 <td>
                   {moment(shift.start).format("hh:mm A")} -{" "}
                   {moment(shift.end).format("hh:mm A")}
                 </td>
-                <td>{shift.role.replace("-", " ") || t("unassigned") || "Unassigned"}</td>
+                <td>
+                  {shift.role.replace("-", " ") || t("unassigned") || "Unassigned"}
+                </td>
                 <td>
                   <button onClick={() => handleEditShift(shift)}>
                     {t("edit") || "Edit"}

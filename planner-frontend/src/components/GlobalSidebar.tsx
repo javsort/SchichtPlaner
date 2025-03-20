@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { FiLogOut } from "react-icons/fi"; // Import the logout icon
 import "./GlobalSidebar.css";
 
+
 interface GlobalSidebarProps {
   open: boolean;
   onClose: () => void;

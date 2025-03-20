@@ -1,4 +1,6 @@
-/* Overall container */
+/* ------------------------------------- */
+/* Overall Container */
+/* ------------------------------------- */
 .shift-management {
   display: flex;
   flex-direction: column;
@@ -45,8 +47,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Section headers for shift creation, calendar and shift overview 
-   All headings now use the same font color, weight, and spacing */
+/* Section headers for shift creation, calendar, and shift overview */
 .shift-creation h3,
 .calendar-card h3,
 .shift-overview h3 {
@@ -120,14 +121,7 @@
   background-color: #69be28;
 }
 
-/* Calendar card header */
-.calendar-card h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  /* Uses the same styles as section headers */
-}
-
-/* Shift overview table */
+/* Shift overview table container */
 .shift-overview {
   background-color: #fff;
   border-radius: 8px;
@@ -186,14 +180,6 @@
   background-color: #4da8d6;
 }
 
-.shift-overview button:last-of-type {
-  background-color: #69be28;
-  color: #fff;
-}
-
-.shift-overview button:last-of-type:hover {
-  background-color: #69be28;
-}
 
 /* Notification bar styling */
 .notification-bar {
@@ -214,9 +200,114 @@
 }
 
 .notification-bar.success {
-  background-color: #28a745;
+  background-color: #f5fff8; /* Light success color */
 }
 
 .notification-bar.error {
-  background-color: #dc3545;
+  background-color: #dc3545; /* Red for errors */
+}
+
+/* ------------------------------------- */
+/* Tooltip Overrides: White BG, Dark Text */
+/* ------------------------------------- */
+.tooltip.show {
+  opacity: 1;
+}
+
+.tooltip .tooltip-inner {
+  background-color: #fff !important;
+  color: #333 !important;
+  border: 1px solid #ccc !important;
+}
+
+.tooltip .arrow::before {
+  border-top-color: #ccc !important;
+  border-bottom-color: #ccc !important;
+  border-right-color: #ccc !important;
+  border-left-color: #ccc !important;
+}
+
+/* ------------------------------------- */
+/* React Big Calendar Overrides */
+/* ------------------------------------- */
+
+/* 1) Toolbar (Today | Back | Next | Month | Week | Day | Agenda) */
+.rbc-toolbar {
+  background-color: #fff !important;
+  border: 1px solid #ddd !important;
+  border-radius: 8px;
+  margin-bottom: 20px !important; /* space below toolbar */
+  color: #333 !important;
+  font-size: 14px;
+}
+
+.rbc-toolbar button {
+  background-color: #fff !important;
+  color: #333 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px;
+  margin: 0 5px 5px 0;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rbc-toolbar button:hover,
+.rbc-toolbar button:focus {
+  background-color: #f9f9f9 !important;
+}
+
+/* Active (selected) view button highlight */
+.rbc-toolbar .rbc-btn-group > button.rbc-active {
+  background-color: #e6e6e6 !important;
+  color: #333 !important;
+}
+
+/* 2) Month/Week/Day/Agenda containers */
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+  background-color: #fff !important;
+  border: 1px solid #ddd !important;
+  border-radius: 8px;
+  color: #333 !important;
+}
+
+/* 3) Remove green highlight for "today" */
+.rbc-day-bg.rbc-today {
+  background-color: #fff !important;
+  border: 1px solid #ddd !important;
+}
+
+.rbc-day-slot.rbc-today {
+  background-color: #fff !important;
+}
+
+/* 4) Day headers (Mon, Tue, Wed, etc.) */
+.rbc-header {
+  background-color: #f2f2f2 !important;
+  color: #333 !important;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+}
+
+/* 5) Event styling */
+.rbc-event {
+  background-color: #3174ad !important; /* your preferred event color */
+  color: #fff !important;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 14px;
+  margin: 2px;
+}
+
+.rbc-event:hover {
+  background-color: #255985 !important;
+}
+
+/* 6) Remove any default RBC shadows or lines if desired */
+.rbc-time-view .rbc-allday-cell {
+  border-bottom: 1px solid #ddd !important;
 }
