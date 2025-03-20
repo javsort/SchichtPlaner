@@ -298,7 +298,8 @@
   "unnamedShift": "Unnamed Shift",
   "unassigned": "Unassigned",
   "importTooltip": "Click to import data",
-  "exportTooltip": "Click to export data"
+  "exportTooltip": "Click to export data",
+  "employeeTooltip": "Select the employee to whom this shift will be assigned."
 }
 
 

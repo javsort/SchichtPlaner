@@ -40,15 +40,33 @@ export interface SwapRequest {
 }
 
 type CalendarView = "month" | "week" | "day" | "agenda";
+
+// Set up moment localizer
 const localizer = momentLocalizer(moment);
 
 const ShiftSwapAdmin: React.FC = () => {
   const { t, i18n } = useTranslation();
+
+  // Force moment to use the current language
+  moment.locale(i18n.language);
+
+  // Define a custom formats object to force 24-hour display in the calendar
+  const formats = {
+    timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
+    eventTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) =>
+      `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+    agendaTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) =>
+      `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+  };
+
   const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
   const [view, setView] = useState<CalendarView>(Views.WEEK as CalendarView);
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error"; } | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
-  // State for shifts and employees loaded from the backend:
+  // State for shifts and employees loaded from the backend
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [employees, setEmployees] = useState<{ id: number; name: string }[]>([]);
 
@@ -111,19 +129,18 @@ const ShiftSwapAdmin: React.FC = () => {
     loadEmployees();
   }, []);
 
-  // Helper: Get a valid ownShift for a swap request.
+  // Helper: Get a valid ownShift for a swap request
   const getOwnShift = (req: SwapRequest): Shift => {
     if (req.ownShift && req.ownShift.start && req.ownShift.end) {
       return req.ownShift;
     }
-  
+
     // Find the shift from the loaded shifts
-    const matchedShift = shifts.find(shift => shift.id === req.currentShiftId);
-  
+    const matchedShift = shifts.find((shift) => shift.id === req.currentShiftId);
     if (matchedShift) {
       return matchedShift;
     }
-  
+
     // Fallback shift if none is found
     return {
       id: req.currentShiftId || 0,
@@ -135,16 +152,14 @@ const ShiftSwapAdmin: React.FC = () => {
       role: t("unassigned"),
     };
   };
-  
-  
 
-  // Helper: Look up employee name by ID.
+  // Helper: Look up employee name by ID
   const getEmployeeName = (id: number): string => {
-    const found = employees.find(emp => emp.id === id);
+    const found = employees.find((emp) => emp.id === id);
     return found ? found.name : `${t("employee")} #${id}`;
   };
 
-  // Map swap requests to calendar events.
+  // Map swap requests to calendar events
   const calendarEvents = swapRequests.map((req) => {
     const ownShift = getOwnShift(req);
     return {
@@ -156,66 +171,85 @@ const ShiftSwapAdmin: React.FC = () => {
     };
   });
 
-  // Approve and reject handlers.
+  // Approve and reject handlers
   const handleApprove = async (requestId: number) => {
     try {
-      const swapRequest = swapRequests.find(r => r.id === requestId);
-      
+      const swapRequest = swapRequests.find((r) => r.id === requestId);
       if (!swapRequest) {
         console.error(`Could not find swap request with ID ${requestId}`);
-        showNotification(t("errorApprovingSwap") || "Error: Swap request not found.", "error");
+        showNotification(
+          t("errorApprovingSwap") || "Error: Swap request not found.",
+          "error"
+        );
         return;
       }
-      
+
       if (!swapRequest.targetEmployee) {
         console.warn(`No target employee selected for swap request ${requestId}`);
-        showNotification(t("selectCandidatePrompt") || "Please select a candidate for swap.", "error");
+        showNotification(
+          t("selectCandidatePrompt") || "Please select a candidate for swap.",
+          "error"
+        );
         return;
       }
-      
+
       console.log("Approving swap for proposal", requestId);
       console.log("Target employee:", swapRequest.targetEmployee);
       console.log("Own shift details:", getOwnShift(swapRequest));
-      
+
       try {
-        // First, try to validate the target employee exists
-        const employeeExists = employees.some(emp => emp.id === swapRequest.targetEmployee!.id);
+        // Check if the target employee actually exists
+        const employeeExists = employees.some(
+          (emp) => emp.id === swapRequest.targetEmployee!.id
+        );
         if (!employeeExists) {
-          console.error(`Target employee with ID ${swapRequest.targetEmployee.id} not found in available employees list`);
-          showNotification(t("errorApprovingSwap") || "Error: Target employee not found.", "error");
+          console.error(
+            `Target employee with ID ${swapRequest.targetEmployee.id} not found in available employees list`
+          );
+          showNotification(
+            t("errorApprovingSwap") || "Error: Target employee not found.",
+            "error"
+          );
           return;
         }
-        
-        // Now call the API to approve the swap
+
+        // Approve the swap
         await approveSwapProposal(
-          requestId.toString(), 
+          requestId.toString(),
           swapRequest.targetEmployee.id.toString()
         );
-        
-        // If successful, reload proposals
+
+        // Reload proposals if successful
         await loadProposals();
         showNotification(t("swapApproved") || "Swap request approved.", "success");
       } catch (error: any) {
-        // Enhanced error reporting
         console.error("Error in handleApprove:", error);
         if (error.response) {
           console.error("Response data:", error.response.data);
           console.error("Response status:", error.response.status);
         }
         showNotification(
-          t("errorApprovingSwap") || 
-          `Error approving swap: ${error.response?.data?.message || error.message || "Unknown error"}`,
+          t("errorApprovingSwap") ||
+            `Error approving swap: ${
+              error.response?.data?.message || error.message || "Unknown error"
+            }`,
           "error"
         );
       }
     } catch (outerError) {
       console.error("Unexpected error in handleApprove:", outerError);
-      showNotification(t("errorApprovingSwap") || "Unexpected error approving swap.", "error");
+      showNotification(
+        t("errorApprovingSwap") || "Unexpected error approving swap.",
+        "error"
+      );
     }
   };
 
   const handleReject = async (requestId: number) => {
-    const managerComment = window.prompt(t("enterManagerComment") || "Enter manager comment (optional):", "");
+    const managerComment = window.prompt(
+      t("enterManagerComment") || "Enter manager comment (optional):",
+      ""
+    );
     try {
       await declineSwapProposal(requestId.toString(), managerComment || "");
       await loadProposals();
@@ -226,25 +260,27 @@ const ShiftSwapAdmin: React.FC = () => {
     }
   };
 
-  // Updated candidate list builder:
+  // Build candidate list
   const buildCandidateList = (req: SwapRequest): number[] => {
     const candidateIds: number[] = [];
-  
+
+    // Find all shifts with the same proposed title (case-insensitive match)
     const matchedShifts = shifts.filter(
-      shift => shift.title.trim().toLowerCase() === req.proposedTitle?.trim().toLowerCase()
+      (shift) =>
+        shift.title.trim().toLowerCase() ===
+        (req.proposedTitle || "").trim().toLowerCase()
     );
-  
-    matchedShifts.forEach(shift => {
+
+    matchedShifts.forEach((shift) => {
       if (shift.employeeId && shift.employeeId !== req.employeeId) {
         candidateIds.push(shift.employeeId);
       }
     });
-  
+
     return candidateIds;
   };
-   
 
-  // Define messages for the calendar toolbar.
+  // Calendar i18n messages
   const messages = {
     today: t("calendarToday"),
     previous: t("calendarBack"),
@@ -252,7 +288,7 @@ const ShiftSwapAdmin: React.FC = () => {
     month: t("month"),
     week: t("week"),
     day: t("day"),
-    agenda: t("agenda")
+    agenda: t("agenda"),
   };
 
   return (
@@ -276,6 +312,8 @@ const ShiftSwapAdmin: React.FC = () => {
           endAccessor="end"
           view={view}
           onView={(newView) => setView(newView as CalendarView)}
+          // Force 24-hour times for the calendar
+          formats={formats}
         />
       </div>
 
@@ -293,12 +331,19 @@ const ShiftSwapAdmin: React.FC = () => {
           {swapRequests.map((req: SwapRequest) => {
             const ownShift = getOwnShift(req);
             const candidateIds = buildCandidateList(req);
+
             return (
-              <tr key={req.id} className={req.status !== "PROPOSED" ? "approved-row" : ""}>
+              <tr
+                key={req.id}
+                className={req.status !== "PROPOSED" ? "approved-row" : ""}
+              >
                 <td>{req.id}</td>
                 <td>{getEmployeeName(req.employeeId)}</td>
                 <td>
-                  {ownShift.title} ({moment(ownShift.start).format("HH:mm")} - {moment(ownShift.end).format("HH:mm")})
+                  {/* Force 24-hour format here as well */}
+                  {ownShift.title} (
+                  {moment(ownShift.start).format("HH:mm")} -{" "}
+                  {moment(ownShift.end).format("HH:mm")})
                 </td>
                 <td>
                   {candidateIds.length > 0 ? (
@@ -321,7 +366,9 @@ const ShiftSwapAdmin: React.FC = () => {
                         );
                       }}
                     >
-                      <option value="">{t("selectCandidate") || "Select Candidate"}</option>
+                      <option value="">
+                        {t("selectCandidate") || "Select Candidate"}
+                      </option>
                       {candidateIds.map((candidateId: number) => (
                         <option key={candidateId} value={candidateId}>
                           {getEmployeeName(candidateId)}

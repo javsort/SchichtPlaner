@@ -357,7 +357,11 @@
   "unnamedShift": "Unbenannte Schicht",
   "unassigned": "Nicht zugewiesen",
   "importTooltip": "Klicken Sie, um Daten zu importieren",
-  "exportTooltip": "Klicken Sie, um Daten zu exportieren"
+  "exportTooltip": "Klicken Sie, um Daten zu exportieren",
+  
+  "employeeTooltip": "Wählen Sie den Mitarbeiter aus, dem diese Schicht zugewiesen werden soll."
+  
+  
 }
 
     

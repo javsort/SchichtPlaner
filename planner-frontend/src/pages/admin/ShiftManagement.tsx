@@ -38,6 +38,15 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   moment.locale(i18n.language);
   const localizer = momentLocalizer(moment);
 
+  // Force 24-hour format for the calendar times
+  const formats = {
+    timeGutterFormat: (date) => moment(date).format("HH:mm"),
+    eventTimeRangeFormat: ({ start, end }) =>
+      `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+    agendaTimeRangeFormat: ({ start, end }) =>
+      `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+  };
+
   const [shifts, setShifts] = useState([]);
   const [employees, setEmployees] = useState([]);
 
@@ -154,8 +163,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
     }
     if (startDate.toDateString() !== endDate.toDateString()) {
       alert(
-        t("shiftLongerThanOneDay") ||
-          "Shifts cannot extend beyond a single day."
+        t("shiftLongerThanOneDay") || "Shifts cannot extend beyond a single day."
       );
       return;
     }
@@ -212,8 +220,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
   const handleDeleteShift = async (shiftId) => {
     if (
       window.confirm(
-        t("confirmDeleteShift") ||
-          "Are you sure you want to delete this shift?"
+        t("confirmDeleteShift") || "Are you sure you want to delete this shift?"
       )
     ) {
       try {
@@ -276,12 +283,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             {!isEditing && (
               <>
                 <label>
-                  <InfoIcon
-                    tooltipText={
-                      // Updated descriptive tooltip text:
-                      "Select the employee to assign to this shift."
-                    }
-                  />
+                  <InfoIcon tooltipText={t("employeeTooltip")} />
                   {t("Select Employee") || "Select Employee"}:
                 </label>
                 <select
@@ -421,6 +423,7 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
             onView={setView}
             eventPropGetter={eventStyleGetter}
             style={{ height: 500 }}
+            formats={formats}
           />
         </div>
       </div>
@@ -446,8 +449,8 @@ const ShiftManagement = ({ currentUser = { id: 1 } }) => {
                 <td>{shift.shiftOwner || t("unassigned") || "Unassigned"}</td>
                 <td>{moment(shift.start).format("YYYY-MM-DD")}</td>
                 <td>
-                  {moment(shift.start).format("hh:mm A")} -{" "}
-                  {moment(shift.end).format("hh:mm A")}
+                  {moment(shift.start).format("HH:mm")} -{" "}
+                  {moment(shift.end).format("HH:mm")}
                 </td>
                 <td>
                   {shift.role.replace("-", " ") ||

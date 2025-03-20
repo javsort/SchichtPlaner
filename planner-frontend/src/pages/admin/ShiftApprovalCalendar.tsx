@@ -21,6 +21,13 @@ moment.updateLocale("en", { week: { dow: 1 } });
 
 const localizer = momentLocalizer(moment);
 
+// Force 24-hour time format for the calendar's displays
+const calendarFormats = {
+  timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
+  eventTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) =>
+    `${moment(start).format("HH:mm")} - ${moment(end).format("HH:mm")}`,
+};
+
 interface Shift {
   id: number;
   title: string;
@@ -237,6 +244,7 @@ const ShiftApprovalCalendar: React.FC = () => {
               eventPropGetter={eventStyleGetter}
               min={new Date(1970, 1, 1, 0, 0)}
               max={new Date(1970, 1, 1, 23, 59)}
+              formats={calendarFormats}
             />
           )}
         </div>
@@ -267,8 +275,8 @@ const ShiftApprovalCalendar: React.FC = () => {
                   <td>{req.role}</td>
                   <td>{moment(req.start).format("YYYY-MM-DD")}</td>
                   <td>
-                    {moment(req.start).format("hh:mm A")} -{" "}
-                    {moment(req.end).format("hh:mm A")}
+                    {moment(req.start).format("HH:mm")} -{" "}
+                    {moment(req.end).format("HH:mm")}
                   </td>
                   <td>
                     <button onClick={() => handleApprove(req.id)} className="approve-btn">
