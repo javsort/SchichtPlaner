@@ -743,9 +743,9 @@ export const deleteRole = async (roleId) => {
  * Employee Report stuff
  */
 export const getEmployeeReportCSV = async (): Promise<string> => {
-    console.log('Fetching Employee CSV Report... URL:', `${baseUrl}/api/employee/reports/csv`);
+    console.log('Fetching Employee CSV Report... URL:', `${baseUrl}/api/stats/reports/csv`);
     try {
-      const response = await axios.get(`${baseUrl}/api/employee/reports/csv`, {
+      const response = await axios.get(`${baseUrl}/api/stats/reports/csv`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': localStorage.getItem('token') || ''
@@ -761,9 +761,9 @@ export const getEmployeeReportCSV = async (): Promise<string> => {
   };
   
   export const getEmployeeReportExcel = async (): Promise<Blob> => {
-    console.log('Fetching Employee Excel Report... URL:', `${baseUrl}/api/employee/reports/excel`);
+    console.log('Fetching Employee Excel Report... URL:', `${baseUrl}/api/stats/reports/excel`);
     try {
-      const response = await axios.get(`${baseUrl}/api/employee/reports/excel`, {
+      const response = await axios.get(`${baseUrl}/api/stats/reports/excel`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': localStorage.getItem('token') || ''
@@ -779,9 +779,9 @@ export const getEmployeeReportCSV = async (): Promise<string> => {
   };
   
   export const getEmployeeReportICS = async (): Promise<string> => {
-    console.log('Fetching Employee ICS Report... URL:', `${baseUrl}/api/employee/reports/ics`);
+    console.log('Fetching Employee ICS Report... URL:', `${baseUrl}/api/stats/reports/ics`);
     try {
-      const response = await axios.get(`${baseUrl}/api/employee/reports/ics`, {
+      const response = await axios.get(`${baseUrl}/api/stats/reports/ics`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': localStorage.getItem('token') || ''

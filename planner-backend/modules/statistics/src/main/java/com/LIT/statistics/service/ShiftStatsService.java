@@ -25,13 +25,13 @@ public class ShiftStatsService {
     }
 
     public List<ShiftReportDTO> getShiftReports() {
-        String sql = "SELECT assigned_employee_id AS employeeId, " +
-                     "       assigned_employee_name AS employeeName, " +
+        String sql = "SELECT employee_id AS employeeId, " +
+                     "       username AS employeeName, " +
                      "       COUNT(*) AS totalShifts, " +
                      "       SUM(CASE WHEN DAYOFWEEK(startTime) IN (1,7) THEN 1 ELSE 0 END) AS weekendShifts, " +
                      "       SUM(CASE WHEN TIME(endTime) > '22:00:00' THEN 1 ELSE 0 END) AS lateShifts " +
                      "FROM shifts " +
-                     "GROUP BY assigned_employee_id, assigned_employee_name";
+                     "GROUP BY employee_id, username";
         log.info(logHeader + "Executing shift reports query: {}", sql);
         List<ShiftReportDTO> reports = jdbcTemplate.query(sql, new ShiftReportRowMapper(logHeader));
         log.info(logHeader + "Retrieved {} shift reports", reports.size());
