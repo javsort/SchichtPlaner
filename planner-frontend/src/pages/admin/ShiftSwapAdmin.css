@@ -10,7 +10,7 @@
 
 /* Heading Styles */
 .shift-swap-admin-container h2 {
-  margin-top: 0;      /* Remove default top margin */
+  margin-top: 0;       /* Remove default top margin */
   margin-bottom: 20px; /* Slight space below heading */
   text-align: left;
   color: #2c3e50;
@@ -20,7 +20,6 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Keeps columns aligned */
   margin-top: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
@@ -35,45 +34,42 @@
   vertical-align: top;
 }
 
-/* Example column widths (optional) */
-.table thead th:nth-child(1),
-.table tbody td:nth-child(1) {
-  width: 60px;
-}
-
-.table thead th:nth-child(2),
-.table tbody td:nth-child(2) {
-  width: 120px;
-}
-
-.table thead th:nth-child(3),
-.table tbody td:nth-child(3) {
-  width: 150px;
-}
-
-.table thead th:nth-child(4),
-.table tbody td:nth-child(4) {
-  width: 120px;
-}
-
-.table thead th:nth-child(5),
-.table tbody td:nth-child(5) {
-  width: 150px;
-}
-
 /* CALENDAR CONTAINER */
 .calendar-container {
-  width: 100%;           /* Fill entire page width */
-  max-width: none;       /* Remove any max-width */
-  margin: 20px 0;        /* Vertical spacing */
+  width: 100%;       /* Fill entire page width */
+  max-width: none;   /* Remove any max-width */
+  margin: 20px 0;    /* Vertical spacing */
   background-color: #fff;
   padding: 20px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.calendar-container .rbc-calendar {
+/* Enclose the entire time-view (dates & days) in a border */
+.calendar-container .rbc-time-view {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Ensure header and content backgrounds stay white */
+.calendar-container .rbc-time-view .rbc-time-header,
+.calendar-container .rbc-time-view .rbc-time-content {
   background-color: #fff;
-  height: 600px;         /* Adjust as needed */
+}
+
+/* NEW: Add top border to the header to close the calendar from above */
+.calendar-container .rbc-time-view .rbc-time-header {
+  border-top: 1px solid #ddd;
+}
+
+/* Horizontal lines between each hour row */
+.calendar-container .rbc-time-content .rbc-timeslot-group {
+  border-top: 1px solid #ddd; /* Horizontal line above each timeslot group */
+}
+
+/* Vertical lines between days in week/day views */
+.calendar-container .rbc-time-content > * + * > * {
+  border-left: 1px solid #ddd;
 }
 
 /* ACTION BUTTONS */

@@ -4,6 +4,8 @@ import App from "./App.tsx";
 import "./i18n.ts"; // Initializes i18next
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n.ts";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
