@@ -5,6 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import "./pages/general/theme.css";
 import "./pages/general/global.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 // Public Pages
 import Login from "./pages/general/Login.tsx";

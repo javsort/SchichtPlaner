@@ -11,6 +11,10 @@ import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestController
@@ -24,6 +28,12 @@ public class ShiftProposalController {
     @Autowired
     public ShiftProposalController(ShiftProposalService proposalService) {
         this.proposalService = proposalService;
+    }
+
+    private Set<String> getPermissions(String permissions) {
+        return Arrays.stream(permissions.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
     }
 
     // Employee submits new shift proposal
@@ -60,15 +70,25 @@ public class ShiftProposalController {
 
     // Manager retrieves all proposals
     @GetMapping
-    public ResponseEntity<List<ShiftProposal>> getAllProposals(@RequestHeader("X-User-Role") String role) {
+    public ResponseEntity<List<ShiftProposal>> getAllProposals(@RequestHeader("X-User-Permissions") String permissions) {
         log.info(logHeader + "getAllProposals: Getting all proposals");
 
-        if(!role.equals("ROLE_Admin") && !role.equals("ROLE_Shift-Supervisor")) {
-            log.error(logHeader + "User is not authorized to view all proposals");
+        if(permissions == null || permissions.isEmpty()) {
+            log.error(logHeader + "getUserById: ERROR! User permissions are not provided in the header");
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        Set<String> userPermissions = getPermissions(permissions);
+
+        if(!userPermissions.contains("PROPOSAL_APPROVAL")) {
+            log.error(logHeader + "getUserById: ERROR! User does not have permission to get user by id. The user permissions is: " + permissions);
+            log.info(logHeader + "The needed permission is: 'PROPOSAL_APPROVAL'");
+
             return ResponseEntity.status(403).build();
         }
         
-        log.info(logHeader + "getAllProposals: Role has been verified, proceeding to get all proposals for: " + role);
+        log.info(logHeader + "getAllProposals: Permissions have been verified, proceeding to get all proposals for user with permissions: " + permissions);
 
         List<ShiftProposal> proposals = proposalService.getAllProposals();
 
