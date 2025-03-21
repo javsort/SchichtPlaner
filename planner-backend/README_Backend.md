@@ -9,7 +9,6 @@ The modules divide as follows:
 | planner-scheduler    | [scheduler](./modules/scheduler/)                                      |
 | planner-auth         | [auth](./modules/auth/)                                                |
 | planner-stats        | [statistics](./modules/statistics/) (work in progress)                 |
-| Coming Soon!         | -                                                                      |
 
 
 To run the full backend, it is sufficient to simply go back to [../schichtconfig/automation-scripts/](../schichtconfig/automation-scripts/) and run [`./no-front-buildnrun-loc.sh`](../schichtconfig/automation-scripts/no-front-buildnrun-loc.sh) / [`./no-front-buildnrun-loc.bat`](../schichtconfig/automation-scripts/no-front-buildnrun-loc.bat) depending of your OS.
@@ -37,7 +36,7 @@ $ chmod +x ./build-local.sh (only if on linux)
 $ ./build-local.sh
 
 ```
-or...
+or more natively...
 
 ```sh
 $ cd planner-backend/
